@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTopCoins, buildPriceMap } from "@/lib/market";
 import { getStockPrices } from "@/lib/stockPrices";
+import ResetCountdown from "@/components/ResetCountdown";
 
 type LeaderboardEntry = {
   username: string;
@@ -15,22 +16,6 @@ type SnapshotEntry = {
   rank: number;
 };
 
-function getResetCountdown(): { daysLeft: number; hoursLeft: number } {
-  const now = new Date();
-  const day = now.getUTCDay(); // 0=Sun … 6=Sat
-  // Next Monday at 05:00 UTC (= midnight EST)
-  const daysUntil = (1 - day + 7) % 7; // 0 if today is Monday
-  const next = new Date(now);
-  next.setUTCDate(now.getUTCDate() + daysUntil);
-  next.setUTCHours(5, 0, 0, 0);
-  // If that time is already past, push to next week
-  if (next <= now) next.setUTCDate(next.getUTCDate() + 7);
-  const msLeft = next.getTime() - now.getTime();
-  return {
-    daysLeft: Math.floor(msLeft / (1000 * 60 * 60 * 24)),
-    hoursLeft: Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-  };
-}
 
 export default async function LeaderboardPage() {
   const supabase = await createClient();
@@ -61,10 +46,6 @@ export default async function LeaderboardPage() {
     if (rank === 3) return "🥉";
     return `#${rank}`;
   };
-
-  const { daysLeft, hoursLeft } = getResetCountdown();
-  const resetLabel =
-    daysLeft > 0 ? `${daysLeft}d ${hoursLeft}h` : `${hoursLeft}h`;
 
   // ── Current leaderboard ──────────────────────────────────────
   let entries: LeaderboardEntry[] = [];
@@ -156,7 +137,7 @@ export default async function LeaderboardPage() {
       <div className="bg-gray-900 border border-gray-700 rounded-2xl px-6 py-4 mb-8 flex items-center justify-between">
         <div>
           <p className="text-sm text-gray-400">Week resets in</p>
-          <p className="text-xl font-bold text-indigo-400">{resetLabel}</p>
+          <ResetCountdown />
         </div>
         <div className="text-right">
           <p className="text-sm text-gray-400">Starting balance</p>
