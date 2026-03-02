@@ -17,17 +17,15 @@ type SnapshotEntry = {
 
 function getResetCountdown(): { daysLeft: number; hoursLeft: number } {
   const now = new Date();
-  // Reset fires Monday 00:00 EST = Monday 05:00 UTC
-  const day = now.getUTCDay();
-  const daysUntil = day === 1 ? 7 : (1 - day + 7) % 7 || 7;
-  const nextMonday = new Date(now);
-  nextMonday.setUTCDate(now.getUTCDate() + daysUntil);
-  nextMonday.setUTCHours(5, 0, 0, 0); // 05:00 UTC = 00:00 EST
-  // If we haven't passed 05:00 UTC today and today is Monday, use today
-  if (day === 1 && now < nextMonday) {
-    nextMonday.setUTCDate(now.getUTCDate());
-  }
-  const msLeft = nextMonday.getTime() - now.getTime();
+  const day = now.getUTCDay(); // 0=Sun … 6=Sat
+  // Next Monday at 05:00 UTC (= midnight EST)
+  const daysUntil = (1 - day + 7) % 7; // 0 if today is Monday
+  const next = new Date(now);
+  next.setUTCDate(now.getUTCDate() + daysUntil);
+  next.setUTCHours(5, 0, 0, 0);
+  // If that time is already past, push to next week
+  if (next <= now) next.setUTCDate(next.getUTCDate() + 7);
+  const msLeft = next.getTime() - now.getTime();
   return {
     daysLeft: Math.floor(msLeft / (1000 * 60 * 60 * 24)),
     hoursLeft: Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
