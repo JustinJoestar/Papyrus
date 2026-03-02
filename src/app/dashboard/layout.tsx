@@ -27,6 +27,12 @@ export default function DashboardLayout({
         >
           Leaderboard
         </Link>
+        <Link
+          href="/dashboard/leagues"
+          className="text-sm text-gray-400 hover:text-white transition"
+        >
+          Leagues
+        </Link>
         <div className="ml-auto">
           <form action="/auth/logout" method="post">
             <button className="text-sm text-gray-400 hover:text-white transition">
