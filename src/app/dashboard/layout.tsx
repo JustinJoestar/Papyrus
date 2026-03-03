@@ -1,6 +1,6 @@
 import Link from "next/link";
-import SignOutButton from "@/components/SignOutButton";
 import NavLinks from "@/components/NavLinks";
+import NavUserMenu from "@/components/NavUserMenu";
 import HexBackground from "@/components/HexBackground";
 
 export default function DashboardLayout({
@@ -43,7 +43,7 @@ export default function DashboardLayout({
         <NavLinks />
 
         <div className="ml-auto">
-          <SignOutButton />
+          <NavUserMenu />
         </div>
       </nav>
 
