@@ -54,19 +54,36 @@ export default function LeagueActions() {
     }
   }
 
+  const inputStyle = {
+    background: "var(--elevated)",
+    border: "1px solid var(--border-mid)",
+    color: "var(--text-1)",
+  };
+
   return (
     <div className="mb-8">
       {mode === "none" && (
         <div className="flex gap-3">
           <button
             onClick={() => switchMode("create")}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition"
+            className="text-sm font-bold font-mono tracking-[0.08em] px-5 py-2.5 rounded-xl transition-all duration-200"
+            style={{
+              background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
+              color: "#0a0800",
+            }}
           >
             + Create League
           </button>
           <button
             onClick={() => switchMode("join")}
-            className="bg-gray-800 hover:bg-gray-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition"
+            className="text-sm font-semibold px-5 py-2.5 rounded-xl transition-all"
+            style={{
+              background: "var(--elevated)",
+              border: "1px solid var(--border-mid)",
+              color: "var(--text-2)",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
+            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
           >
             Join with Code
           </button>
@@ -74,13 +91,30 @@ export default function LeagueActions() {
       )}
 
       {mode === "create" && (
-        <div className="bg-gray-900 rounded-2xl p-6 max-w-sm">
-          <h3 className="font-semibold mb-4">Create a League</h3>
+        <div
+          className="rounded-2xl p-6 max-w-sm"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border-mid)",
+          }}
+        >
+          <h3 className="font-semibold mb-4" style={{ color: "var(--text-1)" }}>
+            Create a League
+          </h3>
+
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3 mb-4">
+            <div
+              className="text-sm rounded-xl px-4 py-3 mb-4"
+              style={{
+                background: "var(--loss-bg)",
+                border: "1px solid var(--loss-border)",
+                color: "var(--loss)",
+              }}
+            >
               {error}
             </div>
           )}
+
           <input
             type="text"
             value={createName}
@@ -89,19 +123,32 @@ export default function LeagueActions() {
             placeholder="League name"
             maxLength={40}
             autoFocus
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition mb-4"
+            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all mb-4"
+            style={inputStyle}
+            onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
+            onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
           />
+
           <div className="flex gap-3">
             <button
               onClick={() => switchMode("none")}
-              className="flex-1 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-lg py-2.5 transition"
+              className="flex-1 text-sm font-medium rounded-xl py-2.5 transition-all"
+              style={{
+                background: "var(--elevated)",
+                border: "1px solid var(--border-mid)",
+                color: "var(--text-2)",
+              }}
             >
               Cancel
             </button>
             <button
               onClick={handleCreate}
               disabled={loading || !createName.trim()}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg py-2.5 transition disabled:opacity-50"
+              className="flex-1 text-sm font-bold font-mono rounded-xl py-2.5 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
+                color: "#0a0800",
+              }}
             >
               {loading ? "Creating..." : "Create"}
             </button>
@@ -110,13 +157,30 @@ export default function LeagueActions() {
       )}
 
       {mode === "join" && (
-        <div className="bg-gray-900 rounded-2xl p-6 max-w-sm">
-          <h3 className="font-semibold mb-4">Join a League</h3>
+        <div
+          className="rounded-2xl p-6 max-w-sm"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border-mid)",
+          }}
+        >
+          <h3 className="font-semibold mb-4" style={{ color: "var(--text-1)" }}>
+            Join a League
+          </h3>
+
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-3 mb-4">
+            <div
+              className="text-sm rounded-xl px-4 py-3 mb-4"
+              style={{
+                background: "var(--loss-bg)",
+                border: "1px solid var(--loss-border)",
+                color: "var(--loss)",
+              }}
+            >
               {error}
             </div>
           )}
+
           <input
             type="text"
             value={joinCode}
@@ -125,19 +189,32 @@ export default function LeagueActions() {
             placeholder="Enter invite code"
             maxLength={8}
             autoFocus
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition mb-4 font-mono tracking-widest uppercase"
+            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all mb-4 font-mono tracking-widest uppercase"
+            style={inputStyle}
+            onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
+            onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
           />
+
           <div className="flex gap-3">
             <button
               onClick={() => switchMode("none")}
-              className="flex-1 bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium rounded-lg py-2.5 transition"
+              className="flex-1 text-sm font-medium rounded-xl py-2.5 transition-all"
+              style={{
+                background: "var(--elevated)",
+                border: "1px solid var(--border-mid)",
+                color: "var(--text-2)",
+              }}
             >
               Cancel
             </button>
             <button
               onClick={handleJoin}
               disabled={loading || !joinCode.trim()}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-lg py-2.5 transition disabled:opacity-50"
+              className="flex-1 text-sm font-bold font-mono rounded-xl py-2.5 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{
+                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
+                color: "#0a0800",
+              }}
             >
               {loading ? "Joining..." : "Join"}
             </button>

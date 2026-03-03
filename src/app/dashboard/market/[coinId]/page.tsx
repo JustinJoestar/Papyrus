@@ -12,7 +12,6 @@ export default async function CoinDetailPage({
 }) {
   const { coinId } = await params;
 
-  // Reuses the cached top-250 fetch — no extra API call
   const [coins, supabase] = await Promise.all([
     getTopCoins(),
     createClient(),
@@ -21,14 +20,10 @@ export default async function CoinDetailPage({
   const coin = coins.find((c) => c.id === coinId);
   if (!coin) notFound();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("cash_balance")
-    .eq("id", user!.id)
-    .single();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = user
+    ? await supabase.from("profiles").select("cash_balance").eq("id", user.id).single()
+    : { data: null };
 
   const isPositive = coin.price_change_percentage_24h >= 0;
 
@@ -47,10 +42,11 @@ export default async function CoinDetailPage({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
+    <div className="max-w-3xl mx-auto px-6 py-10">
       <Link
         href="/dashboard/market"
-        className="text-sm text-gray-400 hover:text-white transition mb-8 inline-block"
+        className="inline-flex items-center font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8"
+        style={{ color: "var(--text-3)" }}
       >
         ← Back to Market
       </Link>
@@ -58,10 +54,22 @@ export default async function CoinDetailPage({
       {/* Header */}
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <div className="flex items-center gap-4">
-          <img src={coin.image} alt={coin.name} className="w-12 h-12 rounded-full" />
+          <img
+            src={coin.image}
+            alt={coin.name}
+            className="w-12 h-12 rounded-full"
+            style={{ background: "var(--elevated)" }}
+          />
           <div>
-            <h1 className="text-2xl font-bold">{coin.name}</h1>
-            <p className="text-gray-400 uppercase text-sm">{coin.symbol}</p>
+            <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
+              {coin.name}
+            </h1>
+            <p
+              className="font-mono text-sm uppercase"
+              style={{ color: "var(--text-3)" }}
+            >
+              {coin.symbol}
+            </p>
           </div>
         </div>
         <CoinBuyButton
@@ -71,21 +79,30 @@ export default async function CoinDetailPage({
             price: coin.current_price,
           }}
           cashBalance={profile?.cash_balance ?? 0}
+          isAuthenticated={!!user}
         />
       </div>
 
       {/* Price */}
       <div className="mb-8">
-        <p className="text-4xl font-bold">{fmtPrice(coin.current_price)}</p>
+        <p className="text-4xl font-bold font-mono" style={{ color: "var(--text-1)" }}>
+          {fmtPrice(coin.current_price)}
+        </p>
         <div className="flex gap-4 mt-2">
-          <span className={`text-sm font-medium ${isPositive ? "text-green-400" : "text-red-400"}`}>
+          <span
+            className="text-sm font-semibold font-mono"
+            style={{ color: isPositive ? "var(--gain)" : "var(--loss)" }}
+          >
             {isPositive ? "+" : ""}{coin.price_change_percentage_24h?.toFixed(2) ?? "0.00"}% 24h
           </span>
           {coin.price_change_percentage_7d_in_currency != null && (
             <span
-              className={`text-sm font-medium ${
-                coin.price_change_percentage_7d_in_currency >= 0 ? "text-green-400" : "text-red-400"
-              }`}
+              className="text-sm font-semibold font-mono"
+              style={{
+                color: coin.price_change_percentage_7d_in_currency >= 0
+                  ? "var(--gain)"
+                  : "var(--loss)",
+              }}
             >
               {coin.price_change_percentage_7d_in_currency >= 0 ? "+" : ""}
               {coin.price_change_percentage_7d_in_currency?.toFixed(2)}% 7d
@@ -95,12 +112,18 @@ export default async function CoinDetailPage({
       </div>
 
       {/* Chart */}
-      <div className="bg-gray-900 rounded-2xl p-6 mb-6">
+      <div
+        className="rounded-2xl p-6 mb-6"
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border-mid)",
+        }}
+      >
         <PriceChart chartBaseUrl={`/api/crypto/chart?coinId=${coinId}`} isPositive={isPositive} />
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {[
           { label: "Market Cap", value: fmtLarge(coin.market_cap) },
           { label: "24h Volume", value: fmtLarge(coin.total_volume) },
@@ -113,9 +136,23 @@ export default async function CoinDetailPage({
           { label: "All-Time High", value: fmtPrice(coin.ath) },
           { label: "All-Time Low", value: fmtPrice(coin.atl) },
         ].map((stat) => (
-          <div key={stat.label} className="bg-gray-900 rounded-2xl p-4">
-            <p className="text-xs text-gray-400 mb-1">{stat.label}</p>
-            <p className="font-semibold text-sm">{stat.value}</p>
+          <div
+            key={stat.label}
+            className="rounded-2xl p-4"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border-mid)",
+            }}
+          >
+            <p
+              className="font-mono text-[10px] tracking-[0.2em] uppercase mb-1.5"
+              style={{ color: "var(--text-3)" }}
+            >
+              {stat.label}
+            </p>
+            <p className="font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>

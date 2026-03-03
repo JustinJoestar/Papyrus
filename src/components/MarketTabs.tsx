@@ -7,9 +7,9 @@ export default function MarketTabs() {
   const pathname = usePathname();
 
   const tabs = [
-    { label: "Crypto",       href: "/dashboard/market" },
-    { label: "Stocks",       href: "/dashboard/market/stocks" },
-    { label: "Commodities",  href: "/dashboard/market/commodities" },
+    { label: "Crypto",      href: "/dashboard/market" },
+    { label: "Stocks",      href: "/dashboard/market/stocks" },
+    { label: "Commodities", href: "/dashboard/market/commodities" },
   ];
 
   return (
@@ -24,11 +24,20 @@ export default function MarketTabs() {
           <Link
             key={tab.href}
             href={tab.href}
-            className={`px-5 py-2 rounded-xl text-sm font-medium transition ${
+            className="px-4 py-1.5 rounded-lg text-sm font-medium font-mono transition-all duration-150"
+            style={
               active
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-800 text-gray-400 hover:text-white"
-            }`}
+                ? {
+                    background: "var(--gold-glow)",
+                    border: "1px solid var(--gold-border)",
+                    color: "var(--gold-bright)",
+                  }
+                : {
+                    background: "var(--elevated)",
+                    border: "1px solid var(--border-mid)",
+                    color: "var(--text-3)",
+                  }
+            }
           >
             {tab.label}
           </Link>

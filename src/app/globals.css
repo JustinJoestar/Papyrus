@@ -1,26 +1,228 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════
+   PAPYRUS — OBSIDIAN GOLD  ·  Design System v3
+   Schema: pure black foundation, burnished gold accents
+═══════════════════════════════════════════════════════════════ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Backgrounds (pure black, zero navy) ────────────────── */
+  --void:     #000000;
+  --base:     #030303;
+  --surface:  #0d0d0d;
+  --elevated: #161616;
+  --overlay:  rgba(0, 0, 0, 0.88);
+
+  /* ── Gold palette ───────────────────────────────────────── */
+  --gold:        #c9a84c;
+  --gold-bright: #e8c66a;
+  --gold-dim:    #8a6f35;
+  --gold-glow:   rgba(201, 168, 76, 0.08);
+  --gold-border: rgba(201, 168, 76, 0.22);
+
+  /* ── Borders (neutral, no blue) ─────────────────────────── */
+  --border:        #1a1a1a;
+  --border-mid:    #272727;
+  --border-bright: #363636;
+
+  /* ── Text (maximum contrast) ────────────────────────────── */
+  --text-1: #ffffff;   /* primary  — pure white   */
+  --text-2: #b4b4b4;   /* secondary — bright gray */
+  --text-3: #585858;   /* muted    — mid gray     */
+
+  /* ── Status ─────────────────────────────────────────────── */
+  --gain:        #22c55e;
+  --gain-bg:     rgba(34,  197,  94, 0.08);
+  --gain-border: rgba(34,  197,  94, 0.22);
+  --loss:        #f43f5e;
+  --loss-bg:     rgba(244,  63,  94, 0.08);
+  --loss-border: rgba(244,  63,  94, 0.22);
+
+  /* Legacy compat */
+  --background: var(--base);
+  --foreground: var(--text-1);
 }
 
+/* Expose palette to Tailwind utility classes */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background:  var(--background);
+  --color-foreground:  var(--foreground);
+  --font-sans:      var(--font-geist-sans);
+  --font-mono:      var(--font-geist-mono);
+  --font-playfair:  var(--font-playfair);
+  --font-cormorant: var(--font-cormorant);
+
+  --color-void:        #000000;
+  --color-base:        #030303;
+  --color-surface:     #0d0d0d;
+  --color-elevated:    #161616;
+  --color-gold:        #c9a84c;
+  --color-gold-bright: #e8c66a;
+  --color-gold-dim:    #8a6f35;
+  --color-border:      #1a1a1a;
+  --color-border-mid:  #272727;
+  --color-gain:        #22c55e;
+  --color-loss:        #f43f5e;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ═══════════════════════════════════════════════════════════════
+   BASE RESET
+═══════════════════════════════════════════════════════════════ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a transparent;
+  box-sizing: border-box;
+}
+*::-webkit-scrollbar         { width: 3px; height: 3px; }
+*::-webkit-scrollbar-track   { background: transparent; }
+*::-webkit-scrollbar-thumb   { background: #2a2a2a; border-radius: 2px; }
+
+body {
+  background: var(--base);
+  color: var(--text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════════════════════════ */
+
+/* Hero card ember particles float upward */
+@keyframes ember-rise {
+  0%   { transform: translateY(0)    translateX(0)   scale(1);   opacity: 0;   }
+  8%   {                                                          opacity: 0.9; }
+  85%  {                                                          opacity: 0.4; }
+  100% { transform: translateY(-60px) translateX(10px) scale(0.3); opacity: 0; }
+}
+
+/* Breathing glow behind hero value */
+@keyframes flame-breathe {
+  0%,  100% { opacity: 0.50; transform: scale(1);    }
+  50%        { opacity: 0.90; transform: scale(1.12); }
+}
+
+/* Gold shimmer sweep across large numbers */
+@keyframes gold-shimmer {
+  0%   { background-position: -300% center; }
+  100% { background-position:  300% center; }
+}
+
+/* Rank-1 card aura pulse */
+@keyframes rank1-aura {
+  0%,  100% {
+    box-shadow: 0 0 0 1px rgba(201,168,76,0.18), 0 0 28px rgba(201,168,76,0.05);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(201,168,76,0.48), 0 0 48px rgba(201,168,76,0.16);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Live dot blink */
+@keyframes blink-dot {
+  0%, 100% { opacity: 1;   }
+  50%       { opacity: 0.2; }
 }
+
+/* Auth horizontal scan line */
+@keyframes scan {
+  from { top: -1px;  }
+  to   { top: 100%;  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION UTILITY CLASSES
+═══════════════════════════════════════════════════════════════ */
+
+.animate-flame-breathe { animation: flame-breathe 4s ease-in-out infinite; }
+.animate-rank1-aura    { animation: rank1-aura    3s ease-in-out infinite; }
+.animate-blink-dot     { animation: blink-dot     1.6s ease-in-out infinite; }
+
+.ember {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: ember-rise 2.8s ease-in infinite;
+}
+
+/* Gold shimmer text — hero portfolio value + countdown */
+.text-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #c9a84c 0%,
+    #f5e48a 25%,
+    #c9a84c 42%,
+    #f0e090 60%,
+    #c9a84c 78%,
+    #eadb80 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gold-shimmer 6s linear infinite;
+}
+
+/* Static gold gradient text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #e8c66a 0%, #c9a84c 55%, #edd080 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Auth page animated scan line — auth pages only */
+.auth-scan-line {
+  position: fixed;
+  inset-inline: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201,168,76,0.3) 50%,
+    transparent 100%
+  );
+  animation: scan 14s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Gold glow — landing page headlines */
+.text-gold-glow {
+  color: var(--gold-bright);
+  text-shadow:
+    0 0 20px  rgba(201,168,76,0.70),
+    0 0 45px  rgba(201,168,76,0.40),
+    0 0 90px  rgba(201,168,76,0.20),
+    0 0 160px rgba(201,168,76,0.08);
+}
+
+/* iMac-style gradient background */
+.bg-imac {
+  background:
+    radial-gradient(ellipse 110% 55% at 50% -5%,  rgba(160,100,30,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 70%  50% at 5%  95%,  rgba(90, 50,10,0.12)  0%, transparent 50%),
+    radial-gradient(ellipse 70%  50% at 95% 95%,  rgba(70, 35, 5,0.10)  0%, transparent 50%),
+    #000000;
+}
+
+/* Scrolling asset ticker */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker-scroll 50s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+/* Playfair headline utility */
+.font-playfair  { font-family: var(--font-playfair),  Georgia, serif; }
+.font-cormorant { font-family: var(--font-cormorant), Georgia, serif; }

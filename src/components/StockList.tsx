@@ -6,9 +6,9 @@ import TradeModal from "./TradeModal";
 import StockLogo from "./StockLogo";
 import type { StockData } from "@/lib/stocks";
 
-type Props = { stocks: StockData[]; cashBalance: number };
+type Props = { stocks: StockData[]; cashBalance: number; isAuthenticated?: boolean };
 
-export default function StockList({ stocks, cashBalance }: Props) {
+export default function StockList({ stocks, cashBalance, isAuthenticated = true }: Props) {
   const router = useRouter();
   const [buyTarget, setBuyTarget] = useState<StockData | null>(null);
   const [search, setSearch]       = useState("");
@@ -93,7 +93,7 @@ export default function StockList({ stocks, cashBalance }: Props) {
                 </div>
 
                 <button
-                  onClick={(e) => { e.stopPropagation(); setBuyTarget(stock); }}
+                  onClick={(e) => { e.stopPropagation(); isAuthenticated ? setBuyTarget(stock) : router.push("/auth/login"); }}
                   disabled={stock.price === 0}
                   className="px-4 py-1.5 rounded-lg text-xs font-mono font-semibold tracking-wide transition-all duration-150 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{

@@ -24,14 +24,10 @@ export default async function StockDetailPage({
 
   if (!quote) notFound();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("cash_balance")
-    .eq("id", user!.id)
-    .single();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = user
+    ? await supabase.from("profiles").select("cash_balance").eq("id", user.id).single()
+    : { data: null };
 
   const price = quote.regularMarketPrice ?? 0;
   const change24h = quote.regularMarketChangePercent ?? 0;
@@ -55,10 +51,11 @@ export default async function StockDetailPage({
   ];
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-12">
+    <div className="max-w-3xl mx-auto px-6 py-10">
       <Link
         href="/dashboard/market/stocks"
-        className="text-sm text-gray-400 hover:text-white transition mb-8 inline-block"
+        className="inline-flex items-center font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8"
+        style={{ color: "var(--text-3)" }}
       >
         ← Back to Stocks
       </Link>
@@ -66,12 +63,12 @@ export default async function StockDetailPage({
       {/* Header */}
       <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <div className="flex items-center gap-4">
-          <StockLogo symbol={upperSymbol} logo={stockMeta.logo} size={48} />
+          <StockLogo symbol={upperSymbol} size={48} />
           <div>
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
               {quote.longName ?? stockMeta.name}
             </h1>
-            <p className="text-gray-400 text-sm">
+            <p className="font-mono text-sm" style={{ color: "var(--text-3)" }}>
               {upperSymbol} · {quote.fullExchangeName ?? "NYSE/NASDAQ"}
             </p>
           </div>
@@ -80,19 +77,31 @@ export default async function StockDetailPage({
           coin={{ symbol: upperSymbol, name: quote.longName ?? stockMeta.name, price }}
           cashBalance={profile?.cash_balance ?? 0}
           assetType="stock"
+          isAuthenticated={!!user}
         />
       </div>
 
       {/* Price */}
       <div className="mb-8">
-        <p className="text-4xl font-bold">{fmtPrice(price)}</p>
-        <p className={`mt-2 text-sm font-medium ${isPositive ? "text-green-400" : "text-red-400"}`}>
+        <p className="text-4xl font-bold font-mono" style={{ color: "var(--text-1)" }}>
+          {fmtPrice(price)}
+        </p>
+        <p
+          className="mt-2 text-sm font-semibold font-mono"
+          style={{ color: isPositive ? "var(--gain)" : "var(--loss)" }}
+        >
           {isPositive ? "+" : ""}{change24h.toFixed(2)}% today
         </p>
       </div>
 
       {/* Chart */}
-      <div className="bg-gray-900 rounded-2xl p-6 mb-6">
+      <div
+        className="rounded-2xl p-6 mb-6"
+        style={{
+          background: "var(--surface)",
+          border: "1px solid var(--border-mid)",
+        }}
+      >
         <PriceChart
           chartBaseUrl={`/api/stocks/chart?symbol=${upperSymbol}`}
           isPositive={isPositive}
@@ -100,11 +109,25 @@ export default async function StockDetailPage({
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-gray-900 rounded-2xl p-4">
-            <p className="text-xs text-gray-400 mb-1">{stat.label}</p>
-            <p className="font-semibold text-sm">{stat.value}</p>
+          <div
+            key={stat.label}
+            className="rounded-2xl p-4"
+            style={{
+              background: "var(--surface)",
+              border: "1px solid var(--border-mid)",
+            }}
+          >
+            <p
+              className="font-mono text-[10px] tracking-[0.2em] uppercase mb-1.5"
+              style={{ color: "var(--text-3)" }}
+            >
+              {stat.label}
+            </p>
+            <p className="font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>

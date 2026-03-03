@@ -12,11 +12,9 @@ export default async function CommoditiesPage() {
   const [commodities, supabase] = await Promise.all([getCommodities(), createClient()]);
 
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: profile }  = await supabase
-    .from("profiles")
-    .select("cash_balance")
-    .eq("id", user!.id)
-    .single();
+  const { data: profile }  = user
+    ? await supabase.from("profiles").select("cash_balance").eq("id", user.id).single()
+    : { data: null };
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
@@ -38,7 +36,7 @@ export default async function CommoditiesPage() {
         {commodities.length} commodities — prices update every 60s
       </p>
 
-      <CommodityList commodities={commodities} cashBalance={profile?.cash_balance ?? 0} />
+      <CommodityList commodities={commodities} cashBalance={profile?.cash_balance ?? 0} isAuthenticated={!!user} />
     </div>
   );
 }

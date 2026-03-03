@@ -8,10 +8,12 @@ export default function CoinBuyButton({
   coin,
   cashBalance,
   assetType = "crypto",
+  isAuthenticated = true,
 }: {
   coin: TradeCoin;
   cashBalance: number;
   assetType?: "crypto" | "stock" | "commodity";
+  isAuthenticated?: boolean;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -19,8 +21,12 @@ export default function CoinBuyButton({
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
-        className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-xl transition"
+        onClick={() => isAuthenticated ? setOpen(true) : router.push("/auth/login")}
+        className="font-bold font-mono text-sm tracking-[0.08em] px-6 py-2.5 rounded-xl transition-all duration-200"
+        style={{
+          background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
+          color: "#0a0800",
+        }}
       >
         Buy {coin.symbol}
       </button>

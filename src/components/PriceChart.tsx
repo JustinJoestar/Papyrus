@@ -73,11 +73,20 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
           <button
             key={r.days}
             onClick={() => setDays(r.days)}
-            className={`px-3 py-1 rounded-lg text-sm font-medium transition ${
+            className="px-3 py-1 rounded-lg text-sm font-mono transition-all"
+            style={
               days === r.days
-                ? "bg-indigo-600 text-white"
-                : "bg-gray-800 text-gray-400 hover:text-white"
-            }`}
+                ? {
+                    background: "var(--gold-glow)",
+                    border: "1px solid var(--gold-border)",
+                    color: "var(--gold-bright)",
+                  }
+                : {
+                    background: "var(--elevated)",
+                    border: "1px solid var(--border-mid)",
+                    color: "var(--text-3)",
+                  }
+            }
           >
             {r.label}
           </button>
@@ -85,11 +94,17 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
       </div>
 
       {loading ? (
-        <div className="h-64 flex items-center justify-center text-gray-500">
+        <div
+          className="h-64 flex items-center justify-center font-mono text-sm"
+          style={{ color: "var(--text-3)" }}
+        >
           Loading chart...
         </div>
       ) : data.length === 0 ? (
-        <div className="h-64 flex items-center justify-center text-gray-500">
+        <div
+          className="h-64 flex items-center justify-center font-mono text-sm"
+          style={{ color: "var(--text-3)" }}
+        >
           Chart data unavailable
         </div>
       ) : (
@@ -118,14 +133,14 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#111827",
-                border: "1px solid #374151",
+                backgroundColor: "#0d0d0d",
+                border: "1px solid #272727",
                 borderRadius: "8px",
-                color: "#fff",
+                color: "#ffffff",
                 fontSize: 13,
               }}
               formatter={(value: number | undefined) => [formatPrice(value ?? 0), "Price"]}
-              labelStyle={{ color: "#9ca3af" }}
+              labelStyle={{ color: "#585858" }}
             />
             <Area
               type="monotone"

@@ -12,6 +12,27 @@ type LeaderboardEntry = {
   isCurrentUser: boolean;
 };
 
+const PODIUM = {
+  1: {
+    border:     "rgba(201,168,76,0.35)",
+    badgeBg:    "rgba(201,168,76,0.12)",
+    badgeColor: "var(--gold-bright)",
+    label:      "GOLD",
+  },
+  2: {
+    border:     "rgba(180,190,210,0.25)",
+    badgeBg:    "rgba(180,190,210,0.08)",
+    badgeColor: "#b0bccc",
+    label:      "SILVER",
+  },
+  3: {
+    border:     "rgba(180,110,60,0.28)",
+    badgeBg:    "rgba(180,110,60,0.08)",
+    badgeColor: "#c07040",
+    label:      "BRONZE",
+  },
+} as const;
+
 export default async function LeagueLeaderboardPage({
   params,
 }: {
@@ -25,7 +46,6 @@ export default async function LeagueLeaderboardPage({
 
   if (!user) redirect("/auth/login");
 
-  // Fetch league info and holdings in parallel
   const [{ data: league }, { data: rows }] = await Promise.all([
     supabase
       .from("leagues")
@@ -37,15 +57,20 @@ export default async function LeagueLeaderboardPage({
     }),
   ]);
 
-  // League doesn't exist
   if (!league) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-12 text-center text-gray-400">
-        <p className="text-4xl mb-4">🔒</p>
-        <p className="font-medium mb-4">League not found</p>
+      <div className="max-w-2xl mx-auto px-6 py-12 text-center">
+        <p
+          className="font-mono text-[10px] tracking-[0.22em] uppercase mb-4"
+          style={{ color: "var(--text-3)" }}
+        >
+          Not Found
+        </p>
         <Link
           href="/dashboard/leagues"
-          className="text-indigo-400 hover:text-indigo-300 text-sm transition"
+          className="text-sm font-mono transition-colors"
+          style={{ color: "var(--text-3)" }}
+          onMouseEnter={undefined}
         >
           ← Back to My Leagues
         </Link>
@@ -53,7 +78,6 @@ export default async function LeagueLeaderboardPage({
     );
   }
 
-  // User is not a member (RPC returned no rows for this user's league)
   if (!rows || rows.length === 0) {
     redirect("/dashboard/leagues");
   }
@@ -68,30 +92,21 @@ export default async function LeagueLeaderboardPage({
   };
   const allRows = rows as HoldingRow[];
 
-  // Collect unique symbols per asset type
   const stockSymbols = [
     ...new Set(
-      allRows
-        .filter((r) => r.asset_type === "stock" && r.symbol)
-        .map((r) => r.symbol)
+      allRows.filter((r) => r.asset_type === "stock" && r.symbol).map((r) => r.symbol)
     ),
   ];
   const commoditySymbols = [
     ...new Set(
-      allRows
-        .filter((r) => r.asset_type === "commodity" && r.symbol)
-        .map((r) => r.symbol)
+      allRows.filter((r) => r.asset_type === "commodity" && r.symbol).map((r) => r.symbol)
     ),
   ];
 
   const [coins, stockPrices, commodityPrices] = await Promise.all([
     getTopCoins(),
-    stockSymbols.length > 0
-      ? getStockPrices(stockSymbols)
-      : Promise.resolve({}),
-    commoditySymbols.length > 0
-      ? getCommodityPrices(commoditySymbols)
-      : Promise.resolve({}),
+    stockSymbols.length > 0 ? getStockPrices(stockSymbols) : Promise.resolve({}),
+    commoditySymbols.length > 0 ? getCommodityPrices(commoditySymbols) : Promise.resolve({}),
   ]);
 
   const priceMap: Record<string, number> = {
@@ -100,23 +115,14 @@ export default async function LeagueLeaderboardPage({
     ...commodityPrices,
   };
 
-  // Aggregate total value per user
-  const userMap: Record<
-    string,
-    { username: string; cashBalance: number; holdingsValue: number }
-  > = {};
+  const userMap: Record<string, { username: string; cashBalance: number; holdingsValue: number }> = {};
 
   for (const row of allRows) {
     if (!userMap[row.user_id]) {
-      userMap[row.user_id] = {
-        username: row.username,
-        cashBalance: row.cash_balance,
-        holdingsValue: 0,
-      };
+      userMap[row.user_id] = { username: row.username, cashBalance: row.cash_balance, holdingsValue: 0 };
     }
     if (row.symbol && row.quantity) {
-      const price = priceMap[row.symbol] ?? 0;
-      userMap[row.user_id].holdingsValue += price * row.quantity;
+      userMap[row.user_id].holdingsValue += (priceMap[row.symbol] ?? 0) * row.quantity;
     }
   }
 
@@ -131,64 +137,165 @@ export default async function LeagueLeaderboardPage({
     .map((entry, i) => ({ ...entry, rank: i + 1 }));
 
   const fmt = (n: number) =>
-    n.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
+    n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  const medal = (rank: number) => {
-    if (rank === 1) return "🥇";
-    if (rank === 2) return "🥈";
-    if (rank === 3) return "🥉";
-    return `#${rank}`;
-  };
+  const podium = entries.slice(0, 3);
+  const rest   = entries.slice(3);
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-12">
+    <div className="max-w-2xl mx-auto px-6 py-10">
+      {/* Back link */}
       <Link
         href="/dashboard/leagues"
-        className="text-sm text-gray-400 hover:text-white transition mb-8 inline-block"
+        className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8"
+        style={{ color: "var(--text-3)" }}
       >
         ← My Leagues
       </Link>
 
-      <h2 className="text-2xl font-bold mb-1">{league.name}</h2>
+      {/* Header */}
+      <div className="mb-6">
+        <p
+          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
+          style={{ color: "var(--text-3)" }}
+        >
+          Private League
+        </p>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
+          {league.name}
+        </h1>
+      </div>
 
       {/* Invite code */}
-      <div className="flex items-center gap-3 mb-8">
-        <p className="text-sm text-gray-400">Invite code:</p>
-        <code className="font-mono text-sm tracking-widest bg-gray-800 px-3 py-1 rounded-lg text-white">
+      <div
+        className="inline-flex items-center gap-3 rounded-xl px-4 py-2.5 mb-8"
+        style={{
+          background: "var(--elevated)",
+          border: "1px solid var(--border-mid)",
+        }}
+      >
+        <span
+          className="font-mono text-[10px] tracking-[0.2em] uppercase"
+          style={{ color: "var(--text-3)" }}
+        >
+          Code
+        </span>
+        <code
+          className="font-mono text-sm tracking-widest"
+          style={{ color: "var(--gold)" }}
+        >
           {league.invite_code}
         </code>
       </div>
 
-      <div className="space-y-3">
-        {entries.map((entry) => (
-          <div
-            key={entry.username}
-            className={`rounded-2xl px-6 py-4 flex items-center gap-4 ${
-              entry.isCurrentUser
-                ? "bg-indigo-600/20 border border-indigo-500/40"
-                : "bg-gray-900"
-            }`}
-          >
-            <span className="text-xl w-10 text-center shrink-0">
-              {medal(entry.rank)}
-            </span>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold truncate">
-                {entry.username}
+      {/* Podium — top 3 */}
+      {podium.length > 0 && (
+        <div className="space-y-3 mb-3">
+          {podium.map((entry) => {
+            const style = PODIUM[entry.rank as 1 | 2 | 3] ?? PODIUM[3];
+            const isMe  = entry.isCurrentUser;
+
+            return (
+              <div
+                key={entry.username}
+                className="relative rounded-2xl px-6 py-5 flex items-center gap-4"
+                style={{
+                  background: isMe ? "rgba(201,168,76,0.04)" : "var(--surface)",
+                  border: `1px solid ${isMe ? "rgba(201,168,76,0.35)" : style.border}`,
+                  ...(entry.rank === 1 ? { animation: "rank1-aura 2.8s ease-in-out infinite" } : {}),
+                }}
+              >
+                <div
+                  className="w-11 h-11 rounded-xl flex flex-col items-center justify-center shrink-0"
+                  style={{
+                    background: isMe ? "rgba(201,168,76,0.12)" : style.badgeBg,
+                    border: `1px solid ${isMe ? "rgba(201,168,76,0.3)" : style.border}`,
+                  }}
+                >
+                  <span
+                    className="font-mono font-bold text-base leading-none"
+                    style={{ color: isMe ? "var(--gold-bright)" : style.badgeColor }}
+                  >
+                    {entry.rank}
+                  </span>
+                  <span
+                    className="font-mono text-[8px] tracking-wider mt-0.5"
+                    style={{ color: isMe ? "var(--gold-dim)" : style.badgeColor, opacity: 0.7 }}
+                  >
+                    {style.label}
+                  </span>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="font-semibold truncate" style={{ color: "var(--text-1)" }}>
+                      {entry.username}
+                    </p>
+                    {isMe && (
+                      <span
+                        className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0"
+                        style={{
+                          background: "rgba(201,168,76,0.12)",
+                          border: "1px solid rgba(201,168,76,0.25)",
+                          color: "var(--gold)",
+                        }}
+                      >
+                        YOU
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <p
+                  className="font-mono font-bold text-lg"
+                  style={{ color: isMe ? "var(--gold-bright)" : style.badgeColor }}
+                >
+                  ${fmt(entry.totalValue)}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Rest */}
+      {rest.length > 0 && (
+        <div className="space-y-1.5">
+          {rest.map((entry) => (
+            <div
+              key={entry.username}
+              className="rounded-xl px-5 py-3.5 flex items-center gap-4"
+              style={{
+                background: entry.isCurrentUser ? "rgba(201,168,76,0.03)" : "var(--surface)",
+                border: `1px solid ${entry.isCurrentUser ? "rgba(201,168,76,0.2)" : "var(--border)"}`,
+              }}
+            >
+              <span
+                className="font-mono text-xs w-8 shrink-0 tabular-nums"
+                style={{ color: "var(--text-3)" }}
+              >
+                #{entry.rank}
+              </span>
+              <div className="flex-1 min-w-0 flex items-center gap-2">
+                <p className="text-sm truncate" style={{ color: "var(--text-2)" }}>
+                  {entry.username}
+                </p>
                 {entry.isCurrentUser && (
-                  <span className="ml-2 text-xs text-indigo-400 font-normal">
+                  <span className="text-[10px] font-mono shrink-0" style={{ color: "var(--gold-dim)" }}>
                     you
                   </span>
                 )}
+              </div>
+              <p
+                className="font-mono font-semibold text-sm"
+                style={{ color: entry.isCurrentUser ? "var(--gold)" : "var(--text-2)" }}
+              >
+                ${fmt(entry.totalValue)}
               </p>
             </div>
-            <p className="font-bold text-lg">${fmt(entry.totalValue)}</p>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

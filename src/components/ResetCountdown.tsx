@@ -12,8 +12,8 @@ function getTimeLeft() {
   if (next <= now) next.setUTCDate(next.getUTCDate() + 7);
   const ms = next.getTime() - now.getTime();
   return {
-    days: Math.floor(ms / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+    days:    Math.floor(ms / (1000 * 60 * 60 * 24)),
+    hours:   Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
     minutes: Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60)),
     seconds: Math.floor((ms % (1000 * 60)) / 1000),
   };
@@ -30,7 +30,9 @@ export default function ResetCountdown() {
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
-    <p className="text-xl font-bold text-indigo-400 tabular-nums">
+    <p
+      className="text-xl font-bold font-mono tabular-nums text-gold-shimmer"
+    >
       {time.days}d {pad(time.hours)}h {pad(time.minutes)}m {pad(time.seconds)}s
     </p>
   );

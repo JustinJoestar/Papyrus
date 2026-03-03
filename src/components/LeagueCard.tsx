@@ -50,54 +50,107 @@ export default function LeagueCard({ league, currentUserId }: Props) {
   }
 
   return (
-    <div className="bg-gray-900 rounded-2xl px-6 py-5">
-      <div className="flex items-start justify-between gap-4 mb-3">
+    <div
+      className="rounded-2xl px-6 py-5"
+      style={{
+        background: "var(--surface)",
+        border: "1px solid var(--border-mid)",
+      }}
+    >
+      <div className="flex items-start justify-between gap-4 mb-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-lg">{league.name}</h3>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-semibold text-base" style={{ color: "var(--text-1)" }}>
+              {league.name}
+            </h3>
             {league.is_owner && (
-              <span className="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full">
-                Owner
+              <span
+                className="text-[10px] font-mono px-1.5 py-0.5 rounded tracking-wider"
+                style={{
+                  background: "var(--gold-glow)",
+                  border: "1px solid var(--gold-border)",
+                  color: "var(--gold)",
+                }}
+              >
+                OWNER
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-400 mt-0.5">
+          <p className="text-xs mt-0.5" style={{ color: "var(--text-3)" }}>
             {league.member_count} {league.member_count === 1 ? "member" : "members"}
           </p>
         </div>
+
         <Link
           href={`/dashboard/leagues/${league.id}`}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shrink-0"
+          className="text-sm font-semibold px-4 py-2 rounded-xl transition-all shrink-0"
+          style={{
+            background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%)",
+            color: "#0a0800",
+          }}
         >
           Leaderboard
         </Link>
       </div>
 
       {/* Invite code */}
-      <div className="flex items-center gap-3 bg-gray-800 rounded-xl px-4 py-3 mb-3">
+      <div
+        className="flex items-center gap-3 rounded-xl px-4 py-3 mb-3"
+        style={{
+          background: "var(--elevated)",
+          border: "1px solid var(--border-mid)",
+        }}
+      >
         <div className="flex-1">
-          <p className="text-xs text-gray-500 mb-0.5">Invite Code</p>
-          <code className="font-mono text-sm tracking-widest text-white">
+          <p
+            className="font-mono text-[10px] tracking-[0.2em] uppercase mb-1"
+            style={{ color: "var(--text-3)" }}
+          >
+            Invite Code
+          </p>
+          <code
+            className="font-mono text-sm tracking-widest"
+            style={{ color: "var(--text-1)" }}
+          >
             {league.invite_code}
           </code>
         </div>
         <button
           onClick={handleCopy}
-          className="text-xs text-gray-400 hover:text-white transition shrink-0"
+          className="text-xs font-mono transition-colors shrink-0"
+          style={{ color: copied ? "var(--gain)" : "var(--text-3)" }}
+          onMouseEnter={(e) => {
+            if (!copied) e.currentTarget.style.color = "var(--gold)";
+          }}
+          onMouseLeave={(e) => {
+            if (!copied) e.currentTarget.style.color = "var(--text-3)";
+          }}
         >
           {copied ? "Copied!" : "Copy"}
         </button>
       </div>
 
       {error && (
-        <p className="text-red-400 text-sm mb-2">{error}</p>
+        <div
+          className="mb-3 flex items-start gap-2 rounded-xl px-4 py-2.5 text-sm"
+          style={{
+            background: "var(--loss-bg)",
+            border: "1px solid var(--loss-border)",
+            color: "var(--loss)",
+          }}
+        >
+          {error}
+        </div>
       )}
 
       {!league.is_owner && (
         <button
           onClick={handleLeave}
           disabled={loading}
-          className="text-sm text-gray-500 hover:text-red-400 transition disabled:opacity-50"
+          className="text-xs font-mono transition-colors disabled:opacity-40"
+          style={{ color: "var(--text-3)" }}
+          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--loss)")}
+          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-3)")}
         >
           {loading ? "Leaving..." : "Leave league"}
         </button>

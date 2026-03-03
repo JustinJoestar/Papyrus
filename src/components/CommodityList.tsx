@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import TradeModal from "./TradeModal";
 import type { CommodityData } from "@/lib/commodities";
 
-type Props = { commodities: CommodityData[]; cashBalance: number };
+type Props = { commodities: CommodityData[]; cashBalance: number; isAuthenticated?: boolean };
 
-export default function CommodityList({ commodities, cashBalance }: Props) {
+export default function CommodityList({ commodities, cashBalance, isAuthenticated = true }: Props) {
   const router = useRouter();
   const [buyTarget, setBuyTarget] = useState<CommodityData | null>(null);
   const [search, setSearch]       = useState("");
@@ -100,7 +100,7 @@ export default function CommodityList({ commodities, cashBalance }: Props) {
                 </div>
 
                 <button
-                  onClick={(e) => { e.stopPropagation(); setBuyTarget(c); }}
+                  onClick={(e) => { e.stopPropagation(); isAuthenticated ? setBuyTarget(c) : router.push("/auth/login"); }}
                   disabled={c.price === 0}
                   className="px-4 py-1.5 rounded-lg text-xs font-mono font-semibold tracking-wide transition-all duration-150 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{

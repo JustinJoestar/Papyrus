@@ -16,11 +16,9 @@ export default async function MarketPage() {
   const [coins, supabase] = await Promise.all([getTopCoins(), createClient()]);
 
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: profile }  = await supabase
-    .from("profiles")
-    .select("cash_balance")
-    .eq("id", user!.id)
-    .single();
+  const { data: profile }  = user
+    ? await supabase.from("profiles").select("cash_balance").eq("id", user.id).single()
+    : { data: null };
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
@@ -52,7 +50,7 @@ export default async function MarketPage() {
           </p>
         </div>
       ) : (
-        <CryptoList coins={coins} cashBalance={profile?.cash_balance ?? 0} />
+        <CryptoList coins={coins} cashBalance={profile?.cash_balance ?? 0} isAuthenticated={!!user} />
       )}
     </div>
   );

@@ -24,7 +24,7 @@ export default function DashboardLayout({
           borderBottom: "1px solid var(--border)",
         }}
       >
-        <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
+        <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-end gap-[3px]">
             <div className="w-[3px] h-3    rounded-sm" style={{ background: "var(--gold)" }} />
             <div className="w-[3px] h-[16px] rounded-sm" style={{ background: "var(--gold)" }} />
