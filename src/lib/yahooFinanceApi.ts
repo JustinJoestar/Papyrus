@@ -21,7 +21,7 @@ export type YahooQuoteResult = {
 async function fetchMeta(symbol: string): Promise<YahooQuoteResult | null> {
   try {
     const res = await fetch(
-      `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=5d&interval=1d`,
+      `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1d&interval=5m`,
       { headers: HEADERS, next: { revalidate: 60 } }
     );
     if (!res.ok) return null;
@@ -30,8 +30,11 @@ async function fetchMeta(symbol: string): Promise<YahooQuoteResult | null> {
     const meta = data?.chart?.result?.[0]?.meta;
     if (!meta || !meta.regularMarketPrice) return null;
 
+    // Use Yahoo's own change % if available, otherwise calculate from previous close
     const changePercent =
-      meta.chartPreviousClose > 0
+      meta.regularMarketChangePercent != null
+        ? meta.regularMarketChangePercent
+        : meta.chartPreviousClose > 0
         ? ((meta.regularMarketPrice - meta.chartPreviousClose) /
             meta.chartPreviousClose) *
           100

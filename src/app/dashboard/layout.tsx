@@ -1,4 +1,7 @@
 import Link from "next/link";
+import SignOutButton from "@/components/SignOutButton";
+import NavLinks from "@/components/NavLinks";
+import HexBackground from "@/components/HexBackground";
 
 export default function DashboardLayout({
   children,
@@ -6,42 +9,48 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <nav className="border-b border-gray-800 px-6 py-4 flex items-center gap-6">
-        <span className="text-xl font-bold text-indigo-400">Papyrus</span>
-        <Link
-          href="/dashboard"
-          className="text-sm text-gray-400 hover:text-white transition"
-        >
-          Portfolio
+    <div
+      className="min-h-screen relative"
+      style={{ background: "var(--base)", color: "var(--text-1)" }}
+    >
+      {/* Animated hex grid — behind everything */}
+      <HexBackground />
+
+      {/* Nav */}
+      <nav
+        className="sticky top-0 z-50 h-14 flex items-center px-6 gap-4 backdrop-blur-md"
+        style={{
+          background: "rgba(3, 3, 3, 0.90)",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
+          <div className="flex items-end gap-[3px]">
+            <div className="w-[3px] h-3    rounded-sm" style={{ background: "var(--gold)" }} />
+            <div className="w-[3px] h-[16px] rounded-sm" style={{ background: "var(--gold)" }} />
+            <div className="w-[3px] h-2    rounded-sm" style={{ background: "var(--gold-dim)" }} />
+          </div>
+          <span
+            className="font-mono font-bold text-sm tracking-[0.15em]"
+            style={{ color: "var(--text-1)" }}
+          >
+            PAPYRUS
+          </span>
         </Link>
-        <Link
-          href="/dashboard/market"
-          className="text-sm text-gray-400 hover:text-white transition"
-        >
-          Market
-        </Link>
-        <Link
-          href="/dashboard/leaderboard"
-          className="text-sm text-gray-400 hover:text-white transition"
-        >
-          Leaderboard
-        </Link>
-        <Link
-          href="/dashboard/leagues"
-          className="text-sm text-gray-400 hover:text-white transition"
-        >
-          Leagues
-        </Link>
+
+        <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
+
+        <NavLinks />
+
         <div className="ml-auto">
-          <form action="/auth/logout" method="post">
-            <button className="text-sm text-gray-400 hover:text-white transition">
-              Sign out
-            </button>
-          </form>
+          <SignOutButton />
         </div>
       </nav>
-      <main>{children}</main>
+
+      {/* Page content — sits above hex canvas */}
+      <main className="relative" style={{ zIndex: 1 }}>
+        {children}
+      </main>
     </div>
   );
 }

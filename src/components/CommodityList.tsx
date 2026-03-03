@@ -5,15 +5,12 @@ import { useRouter } from "next/navigation";
 import TradeModal from "./TradeModal";
 import type { CommodityData } from "@/lib/commodities";
 
-type Props = {
-  commodities: CommodityData[];
-  cashBalance: number;
-};
+type Props = { commodities: CommodityData[]; cashBalance: number };
 
 export default function CommodityList({ commodities, cashBalance }: Props) {
   const router = useRouter();
   const [buyTarget, setBuyTarget] = useState<CommodityData | null>(null);
-  const [search, setSearch] = useState("");
+  const [search, setSearch]       = useState("");
 
   const filtered = commodities.filter(
     (c) =>
@@ -32,77 +29,112 @@ export default function CommodityList({ commodities, cashBalance }: Props) {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search commodities..."
-          className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition"
+          className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none transition-all"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border-mid)",
+            color: "var(--text-1)",
+          }}
+          onFocus={(e)  => (e.currentTarget.style.borderColor = "var(--gold-border)")}
+          onBlur={(e)   => (e.currentTarget.style.borderColor = "var(--border-mid)")}
         />
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-gray-500 text-center py-12">
+        <p className="text-center py-12 font-mono text-sm" style={{ color: "var(--text-3)" }}>
           No commodities match &quot;{search}&quot;
         </p>
       ) : (
-        <div className="space-y-3">
-          {filtered.map((c) => (
-            <div
-              key={c.symbol}
-              onClick={() => router.push(`/dashboard/market/commodities/${c.symbol}`)}
-              className="bg-gray-900 rounded-2xl px-6 py-4 flex items-center gap-4 cursor-pointer hover:bg-gray-800 transition"
-            >
-              {/* Icon badge */}
-              <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0 text-xl">
-                {c.icon}
-              </div>
-
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold">{c.name}</p>
-                <p className="text-sm text-gray-400">{c.unit}</p>
-              </div>
-
-              <div className="text-right mr-4">
-                <p className="font-semibold">
-                  {c.price > 0 ? `$${fmt(c.price)}` : "—"}
-                </p>
-                <p
-                  className={`text-sm ${
-                    c.change24h >= 0 ? "text-green-400" : "text-red-400"
-                  }`}
-                >
-                  {c.price > 0
-                    ? `${c.change24h >= 0 ? "+" : ""}${c.change24h.toFixed(2)}%`
-                    : "—"}
-                </p>
-              </div>
-
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setBuyTarget(c);
+        <div className="space-y-2">
+          {filtered.map((c) => {
+            const up = c.change24h >= 0;
+            return (
+              <div
+                key={c.symbol}
+                onClick={() => router.push(`/dashboard/market/commodities/${c.symbol}`)}
+                className="rounded-2xl px-5 py-4 flex items-center gap-4 cursor-pointer transition-all duration-150"
+                style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
                 }}
-                disabled={c.price === 0}
-                className="bg-amber-500/20 hover:bg-amber-500/40 text-amber-400 text-sm font-medium px-4 py-1.5 rounded-lg transition shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border-mid)";
+                  e.currentTarget.style.background  = "var(--elevated)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "var(--border)";
+                  e.currentTarget.style.background  = "var(--surface)";
+                }}
               >
-                Buy
-              </button>
-            </div>
-          ))}
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xl"
+                  style={{
+                    background: "var(--gold-glow)",
+                    border: "1px solid var(--gold-border)",
+                  }}
+                >
+                  {c.icon}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+                    {c.name}
+                  </p>
+                  <p className="text-xs font-mono mt-0.5" style={{ color: "var(--text-3)" }}>
+                    {c.unit}
+                  </p>
+                </div>
+
+                <div className="text-right mr-3">
+                  <p className="font-mono font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+                    {c.price > 0 ? `$${fmt(c.price)}` : "—"}
+                  </p>
+                  <p
+                    className="text-xs font-mono mt-0.5"
+                    style={{ color: up ? "var(--gain)" : "var(--loss)" }}
+                  >
+                    {c.price > 0
+                      ? `${up ? "+" : ""}${c.change24h.toFixed(2)}%`
+                      : "—"}
+                  </p>
+                </div>
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); setBuyTarget(c); }}
+                  disabled={c.price === 0}
+                  className="px-4 py-1.5 rounded-lg text-xs font-mono font-semibold tracking-wide transition-all duration-150 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
+                  style={{
+                    background: "var(--gold-glow)",
+                    border: "1px solid var(--gold-border)",
+                    color: "var(--gold-bright)",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!e.currentTarget.disabled) {
+                      e.currentTarget.style.background  = "rgba(201,168,76,0.18)";
+                      e.currentTarget.style.borderColor = "var(--gold)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background  = "var(--gold-glow)";
+                    e.currentTarget.style.borderColor = "var(--gold-border)";
+                  }}
+                >
+                  BUY
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
 
       {buyTarget && (
         <TradeModal
           mode="buy"
-          coin={{
-            symbol: buyTarget.symbol,
-            name: buyTarget.name,
-            price: buyTarget.price,
-          }}
+          coin={{ symbol: buyTarget.symbol, name: buyTarget.name, price: buyTarget.price }}
           assetType="commodity"
           cashBalance={cashBalance}
           onClose={() => setBuyTarget(null)}
-          onSuccess={() => {
-            setBuyTarget(null);
-            router.refresh();
-          }}
+          onSuccess={() => { setBuyTarget(null); router.refresh(); }}
         />
       )}
     </>
