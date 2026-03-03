@@ -34,7 +34,19 @@ export default function AssetTicker() {
       className="w-full overflow-hidden py-4 border-y"
       style={{ borderColor: "var(--border)", background: "rgba(0,0,0,0.5)" }}
     >
-      <div className="ticker-track gap-8" style={{ display: "flex", alignItems: "center" }}>
+      <style>{`
+        @keyframes ticker-scroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .ticker-track {
+          display: flex;
+          width: max-content;
+          animation: ticker-scroll 40s linear infinite;
+        }
+        .ticker-track:hover { animation-play-state: paused; }
+      `}</style>
+      <div className="ticker-track" style={{ alignItems: "center", gap: "2rem" }}>
         {ITEMS.map((asset, i) => (
           <div
             key={i}
