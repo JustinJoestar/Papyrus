@@ -25,7 +25,7 @@ export default async function ProfilePage() {
   const [{ data: profile }, { count: tradeCount }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("username, avatar_url, cash_balance, created_at")
+      .select("username, avatar_url, cash_balance, created_at, username_changed_at")
       .eq("id", user.id)
       .single(),
     supabase
@@ -68,7 +68,10 @@ export default async function ProfilePage() {
         />
 
         <div className="flex-1 min-w-0 space-y-5">
-          <UsernameForm currentUsername={profile.username} />
+          <UsernameForm
+            currentUsername={profile.username}
+            usernameChangedAt={profile.username_changed_at ?? null}
+          />
 
           <div>
             <p

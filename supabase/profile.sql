@@ -16,18 +16,36 @@ as $$
   limit 1;
 $$;
 
--- RPC: update_username — change username with uniqueness check
+-- Add column to track when username was last changed (run once)
+alter table public.profiles
+  add column if not exists username_changed_at timestamptz;
+
+-- RPC: update_username — change username with uniqueness + weekly rate limit
 create or replace function update_username(p_username text)
 returns json
 language plpgsql
 security definer
 as $$
 declare
-  v_user_id uuid := auth.uid();
-  v_clean   text := trim(p_username);
+  v_user_id   uuid        := auth.uid();
+  v_clean     text        := trim(p_username);
+  v_changed_at timestamptz;
+  v_days_left  int;
 begin
   if v_user_id is null then
     return json_build_object('success', false, 'error', 'Not authenticated');
+  end if;
+
+  -- Rate limit: once per 7 days
+  select username_changed_at into v_changed_at
+  from public.profiles where id = v_user_id;
+
+  if v_changed_at is not null and v_changed_at > now() - interval '7 days' then
+    v_days_left := 7 - extract(day from (now() - v_changed_at))::int;
+    return json_build_object(
+      'success', false,
+      'error', 'You can only change your username once per week. Try again in ' || v_days_left || ' day(s).'
+    );
   end if;
 
   if length(v_clean) < 3 then
@@ -52,7 +70,8 @@ begin
   end if;
 
   update public.profiles
-  set username = v_clean
+  set username            = v_clean,
+      username_changed_at = now()
   where id = v_user_id;
 
   return json_build_object('success', true);

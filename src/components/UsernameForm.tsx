@@ -6,9 +6,17 @@ import { createClient } from "@/lib/supabase/client";
 
 type Props = {
   currentUsername: string;
+  usernameChangedAt: string | null;
 };
 
-export default function UsernameForm({ currentUsername }: Props) {
+export default function UsernameForm({ currentUsername, usernameChangedAt }: Props) {
+  const canChange = !usernameChangedAt ||
+    new Date(usernameChangedAt).getTime() < Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+  const nextChangeDate = usernameChangedAt
+    ? new Date(new Date(usernameChangedAt).getTime() + 7 * 24 * 60 * 60 * 1000)
+        .toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : null;
   const supabase = createClient();
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -104,24 +112,27 @@ export default function UsernameForm({ currentUsername }: Props) {
           <span className="font-semibold text-lg" style={{ color: "var(--text-1)" }}>
             {currentUsername}
           </span>
-          <button
-            onClick={startEdit}
-            className="font-mono text-[10px] tracking-wider px-2.5 py-1 rounded-lg transition-all"
-            style={{
-              border: "1px solid var(--border-mid)",
-              color: "var(--text-3)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "var(--gold)";
-              e.currentTarget.style.borderColor = "var(--gold-border)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--text-3)";
-              e.currentTarget.style.borderColor = "var(--border-mid)";
-            }}
-          >
-            EDIT
-          </button>
+          {canChange ? (
+            <button
+              onClick={startEdit}
+              className="font-mono text-[10px] tracking-wider px-2.5 py-1 rounded-lg transition-all"
+              style={{ border: "1px solid var(--border-mid)", color: "var(--text-3)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--gold)";
+                e.currentTarget.style.borderColor = "var(--gold-border)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "var(--text-3)";
+                e.currentTarget.style.borderColor = "var(--border-mid)";
+              }}
+            >
+              EDIT
+            </button>
+          ) : (
+            <span className="font-mono text-[10px] tracking-wider" style={{ color: "var(--text-3)" }}>
+              Available {nextChangeDate}
+            </span>
+          )}
           {success && (
             <span className="font-mono text-[10px] tracking-wider" style={{ color: "var(--gain)" }}>
               SAVED
