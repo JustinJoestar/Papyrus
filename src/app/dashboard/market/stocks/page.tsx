@@ -4,6 +4,7 @@ import { fetchQuotes } from "@/lib/yahooFinanceApi";
 import { unstable_cache } from "next/cache";
 import StockList from "@/components/StockList";
 import MarketTabs from "@/components/MarketTabs";
+import LeagueSwitcher from "@/components/LeagueSwitcher";
 
 const fetchStocks = unstable_cache(
   async () => {
@@ -47,9 +48,12 @@ export default async function StocksPage() {
 
       <MarketTabs />
 
-      <p className="font-mono text-xs mb-6" style={{ color: "var(--text-3)" }}>
-        {stocks.length} stocks — prices update every 60s
-      </p>
+      <div className="flex items-center justify-between mb-6">
+        <p className="font-mono text-xs" style={{ color: "var(--text-3)" }}>
+          {stocks.length} stocks — prices update every 60s
+        </p>
+        <LeagueSwitcher />
+      </div>
 
       <StockList stocks={stocks} cashBalance={profile?.cash_balance ?? 0} isAuthenticated={!!user} />
     </div>

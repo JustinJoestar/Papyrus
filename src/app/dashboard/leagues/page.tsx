@@ -10,6 +10,7 @@ type League = {
   owner_id: string;
   is_owner: boolean;
   member_count: number;
+  starting_balance: number;
   created_at: string;
 };
 

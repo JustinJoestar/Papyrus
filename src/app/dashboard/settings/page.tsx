@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "@/components/SignOutButton";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default async function SettingsPage() {
   const supabase = await createClient();
@@ -50,20 +51,18 @@ export default async function SettingsPage() {
         </div>
       </div>
 
-      {/* More settings — placeholder */}
+      {/* Appearance */}
       <div
         className="rounded-2xl p-6"
-        style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
       >
         <p
           className="font-mono text-[10px] tracking-[0.22em] uppercase mb-4"
           style={{ color: "var(--text-3)" }}
         >
-          More settings coming soon
+          Appearance
         </p>
-        <p className="text-sm" style={{ color: "var(--text-3)" }}>
-          Notification preferences, privacy options, and more will appear here.
-        </p>
+        <ThemeToggle />
       </div>
     </div>
   );

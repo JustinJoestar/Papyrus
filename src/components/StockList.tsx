@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TradeModal from "./TradeModal";
 import StockLogo from "./StockLogo";
+import { useMarketLeague } from "@/app/dashboard/market/MarketLeagueProvider";
 import type { StockData } from "@/lib/stocks";
 
 type Props = { stocks: StockData[]; cashBalance: number; isAuthenticated?: boolean };
 
 export default function StockList({ stocks, cashBalance, isAuthenticated = true }: Props) {
   const router = useRouter();
+  const { activeLeague, refreshBalances } = useMarketLeague();
   const [buyTarget, setBuyTarget] = useState<StockData | null>(null);
   const [search, setSearch]       = useState("");
 
@@ -125,9 +127,11 @@ export default function StockList({ stocks, cashBalance, isAuthenticated = true 
           mode="buy"
           coin={{ symbol: buyTarget.symbol, name: buyTarget.name, price: buyTarget.price }}
           assetType="stock"
-          cashBalance={cashBalance}
+          cashBalance={activeLeague?.cashBalance ?? cashBalance}
+          leagueId={activeLeague?.id ?? null}
+          leagueName={activeLeague?.name ?? null}
           onClose={() => setBuyTarget(null)}
-          onSuccess={() => { setBuyTarget(null); router.refresh(); }}
+          onSuccess={async () => { setBuyTarget(null); await refreshBalances(); router.refresh(); }}
         />
       )}
     </>

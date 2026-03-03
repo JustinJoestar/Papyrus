@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getTopCoins } from "@/lib/market";
 import CryptoList from "@/components/CryptoList";
 import MarketTabs from "@/components/MarketTabs";
+import LeagueSwitcher from "@/components/LeagueSwitcher";
 
 export type CoinWithPrice = {
   id: string;
@@ -36,9 +37,12 @@ export default async function MarketPage() {
 
       <MarketTabs />
 
-      <p className="font-mono text-xs mb-6" style={{ color: "var(--text-3)" }}>
-        Top 250 coins by market cap — prices update every 60s
-      </p>
+      <div className="flex items-center justify-between mb-6">
+        <p className="font-mono text-xs" style={{ color: "var(--text-3)" }}>
+          Top 250 coins by market cap — prices update every 60s
+        </p>
+        <LeagueSwitcher />
+      </div>
 
       {coins.length === 0 ? (
         <div

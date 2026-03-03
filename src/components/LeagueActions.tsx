@@ -6,11 +6,20 @@ import { createClient } from "@/lib/supabase/client";
 
 type Mode = "none" | "create" | "join";
 
+const BALANCE_PRESETS = [1000, 5000, 10000, 50000, 100000];
+
+function fmtPreset(n: number) {
+  if (n >= 1000) return `$${(n / 1000).toFixed(0)}k`;
+  return `$${n}`;
+}
+
 export default function LeagueActions() {
   const supabase = createClient();
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("none");
   const [createName, setCreateName] = useState("");
+  const [startingBalance, setStartingBalance] = useState(10000);
+  const [customBalance, setCustomBalance] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +28,20 @@ export default function LeagueActions() {
     setMode(next);
     setError(null);
     setCreateName("");
+    setStartingBalance(10000);
+    setCustomBalance("");
     setJoinCode("");
+  }
+
+  function handlePreset(val: number) {
+    setStartingBalance(val);
+    setCustomBalance("");
+  }
+
+  function handleCustomBalance(raw: string) {
+    setCustomBalance(raw);
+    const parsed = parseInt(raw.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(parsed)) setStartingBalance(parsed);
   }
 
   async function handleCreate() {
@@ -28,6 +50,7 @@ export default function LeagueActions() {
     setError(null);
     const { data, error: rpcError } = await supabase.rpc("create_league", {
       p_name: createName.trim(),
+      p_starting_balance: startingBalance,
     });
     setLoading(false);
     if (rpcError || data?.success === false) {
@@ -93,10 +116,7 @@ export default function LeagueActions() {
       {mode === "create" && (
         <div
           className="rounded-2xl p-6 max-w-sm"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-mid)",
-          }}
+          style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
         >
           <h3 className="font-semibold mb-4" style={{ color: "var(--text-1)" }}>
             Create a League
@@ -105,11 +125,7 @@ export default function LeagueActions() {
           {error && (
             <div
               className="text-sm rounded-xl px-4 py-3 mb-4"
-              style={{
-                background: "var(--loss-bg)",
-                border: "1px solid var(--loss-border)",
-                color: "var(--loss)",
-              }}
+              style={{ background: "var(--loss-bg)", border: "1px solid var(--loss-border)", color: "var(--loss)" }}
             >
               {error}
             </div>
@@ -129,15 +145,50 @@ export default function LeagueActions() {
             onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
           />
 
+          {/* Starting balance */}
+          <div className="mb-4">
+            <p
+              className="font-mono text-[10px] tracking-[0.2em] uppercase mb-2"
+              style={{ color: "var(--text-3)" }}
+            >
+              Starting Balance
+            </p>
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {BALANCE_PRESETS.map((val) => {
+                const active = startingBalance === val && !customBalance;
+                return (
+                  <button
+                    key={val}
+                    onClick={() => handlePreset(val)}
+                    className="font-mono text-xs px-3 py-1.5 rounded-lg transition-all"
+                    style={{
+                      background: active ? "var(--gold-glow)" : "var(--elevated)",
+                      border: `1px solid ${active ? "var(--gold-border)" : "var(--border-mid)"}`,
+                      color: active ? "var(--gold)" : "var(--text-3)",
+                    }}
+                  >
+                    {fmtPreset(val)}
+                  </button>
+                );
+              })}
+            </div>
+            <input
+              type="text"
+              value={customBalance}
+              onChange={(e) => handleCustomBalance(e.target.value)}
+              placeholder="Custom amount"
+              className="w-full rounded-xl px-4 py-2 text-sm focus:outline-none transition-all font-mono"
+              style={inputStyle}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+            />
+          </div>
+
           <div className="flex gap-3">
             <button
               onClick={() => switchMode("none")}
               className="flex-1 text-sm font-medium rounded-xl py-2.5 transition-all"
-              style={{
-                background: "var(--elevated)",
-                border: "1px solid var(--border-mid)",
-                color: "var(--text-2)",
-              }}
+              style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-2)" }}
             >
               Cancel
             </button>
@@ -159,10 +210,7 @@ export default function LeagueActions() {
       {mode === "join" && (
         <div
           className="rounded-2xl p-6 max-w-sm"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-mid)",
-          }}
+          style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
         >
           <h3 className="font-semibold mb-4" style={{ color: "var(--text-1)" }}>
             Join a League
@@ -171,11 +219,7 @@ export default function LeagueActions() {
           {error && (
             <div
               className="text-sm rounded-xl px-4 py-3 mb-4"
-              style={{
-                background: "var(--loss-bg)",
-                border: "1px solid var(--loss-border)",
-                color: "var(--loss)",
-              }}
+              style={{ background: "var(--loss-bg)", border: "1px solid var(--loss-border)", color: "var(--loss)" }}
             >
               {error}
             </div>
@@ -199,11 +243,7 @@ export default function LeagueActions() {
             <button
               onClick={() => switchMode("none")}
               className="flex-1 text-sm font-medium rounded-xl py-2.5 transition-all"
-              style={{
-                background: "var(--elevated)",
-                border: "1px solid var(--border-mid)",
-                color: "var(--text-2)",
-              }}
+              style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-2)" }}
             >
               Cancel
             </button>

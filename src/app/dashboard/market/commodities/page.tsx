@@ -3,6 +3,7 @@ import { fetchCommodities } from "@/lib/commodities";
 import { unstable_cache } from "next/cache";
 import CommodityList from "@/components/CommodityList";
 import MarketTabs from "@/components/MarketTabs";
+import LeagueSwitcher from "@/components/LeagueSwitcher";
 
 const getCommodities = unstable_cache(fetchCommodities, ["commodity-prices"], {
   revalidate: 60,
@@ -32,9 +33,12 @@ export default async function CommoditiesPage() {
 
       <MarketTabs />
 
-      <p className="font-mono text-xs mb-6" style={{ color: "var(--text-3)" }}>
-        {commodities.length} commodities — prices update every 60s
-      </p>
+      <div className="flex items-center justify-between mb-6">
+        <p className="font-mono text-xs" style={{ color: "var(--text-3)" }}>
+          {commodities.length} commodities — prices update every 60s
+        </p>
+        <LeagueSwitcher />
+      </div>
 
       <CommodityList commodities={commodities} cashBalance={profile?.cash_balance ?? 0} isAuthenticated={!!user} />
     </div>

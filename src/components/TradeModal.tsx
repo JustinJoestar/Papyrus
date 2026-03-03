@@ -11,6 +11,8 @@ type Props = {
   assetType?: "crypto" | "stock" | "commodity";
   cashBalance?: number;
   maxQuantity?: number;
+  leagueId?: string | null;
+  leagueName?: string | null;
   onClose: () => void;
   onSuccess: () => void;
 };
@@ -23,7 +25,8 @@ const SELL_PRESETS = [
 ];
 
 export default function TradeModal({
-  mode, coin, assetType = "crypto", cashBalance, maxQuantity, onClose, onSuccess,
+  mode, coin, assetType = "crypto", cashBalance, maxQuantity,
+  leagueId, leagueName, onClose, onSuccess,
 }: Props) {
   const supabase = createClient();
   const [amount,  setAmount]  = useState("");
@@ -49,10 +52,15 @@ export default function TradeModal({
     if (quantity <= 0) return;
     setLoading(true);
     setError(null);
-    const { data, error: rpcError } = await supabase.rpc("execute_trade", {
-      p_symbol: coin.symbol, p_asset_type: assetType,
-      p_type: mode, p_quantity: quantity, p_price: coin.price,
-    });
+    const { data, error: rpcError } = leagueId
+      ? await supabase.rpc("execute_league_trade", {
+          p_league_id: leagueId, p_symbol: coin.symbol, p_asset_type: assetType,
+          p_type: mode, p_quantity: quantity, p_price: coin.price,
+        })
+      : await supabase.rpc("execute_trade", {
+          p_symbol: coin.symbol, p_asset_type: assetType,
+          p_type: mode, p_quantity: quantity, p_price: coin.price,
+        });
     if (rpcError || data?.success === false) {
       setError(rpcError?.message ?? data?.error ?? "Trade failed");
       setLoading(false);
@@ -100,6 +108,17 @@ export default function TradeModal({
                 Current price:{" "}
                 <span style={{ color: "var(--gold-bright)" }}>${fmt(coin.price)}</span>
               </p>
+              {leagueName && (
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <span className="text-xs">🏆</span>
+                  <span
+                    className="font-mono text-[10px] tracking-wide px-2 py-0.5 rounded-md"
+                    style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+                  >
+                    {leagueName}
+                  </span>
+                </div>
+              )}
             </div>
             <button
               onClick={onClose}

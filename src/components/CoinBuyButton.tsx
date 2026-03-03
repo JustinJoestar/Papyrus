@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TradeModal, { type TradeCoin } from "./TradeModal";
+import { useMarketLeague } from "@/app/dashboard/market/MarketLeagueProvider";
 
 export default function CoinBuyButton({
   coin,
@@ -16,6 +17,7 @@ export default function CoinBuyButton({
   isAuthenticated?: boolean;
 }) {
   const router = useRouter();
+  const { activeLeague, refreshBalances } = useMarketLeague();
   const [open, setOpen] = useState(false);
 
   return (
@@ -29,6 +31,9 @@ export default function CoinBuyButton({
         }}
       >
         Buy {coin.symbol}
+        {activeLeague && (
+          <span className="ml-2 font-mono text-[10px] opacity-70">({activeLeague.name})</span>
+        )}
       </button>
 
       {open && (
@@ -36,10 +41,13 @@ export default function CoinBuyButton({
           mode="buy"
           coin={coin}
           assetType={assetType}
-          cashBalance={cashBalance}
+          cashBalance={activeLeague?.cashBalance ?? cashBalance}
+          leagueId={activeLeague?.id ?? null}
+          leagueName={activeLeague?.name ?? null}
           onClose={() => setOpen(false)}
-          onSuccess={() => {
+          onSuccess={async () => {
             setOpen(false);
+            await refreshBalances();
             router.refresh();
           }}
         />

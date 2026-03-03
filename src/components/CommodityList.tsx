@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TradeModal from "./TradeModal";
+import { useMarketLeague } from "@/app/dashboard/market/MarketLeagueProvider";
 import type { CommodityData } from "@/lib/commodities";
 
 type Props = { commodities: CommodityData[]; cashBalance: number; isAuthenticated?: boolean };
 
 export default function CommodityList({ commodities, cashBalance, isAuthenticated = true }: Props) {
   const router = useRouter();
+  const { activeLeague, refreshBalances } = useMarketLeague();
   const [buyTarget, setBuyTarget] = useState<CommodityData | null>(null);
   const [search, setSearch]       = useState("");
 
@@ -132,9 +134,11 @@ export default function CommodityList({ commodities, cashBalance, isAuthenticate
           mode="buy"
           coin={{ symbol: buyTarget.symbol, name: buyTarget.name, price: buyTarget.price }}
           assetType="commodity"
-          cashBalance={cashBalance}
+          cashBalance={activeLeague?.cashBalance ?? cashBalance}
+          leagueId={activeLeague?.id ?? null}
+          leagueName={activeLeague?.name ?? null}
           onClose={() => setBuyTarget(null)}
-          onSuccess={() => { setBuyTarget(null); router.refresh(); }}
+          onSuccess={async () => { setBuyTarget(null); await refreshBalances(); router.refresh(); }}
         />
       )}
     </>

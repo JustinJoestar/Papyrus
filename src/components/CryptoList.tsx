@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TradeModal from "./TradeModal";
+import { useMarketLeague } from "@/app/dashboard/market/MarketLeagueProvider";
 import type { CoinWithPrice } from "@/app/dashboard/market/page";
 
 type Props = { coins: CoinWithPrice[]; cashBalance: number; isAuthenticated?: boolean };
 
 export default function CryptoList({ coins, cashBalance, isAuthenticated = true }: Props) {
   const router   = useRouter();
+  const { activeLeague, refreshBalances } = useMarketLeague();
   const [buyTarget, setBuyTarget] = useState<CoinWithPrice | null>(null);
   const [search, setSearch]       = useState("");
 
@@ -119,14 +121,12 @@ export default function CryptoList({ coins, cashBalance, isAuthenticated = true 
       {buyTarget && (
         <TradeModal
           mode="buy"
-          coin={{
-            symbol: buyTarget.symbol.toUpperCase(),
-            name:   buyTarget.name,
-            price:  buyTarget.current_price,
-          }}
-          cashBalance={cashBalance}
+          coin={{ symbol: buyTarget.symbol.toUpperCase(), name: buyTarget.name, price: buyTarget.current_price }}
+          cashBalance={activeLeague?.cashBalance ?? cashBalance}
+          leagueId={activeLeague?.id ?? null}
+          leagueName={activeLeague?.name ?? null}
           onClose={() => setBuyTarget(null)}
-          onSuccess={() => { setBuyTarget(null); router.refresh(); }}
+          onSuccess={async () => { setBuyTarget(null); await refreshBalances(); router.refresh(); }}
         />
       )}
     </>

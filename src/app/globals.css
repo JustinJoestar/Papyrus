@@ -38,9 +38,79 @@
   --loss-bg:     rgba(244,  63,  94, 0.08);
   --loss-border: rgba(244,  63,  94, 0.22);
 
+  /* Nav background (theme-aware) */
+  --nav-bg: rgba(3, 3, 3, 0.90);
+
   /* Legacy compat */
   --background: var(--base);
   --foreground: var(--text-1);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT MODE — white + blue palette
+   Applied when <html data-theme="light">
+═══════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  /* Backgrounds */
+  --void:     #f0f4f8;
+  --base:     #f8fafc;
+  --surface:  #ffffff;
+  --elevated: #f1f5f9;
+  --overlay:  rgba(248, 250, 252, 0.88);
+
+  /* Blue accent (replaces gold) */
+  --gold:        #2563eb;
+  --gold-bright: #1d4ed8;
+  --gold-dim:    #3b82f6;
+  --gold-glow:   rgba(37, 99, 235, 0.08);
+  --gold-border: rgba(37, 99, 235, 0.25);
+
+  /* Borders */
+  --border:        #e2e8f0;
+  --border-mid:    #cbd5e1;
+  --border-bright: #94a3b8;
+
+  /* Text */
+  --text-1: #0f172a;
+  --text-2: #334155;
+  --text-3: #64748b;
+
+  /* Nav */
+  --nav-bg: rgba(255, 255, 255, 0.92);
+
+  /* Legacy compat */
+  --background: var(--base);
+  --foreground: var(--text-1);
+}
+
+/* Light mode text-shimmer → blue shimmer */
+[data-theme="light"] .text-gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    #1d4ed8 0%, #60a5fa 25%, #2563eb 42%,
+    #93c5fd 60%, #1d4ed8 78%, #60a5fa 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gold-shimmer 6s linear infinite;
+}
+
+/* Light mode static gradient → blue gradient */
+[data-theme="light"] .text-gold-gradient {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 55%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar in light mode */
+[data-theme="light"] * {
+  scrollbar-color: #cbd5e1 transparent;
+}
+[data-theme="light"] *::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
 }
 
 /* Expose palette to Tailwind utility classes */

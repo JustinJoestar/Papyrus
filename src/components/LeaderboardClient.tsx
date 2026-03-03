@@ -4,11 +4,36 @@ import { useState } from "react";
 
 type Entry = {
   username: string;
+  avatarUrl: string | null;
   totalValue: number;
   cashBalance: number;
   rank: number;
   isCurrentUser: boolean;
 };
+
+function Avatar({ username, avatarUrl, size = 8 }: { username: string; avatarUrl: string | null; size?: number }) {
+  const initials = (username ?? "?").slice(0, 2).toUpperCase();
+  const dim = `${size * 4}px`;
+  return (
+    <div
+      className="rounded-full overflow-hidden flex items-center justify-center shrink-0"
+      style={{
+        width: dim,
+        height: dim,
+        background: avatarUrl ? "transparent" : "var(--gold-glow)",
+        border: "1px solid var(--gold-border)",
+      }}
+    >
+      {avatarUrl ? (
+        <img src={avatarUrl} alt={username} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      ) : (
+        <span className="font-mono font-bold" style={{ fontSize: `${size * 1.4}px`, color: "var(--gold)" }}>
+          {initials}
+        </span>
+      )}
+    </div>
+  );
+}
 
 type SnapshotEntry = {
   username: string;
@@ -99,8 +124,9 @@ export default function LeaderboardClient({
                         {s.label}
                       </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex-1 min-w-0 flex items-center gap-3">
+                      <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={9} />
+                      <div className="flex items-center gap-2 flex-wrap min-w-0">
                         <p className="font-semibold truncate" style={{ color: "var(--text-1)" }}>{entry.username}</p>
                         {isMe && (
                           <span className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0" style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "var(--gold)" }}>YOU</span>
@@ -132,6 +158,7 @@ export default function LeaderboardClient({
                   <span className="font-mono text-xs w-8 shrink-0 tabular-nums" style={{ color: "var(--text-3)" }}>
                     #{entry.rank}
                   </span>
+                  <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={7} />
                   <div className="flex-1 min-w-0 flex items-center gap-2">
                     <p className="text-sm truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
                     {entry.isCurrentUser && <span className="text-[10px] font-mono shrink-0" style={{ color: "var(--gold-dim)" }}>you</span>}

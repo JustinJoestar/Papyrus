@@ -14,7 +14,15 @@ export type HoldingWithPrice = {
   currentValue: number;
 };
 
-export default function HoldingsList({ holdings }: { holdings: HoldingWithPrice[] }) {
+export default function HoldingsList({
+  holdings,
+  leagueId,
+  leagueName,
+}: {
+  holdings: HoldingWithPrice[];
+  leagueId?: string | null;
+  leagueName?: string | null;
+}) {
   const router = useRouter();
   const [sellTarget, setSellTarget] = useState<HoldingWithPrice | null>(null);
 
@@ -131,13 +139,11 @@ export default function HoldingsList({ holdings }: { holdings: HoldingWithPrice[
       {sellTarget && (
         <TradeModal
           mode="sell"
-          coin={{
-            symbol: sellTarget.symbol,
-            name:   sellTarget.symbol,
-            price:  sellTarget.currentPrice,
-          }}
+          coin={{ symbol: sellTarget.symbol, name: sellTarget.symbol, price: sellTarget.currentPrice }}
           assetType={sellTarget.asset_type as "crypto" | "stock" | "commodity"}
           maxQuantity={sellTarget.quantity}
+          leagueId={leagueId ?? null}
+          leagueName={leagueName ?? null}
           onClose={() => setSellTarget(null)}
           onSuccess={() => { setSellTarget(null); router.refresh(); }}
         />

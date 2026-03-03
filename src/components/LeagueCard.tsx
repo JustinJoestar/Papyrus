@@ -12,6 +12,7 @@ type League = {
   owner_id: string;
   is_owner: boolean;
   member_count: number;
+  starting_balance: number;
   created_at: string;
 };
 
@@ -78,6 +79,10 @@ export default function LeagueCard({ league, currentUserId }: Props) {
           </div>
           <p className="text-xs mt-0.5" style={{ color: "var(--text-3)" }}>
             {league.member_count} {league.member_count === 1 ? "member" : "members"}
+            {" · "}
+            <span className="font-mono" style={{ color: "var(--gold-dim)" }}>
+              ${league.starting_balance.toLocaleString()} start
+            </span>
           </p>
         </div>
 

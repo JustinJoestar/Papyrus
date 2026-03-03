@@ -7,6 +7,7 @@ import LeaderboardClient from "@/components/LeaderboardClient";
 
 type LeaderboardEntry = {
   username: string;
+  avatarUrl: string | null;
   totalValue: number;
   cashBalance: number;
   rank: number;
@@ -92,9 +93,17 @@ export default async function LeaderboardPage() {
       }
     }
 
+    const userIds = Object.keys(userMap);
+    const { data: avatarRows } = await supabase
+      .from("profiles")
+      .select("id, avatar_url")
+      .in("id", userIds);
+    const avatarMap = Object.fromEntries((avatarRows ?? []).map((r) => [r.id, r.avatar_url as string | null]));
+
     entries = Object.entries(userMap)
       .map(([userId, data]) => ({
         username: data.username,
+        avatarUrl: avatarMap[userId] ?? null,
         totalValue: data.cashBalance + data.holdingsValue,
         cashBalance: data.cashBalance,
         rank: 0,
