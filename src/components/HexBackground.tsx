@@ -8,7 +8,7 @@ const ROW_H      = R * Math.sqrt(3);     // 55.4 — vertical centre spacing
 const SPEED_X    = 0.20;                 // px per frame (drift right)
 const SPEED_Y    = 0.10;                 // px per frame (drift down)
 const STROKE     = "rgba(201,168,76,0.065)";
-const LINE_WIDTH = 0.7;
+const LINE_WIDTH = .7;
 
 function drawHex(
   ctx: CanvasRenderingContext2D,

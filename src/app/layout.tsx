@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
+import CursorGlow from "@/components/CursorGlow";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,9 +41,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
+      <head suppressHydrationWarning>
         {/* Apply saved theme before first paint to avoid flash */}
         <script
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('papyrus-theme');if(t==='light')document.documentElement.setAttribute('data-theme','light');}catch(e){}})();`,
           }}
@@ -50,7 +53,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${cormorant.variable} antialiased`}
       >
-        {children}
+        <ThemeProvider>
+          <CursorGlow />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import HexBackground from "@/components/HexBackground";
 
 export default function SignupPage() {
   const router   = useRouter();
@@ -42,9 +41,12 @@ export default function SignupPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{ background: "var(--void)" }}
+      style={{
+        backgroundColor: "var(--void)",
+        backgroundImage: "radial-gradient(rgba(201,168,76,0.18) 1.5px, transparent 1.5px)",
+        backgroundSize: "28px 28px",
+      }}
     >
-      <HexBackground />
 
       <div
         className="absolute pointer-events-none"

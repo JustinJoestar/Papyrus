@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import HexBackground from "@/components/HexBackground";
 
 function Logo() {
   return (
@@ -65,9 +64,12 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{ background: "var(--void)" }}
+      style={{
+        backgroundColor: "var(--void)",
+        backgroundImage: "radial-gradient(rgba(201,168,76,0.18) 1.5px, transparent 1.5px)",
+        backgroundSize: "28px 28px",
+      }}
     >
-      <HexBackground />
 
       {/* Ambient gold crown glow */}
       <div

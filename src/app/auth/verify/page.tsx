@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import HexBackground from "@/components/HexBackground";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
@@ -20,9 +19,12 @@ export default function VerifyPage() {
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{ background: "var(--void)" }}
+      style={{
+        backgroundColor: "var(--void)",
+        backgroundImage: "radial-gradient(rgba(201,168,76,0.18) 1.5px, transparent 1.5px)",
+        backgroundSize: "28px 28px",
+      }}
     >
-      <HexBackground />
 
       {/* Ambient gold crown glow */}
       <div

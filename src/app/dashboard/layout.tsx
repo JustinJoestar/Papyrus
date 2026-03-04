@@ -2,7 +2,6 @@ import Link from "next/link";
 import NavLinks from "@/components/NavLinks";
 import NavUserMenu from "@/components/NavUserMenu";
 import NavSettingsLink from "@/components/NavSettingsLink";
-import HexBackground from "@/components/HexBackground";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardLayout({
@@ -24,9 +23,13 @@ export default async function DashboardLayout({
   return (
     <div
       className="min-h-screen relative"
-      style={{ background: "var(--base)", color: "var(--text-1)" }}
+      style={{
+        backgroundColor: "var(--base)",
+        backgroundImage: "radial-gradient(rgba(201,168,76,0.15) 1.5px, transparent 1.5px)",
+        backgroundSize: "28px 28px",
+        color: "var(--text-1)",
+      }}
     >
-      <HexBackground />
 
       <nav
         className="sticky top-0 z-50 h-14 flex items-center px-6 gap-4 backdrop-blur-md"

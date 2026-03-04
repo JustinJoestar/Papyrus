@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AssetTicker from "@/components/AssetTicker";
+import { BeamsBackground } from "@/components/BeamsBackground";
 
 const STATS = [
   { value: "250+",    label: "Coins"             },
@@ -42,9 +43,10 @@ const FEATURES = [
 export default function LandingPage() {
   return (
     <div
-      className="min-h-screen relative overflow-hidden bg-imac"
-      style={{ color: "var(--text-1)" }}
+      className="min-h-screen relative overflow-hidden"
+      style={{ background: "#000000", color: "var(--text-1)" }}
     >
+      <BeamsBackground />
       {/* ── Nav ──────────────────────────────────────────────── */}
       <nav className="relative z-10 flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
         <div className="flex items-center gap-3">
@@ -109,15 +111,21 @@ export default function LandingPage() {
 
         {/* Subheadline — Cormorant italic */}
         <p
-          className="font-cormorant text-2xl italic mb-3 leading-relaxed"
-          style={{ color: "var(--text-3)" }}
+          className="font-cormorant text-2xl italic mb-6 leading-relaxed"
+          style={{ color: "var(--text-2)" }}
         >
-          The trading arena where skill, not luck, determines the leaderboard.
+          The trading arena where{" "}
+          <span style={{ color: "var(--gold)", fontStyle: "italic" }}>skill, not luck,</span>
+          {" "}determines the leaderboard.
         </p>
 
-        <p className="font-mono text-sm max-w-xl mx-auto mb-10 leading-relaxed" style={{ color: "var(--text-3)" }}>
-          Get $10,000 in virtual cash. Trade crypto, stocks, and commodities
-          with live prices. Compete weekly. Reset every Monday.
+        <p
+          className="font-cormorant text-lg max-w-xl mx-auto mb-10 leading-loose"
+          style={{ color: "var(--text-2)" }}
+        >
+          Start with <span className="font-semibold" style={{ color: "var(--gold-bright)" }}>$10,000</span> in virtual cash.
+          {" "}Trade crypto, stocks, and commodities at live prices —
+          {" "}compete weekly, reset every Monday.
         </p>
 
         <div className="flex items-center justify-center gap-4 flex-wrap">
