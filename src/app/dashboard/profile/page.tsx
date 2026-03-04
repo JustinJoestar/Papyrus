@@ -4,25 +4,27 @@ import AvatarUpload from "@/components/AvatarUpload";
 import UsernameForm from "@/components/UsernameForm";
 
 const ACHIEVEMENTS = [
-  { id: "first_trade",    icon: "🚀", title: "First Trade",       desc: "Complete your first buy or sell.",         unlocked: false },
-  { id: "ten_trades",     icon: "📈", title: "10 Trades",         desc: "Complete 10 total transactions.",           unlocked: false },
-  { id: "top_10",         icon: "🏆", title: "Top 10",            desc: "Reach the top 10 on the global leaderboard.", unlocked: false },
-  { id: "league_winner",  icon: "🥇", title: "League Champion",   desc: "Finish #1 in a private league.",           unlocked: false },
-  { id: "diamond_hands",  icon: "💎", title: "Diamond Hands",     desc: "Hold a position for a full week.",         unlocked: false },
-  { id: "diversified",    icon: "🌐", title: "Diversified",       desc: "Hold crypto, stocks, and a commodity simultaneously.", unlocked: false },
-  { id: "comeback",       icon: "⚡", title: "Comeback Kid",      desc: "Recover from -20% to finish positive.",    unlocked: false },
-  { id: "weekly_reset",   icon: "🔄", title: "Veteran",           desc: "Survive 4 weekly resets.",                 unlocked: false },
+  { id: "first_trade",   icon: "🚀", title: "First Trade",      desc: "Complete your first buy or sell." },
+  { id: "ten_trades",    icon: "📈", title: "10 Trades",        desc: "Complete 10 total transactions." },
+  { id: "diversified",   icon: "🌐", title: "Diversified",      desc: "Hold crypto, stocks, and a commodity simultaneously." },
+  { id: "top_10",        icon: "🏆", title: "Top 10",           desc: "Reach the top 10 on the global leaderboard." },
+  { id: "league_winner", icon: "🥇", title: "League Champion",  desc: "Finish #1 in a private league." },
+  { id: "diamond_hands", icon: "💎", title: "Diamond Hands",    desc: "Hold a position for a full week." },
+  { id: "comeback",      icon: "⚡", title: "Comeback Kid",     desc: "Recover from -20% to finish positive." },
+  { id: "weekly_reset",  icon: "🔄", title: "Veteran",          desc: "Survive 4 weekly resets." },
 ];
 
 export default async function ProfilePage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) redirect("/auth/login");
 
-  const [{ data: profile }, { count: tradeCount }] = await Promise.all([
+  const [
+    { data: profile },
+    { count: tradeCount },
+    { data: unlockedData },
+  ] = await Promise.all([
     supabase
       .from("profiles")
       .select("username, avatar_url, cash_balance, created_at, username_changed_at")
@@ -32,9 +34,25 @@ export default async function ProfilePage() {
       .from("transactions")
       .select("*", { count: "exact", head: true })
       .eq("user_id", user.id),
+    supabase
+      .from("user_achievements")
+      .select("achievement_id, unlocked_at")
+      .eq("user_id", user.id),
   ]);
 
   if (!profile) redirect("/auth/login");
+
+  const unlockedMap = new Map(
+    (unlockedData ?? []).map((a) => [a.achievement_id, a.unlocked_at as string])
+  );
+
+  const achievements = ACHIEVEMENTS.map((a) => ({
+    ...a,
+    unlocked: unlockedMap.has(a.id),
+    unlocked_at: unlockedMap.get(a.id) ?? null,
+  }));
+
+  const unlockedCount = achievements.filter((a) => a.unlocked).length;
 
   const memberSince = new Date(profile.created_at).toLocaleDateString("en-US", {
     month: "long",
@@ -102,9 +120,9 @@ export default async function ProfilePage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         {[
-          { label: "Total Trades",     value: tradeCount ?? 0 },
-          { label: "Cash Balance",     value: `$${Number(profile.cash_balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
-          { label: "Achievements",     value: `0 / ${ACHIEVEMENTS.length}` },
+          { label: "Total Trades",  value: tradeCount ?? 0 },
+          { label: "Cash Balance",  value: `$${Number(profile.cash_balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+          { label: "Achievements",  value: `${unlockedCount} / ${ACHIEVEMENTS.length}` },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -134,18 +152,22 @@ export default async function ProfilePage() {
             Achievements
           </p>
           <h2 className="text-base font-semibold" style={{ color: "var(--text-2)" }}>
-            Coming soon
+            {unlockedCount === 0
+              ? "Make your first trade to earn achievements"
+              : `${unlockedCount} of ${ACHIEVEMENTS.length} unlocked`}
           </h2>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          {ACHIEVEMENTS.map((a) => (
+          {achievements.map((a) => (
             <div
               key={a.id}
-              className="rounded-xl px-4 py-4 flex items-start gap-3"
+              className="rounded-xl px-4 py-4 flex items-start gap-3 transition-all"
               style={{
-                background: "var(--surface)",
-                border: `1px solid var(--border)`,
+                background: a.unlocked ? "var(--surface)" : "var(--surface)",
+                border: a.unlocked
+                  ? "1px solid var(--gold-border)"
+                  : "1px solid var(--border)",
                 opacity: a.unlocked ? 1 : 0.45,
               }}
             >
@@ -153,7 +175,7 @@ export default async function ProfilePage() {
               <div className="min-w-0">
                 <p
                   className="font-semibold text-sm truncate"
-                  style={{ color: a.unlocked ? "var(--text-1)" : "var(--text-3)" }}
+                  style={{ color: a.unlocked ? "var(--gold)" : "var(--text-3)" }}
                 >
                   {a.title}
                 </p>
@@ -163,6 +185,18 @@ export default async function ProfilePage() {
                 >
                   {a.desc}
                 </p>
+                {a.unlocked && a.unlocked_at && (
+                  <p
+                    className="font-mono text-[10px] mt-1.5"
+                    style={{ color: "var(--gold-dim)" }}
+                  >
+                    Unlocked{" "}
+                    {new Date(a.unlocked_at).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                )}
               </div>
             </div>
           ))}

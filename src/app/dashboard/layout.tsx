@@ -1,7 +1,7 @@
 import Link from "next/link";
 import NavLinks from "@/components/NavLinks";
 import NavUserMenu from "@/components/NavUserMenu";
-import NavSettingsLink from "@/components/NavSettingsLink";
+import NavNotifications from "@/components/NavNotifications";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardLayout({
@@ -58,7 +58,7 @@ export default async function DashboardLayout({
 
         {/* Right side */}
         <div className="ml-auto flex items-center gap-2">
-          <NavSettingsLink />
+          <NavNotifications userId={user?.id ?? null} />
           <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
           <NavUserMenu
             username={profile?.username ?? null}

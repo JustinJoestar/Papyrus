@@ -65,6 +65,8 @@ export default function TradeModal({
       setError(rpcError?.message ?? data?.error ?? "Trade failed");
       setLoading(false);
     } else {
+      // Check achievements in background after every global trade
+      if (!leagueId) supabase.rpc("check_trade_achievements");
       onSuccess();
     }
   }
