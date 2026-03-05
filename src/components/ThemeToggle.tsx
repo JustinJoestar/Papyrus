@@ -3,10 +3,18 @@
 import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
-  const [isLight, setIsLight] = useState(false);
+  const [isLight, setIsLight] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return document.documentElement.getAttribute("data-theme") === "light";
+  });
 
   useEffect(() => {
-    setIsLight(document.documentElement.getAttribute("data-theme") === "light");
+    const check = () =>
+      setIsLight(document.documentElement.getAttribute("data-theme") === "light");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
   }, []);
 
   function toggle() {
@@ -37,8 +45,8 @@ export default function ThemeToggle() {
         onClick={toggle}
         className="relative w-12 h-6 rounded-full transition-all duration-200 shrink-0"
         style={{
-          background: isLight ? "var(--gold)" : "var(--elevated)",
-          border: "1px solid var(--border-mid)",
+          background: isLight ? "#2563eb" : "#3f3f46",
+          border: isLight ? "1px solid #1d4ed8" : "1px solid #52525b",
         }}
         aria-label="Toggle theme"
       >
@@ -47,7 +55,8 @@ export default function ThemeToggle() {
           className="absolute top-0.5 w-5 h-5 rounded-full transition-all duration-200 flex items-center justify-center text-[10px]"
           style={{
             left: isLight ? "calc(100% - 22px)" : "2px",
-            background: isLight ? "#ffffff" : "var(--border-bright)",
+            background: "#ffffff",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.30)",
           }}
         >
           {isLight ? "☀️" : "🌙"}

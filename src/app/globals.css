@@ -41,6 +41,15 @@
   /* Nav background (theme-aware) */
   --nav-bg: rgba(3, 3, 3, 0.90);
 
+  /* Card / glass surface backgrounds */
+  --card-bg: rgba(13, 13, 13, 0.75);
+
+  /* Primary glow shadow (buttons, CTA) */
+  --primary-glow: 0 0 30px rgba(201,168,76,0.25), 0 0 60px rgba(201,168,76,0.10);
+
+  /* CTA section radial gradient */
+  --cta-radial: rgba(201,168,76,0.10);
+
   /* Legacy compat */
   --background: var(--base);
   --foreground: var(--text-1);
@@ -78,6 +87,15 @@
   /* Nav */
   --nav-bg: rgba(255, 255, 255, 0.92);
 
+  /* Card / glass surface backgrounds */
+  --card-bg: rgba(255, 255, 255, 0.85);
+
+  /* Primary glow shadow (buttons, CTA) */
+  --primary-glow: 0 0 30px rgba(37,99,235,0.22), 0 0 60px rgba(37,99,235,0.10);
+
+  /* CTA section radial gradient */
+  --cta-radial: rgba(37,99,235,0.08);
+
   /* Legacy compat */
   --background: var(--base);
   --foreground: var(--text-1);
@@ -103,6 +121,57 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Light mode text-gold-glow → blue glow */
+[data-theme="light"] .text-gold-glow {
+  color: var(--gold);
+  text-shadow:
+    0 0 20px rgba(37,99,235,0.60),
+    0 0 45px rgba(37,99,235,0.30),
+    0 0 90px rgba(37,99,235,0.15),
+    0 0 160px rgba(37,99,235,0.06);
+}
+
+/* Light mode rank1-aura → blue aura */
+[data-theme="light"] .animate-rank1-aura {
+  animation: rank1-aura-light 3s ease-in-out infinite;
+}
+@keyframes rank1-aura-light {
+  0%,  100% { box-shadow: 0 0 0 1px rgba(37,99,235,0.18), 0 0 28px rgba(37,99,235,0.05); }
+  50%        { box-shadow: 0 0 0 1px rgba(37,99,235,0.45), 0 0 48px rgba(37,99,235,0.14); }
+}
+
+/* Light mode auth scan line → blue */
+[data-theme="light"] .auth-scan-line {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(37,99,235,0.3) 50%,
+    transparent 100%
+  );
+}
+
+/* Light mode iMac gradient background → white with blue hints */
+[data-theme="light"] .bg-imac {
+  background:
+    radial-gradient(ellipse 110% 55% at 50% -5%,  rgba(37,99,235,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 70%  50% at 5%  95%,  rgba(59,130,246,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse 70%  50% at 95% 95%,  rgba(37,99,235,0.04) 0%, transparent 50%),
+    #f8fafc;
+}
+
+/* Landing page background */
+.landing-bg {
+  background: #000000;
+}
+[data-theme="light"] .landing-bg {
+  background:
+    radial-gradient(ellipse 130% 55% at 50% -10%, rgba(186,230,253,0.55) 0%, transparent 55%),
+    radial-gradient(ellipse 50%  35% at  2% 38%, rgba(221,214,254,0.30) 0%, transparent 55%),
+    radial-gradient(ellipse 50%  35% at 98% 38%, rgba(186,230,253,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 60%  40% at 50% 105%, rgba(224,242,254,0.35) 0%, transparent 55%),
+    linear-gradient(180deg, #f8fbff 0%, #ffffff 35%, #f9fafb 100%);
 }
 
 /* Scrollbar in light mode */

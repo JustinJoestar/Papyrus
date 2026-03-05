@@ -1,6 +1,7 @@
 import Link from "next/link";
 import AssetTicker from "@/components/AssetTicker";
 import { BeamsBackground } from "@/components/BeamsBackground";
+import NavThemeToggle from "@/components/NavThemeToggle";
 
 const STATS = [
   { value: "250+",    label: "Coins"             },
@@ -43,10 +44,11 @@ const FEATURES = [
 export default function LandingPage() {
   return (
     <div
-      className="min-h-screen relative overflow-hidden"
-      style={{ background: "#000000", color: "var(--text-1)" }}
+      className="min-h-screen relative overflow-hidden landing-bg"
+      style={{ color: "var(--text-1)" }}
     >
       <BeamsBackground />
+
       {/* ── Nav ──────────────────────────────────────────────── */}
       <nav className="relative z-10 flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
         <div className="flex items-center gap-3">
@@ -68,6 +70,7 @@ export default function LandingPage() {
           >
             Markets
           </Link>
+          <NavThemeToggle />
           <Link
             href="/auth/login"
             className="font-mono text-xs px-4 py-2 rounded-xl transition-all"
@@ -80,7 +83,7 @@ export default function LandingPage() {
             className="font-mono text-xs font-bold px-4 py-2 rounded-xl transition-all"
             style={{
               background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-              color: "#0a0800",
+              color: "var(--surface)",
             }}
           >
             Get Started
@@ -134,8 +137,8 @@ export default function LandingPage() {
             className="font-bold font-mono text-sm tracking-[0.1em] px-8 py-3.5 rounded-xl transition-all duration-200"
             style={{
               background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-              color: "#0a0800",
-              boxShadow: "0 0 30px rgba(201,168,76,0.25), 0 0 60px rgba(201,168,76,0.10)",
+              color: "var(--surface)",
+              boxShadow: "var(--primary-glow)",
             }}
           >
             START TRADING FREE →
@@ -144,9 +147,10 @@ export default function LandingPage() {
             href="/dashboard/market"
             className="font-cormorant italic text-lg px-8 py-3 rounded-xl transition-all duration-200"
             style={{
-              background: "var(--surface)",
+              background: "var(--card-bg)",
               border: "1px solid var(--border-mid)",
               color: "var(--text-2)",
+              backdropFilter: "blur(16px)",
             }}
           >
             Browse Markets
@@ -168,7 +172,7 @@ export default function LandingPage() {
         <div
           className="rounded-2xl px-8 py-6 grid grid-cols-5 gap-4"
           style={{
-            background: "rgba(13,13,13,0.75)",
+            background: "var(--card-bg)",
             border: "1px solid var(--border-mid)",
             backdropFilter: "blur(16px)",
           }}
@@ -204,7 +208,7 @@ export default function LandingPage() {
               key={f.title}
               className="rounded-2xl p-6 flex flex-col gap-4"
               style={{
-                background: "rgba(13,13,13,0.75)",
+                background: "var(--card-bg)",
                 border: "1px solid var(--border-mid)",
                 backdropFilter: "blur(16px)",
               }}
@@ -232,12 +236,14 @@ export default function LandingPage() {
       <section className="relative z-10 max-w-4xl mx-auto px-8 pb-24 text-center">
         <div
           className="rounded-2xl p-12 relative overflow-hidden"
-          style={{ background: "rgba(13,13,13,0.75)", border: "1px solid var(--border-mid)" }}
+          style={{ background: "var(--card-bg)", border: "1px solid var(--border-mid)", backdropFilter: "blur(16px)" }}
         >
+          {/* Ambient radial glow */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(ellipse 60% 80% at 50% 120%, rgba(201,168,76,0.10) 0%, transparent 65%)" }}
+            style={{ background: `radial-gradient(ellipse 60% 80% at 50% 120%, var(--cta-radial) 0%, transparent 65%)` }}
           />
+          {/* Top accent line */}
           <div
             className="h-px absolute top-0 inset-x-0"
             style={{ background: "linear-gradient(90deg, transparent, var(--gold) 35%, var(--gold-bright) 50%, var(--gold) 65%, transparent)" }}
@@ -258,8 +264,8 @@ export default function LandingPage() {
               className="inline-block font-bold font-mono text-sm tracking-[0.1em] px-10 py-3.5 rounded-xl transition-all duration-200"
               style={{
                 background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-                color: "#0a0800",
-                boxShadow: "0 0 30px rgba(201,168,76,0.25)",
+                color: "var(--surface)",
+                boxShadow: "var(--primary-glow)",
               }}
             >
               CREATE FREE ACCOUNT →

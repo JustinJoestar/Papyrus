@@ -202,6 +202,7 @@ export interface BeamsProps {
   noiseIntensity?: number
   scale?: number
   rotation?: number
+  backgroundColor?: string
 }
 
 function createStackedPlanesBufferGeometry(
@@ -336,6 +337,7 @@ export const Beams: FC<BeamsProps> = ({
   noiseIntensity = 1.75,
   scale = 0.2,
   rotation = 0,
+  backgroundColor = "#000000",
 }) => {
   const meshRef = useRef<THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial>>(null!)
 
@@ -405,7 +407,7 @@ export const Beams: FC<BeamsProps> = ({
         <DirLight color={lightColor} position={[0, 3, 10]} />
       </group>
       <ambientLight intensity={1} />
-      <color attach="background" args={["#000000"]} />
+      <color attach="background" args={[backgroundColor]} />
       <PerspectiveCamera makeDefault position={[0, 0, 20]} fov={30} />
     </CanvasWrapper>
   )
