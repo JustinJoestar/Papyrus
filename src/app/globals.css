@@ -348,6 +348,10 @@ body {
     #000000;
 }
 
+/* Asset ticker background variable */
+:root { --ticker-bg: rgba(0,0,0,0.5); }
+[data-theme="light"] { --ticker-bg: rgba(226, 232, 240, 0.7); }
+
 /* Scrolling asset ticker */
 @keyframes ticker-scroll {
   0%   { transform: translateX(0); }
@@ -357,9 +361,6 @@ body {
   display: flex;
   width: max-content;
   animation: ticker-scroll 50s linear infinite;
-}
-.ticker-track:hover {
-  animation-play-state: paused;
 }
 
 /* Playfair headline utility */

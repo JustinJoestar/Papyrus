@@ -24,12 +24,6 @@ export default async function MarketPage() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-10">
       <div className="mb-8">
-        <p
-          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
-          style={{ color: "var(--text-3)" }}
-        >
-          Markets
-        </p>
         <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
           Market
         </h1>
