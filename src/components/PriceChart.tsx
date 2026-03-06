@@ -37,7 +37,7 @@ function formatPrice(price: number) {
 }
 
 type Props = {
-  chartBaseUrl: string; // e.g. "/api/crypto/chart?coinId=bitcoin" or "/api/stocks/chart?symbol=AAPL"
+  chartBaseUrl: string;
   isPositive: boolean;
 };
 
@@ -132,15 +132,20 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
               width={80}
             />
             <Tooltip
+              isAnimationActive={false}
+              position={{ y: 40 }}
               contentStyle={{
                 backgroundColor: "#0d0d0d",
                 border: "1px solid #272727",
-                borderRadius: "8px",
+                borderRadius: "6px",
                 color: "#ffffff",
-                fontSize: 13,
+                fontSize: 11,
+                padding: "4px 8px",
+                lineHeight: "1.4",
               }}
               formatter={(value: number | undefined) => [formatPrice(value ?? 0), "Price"]}
-              labelStyle={{ color: "#585858" }}
+              labelStyle={{ color: "#585858", fontSize: 10, marginBottom: 1 }}
+              itemStyle={{ padding: 0 }}
             />
             <Area
               type="monotone"

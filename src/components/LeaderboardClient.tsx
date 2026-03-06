@@ -103,7 +103,7 @@ export default function LeaderboardClient({
                 return (
                   <div
                     key={entry.username}
-                    className="relative rounded-2xl px-6 py-5 flex items-center gap-4"
+                    className="relative rounded-2xl px-8 py-7 flex items-center gap-6"
                     style={{
                       background: isMe ? "rgba(201,168,76,0.04)" : "var(--surface)",
                       border: `1px solid ${isMe ? "rgba(201,168,76,0.35)" : s.border}`,
@@ -111,31 +111,31 @@ export default function LeaderboardClient({
                     }}
                   >
                     <div
-                      className="w-11 h-11 rounded-xl flex flex-col items-center justify-center shrink-0"
+                      className="w-16 h-16 rounded-xl flex flex-col items-center justify-center shrink-0"
                       style={{
                         background: isMe ? "rgba(201,168,76,0.12)" : s.badgeBg,
                         border: `1px solid ${isMe ? "rgba(201,168,76,0.3)" : s.border}`,
                       }}
                     >
-                      <span className="font-mono font-bold text-base leading-none" style={{ color: isMe ? "var(--gold-bright)" : s.badgeColor }}>
+                      <span className="font-mono font-bold text-2xl leading-none" style={{ color: isMe ? "var(--gold-bright)" : s.badgeColor }}>
                         {entry.rank}
                       </span>
-                      <span className="font-mono text-[8px] tracking-wider mt-0.5" style={{ color: isMe ? "var(--gold-dim)" : s.badgeColor, opacity: 0.7 }}>
+                      <span className="font-mono text-[10px] tracking-wider mt-1" style={{ color: isMe ? "var(--gold-dim)" : s.badgeColor, opacity: 0.7 }}>
                         {s.label}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0 flex items-center gap-3">
-                      <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={9} />
+                      <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={14} />
                       <div className="flex items-center gap-2 flex-wrap min-w-0">
-                        <p className="font-semibold truncate" style={{ color: "var(--text-1)" }}>{entry.username}</p>
+                        <p className="font-semibold text-xl truncate" style={{ color: "var(--text-1)" }}>{entry.username}</p>
                         {isMe && (
                           <span className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0" style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "var(--gold)" }}>YOU</span>
                         )}
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-mono font-bold text-lg" style={{ color: isMe ? "var(--gold-bright)" : s.valueColor }}>${fmt(entry.totalValue)}</p>
-                      <p className="font-mono text-[10px] tracking-wide" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
+                      <p className="font-mono font-bold text-2xl" style={{ color: isMe ? "var(--gold-bright)" : s.valueColor }}>${fmt(entry.totalValue)}</p>
+                      <p className="font-mono text-sm tracking-wide mt-1" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
                     </div>
                   </div>
                 );
@@ -149,23 +149,23 @@ export default function LeaderboardClient({
               {rest.map((entry) => (
                 <div
                   key={entry.username}
-                  className="rounded-xl px-5 py-3.5 flex items-center gap-4 transition-colors"
+                  className="rounded-xl px-6 py-5 flex items-center gap-5 transition-colors"
                   style={{
                     background: entry.isCurrentUser ? "rgba(201,168,76,0.03)" : "var(--surface)",
                     border: `1px solid ${entry.isCurrentUser ? "rgba(201,168,76,0.2)" : "var(--border)"}`,
                   }}
                 >
-                  <span className="font-mono text-xs w-8 shrink-0 tabular-nums" style={{ color: "var(--text-3)" }}>
+                  <span className="font-mono text-base w-10 shrink-0 tabular-nums" style={{ color: "var(--text-3)" }}>
                     #{entry.rank}
                   </span>
-                  <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={7} />
+                  <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={10} />
                   <div className="flex-1 min-w-0 flex items-center gap-2">
-                    <p className="text-sm truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
+                    <p className="text-base font-medium truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
                     {entry.isCurrentUser && <span className="text-[10px] font-mono shrink-0" style={{ color: "var(--gold-dim)" }}>you</span>}
                   </div>
                   <div className="text-right">
-                    <p className="font-mono font-semibold text-sm" style={{ color: entry.isCurrentUser ? "var(--gold)" : "var(--text-2)" }}>${fmt(entry.totalValue)}</p>
-                    <p className="font-mono text-[10px]" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
+                    <p className="font-mono font-semibold text-base" style={{ color: entry.isCurrentUser ? "var(--gold)" : "var(--text-2)" }}>${fmt(entry.totalValue)}</p>
+                    <p className="font-mono text-xs" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
                   </div>
                 </div>
               ))}

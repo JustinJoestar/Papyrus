@@ -34,17 +34,17 @@ export default function NavLinks() {
                     border: "1px solid var(--gold-border)",
                   }
                 : {
-                    color: "var(--text-3)",
+                    color: "var(--text-2)",
                     border: "1px solid transparent",
                   }
             }
             onMouseEnter={(e) => {
               if (!active)
-                e.currentTarget.style.color = "var(--text-2)";
+                e.currentTarget.style.color = "var(--text-1)";
             }}
             onMouseLeave={(e) => {
               if (!active)
-                e.currentTarget.style.color = "var(--text-3)";
+                e.currentTarget.style.color = "var(--text-2)";
             }}
           >
             {label}

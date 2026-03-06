@@ -61,6 +61,7 @@ export default async function DashboardPage({
     if (!memberInfo) redirect("/dashboard");
 
     let priceMap: Record<string, number> = {};
+    let symbolToCoinId: Record<string, string> = {};
     if (rawHoldings && rawHoldings.length > 0) {
       const cryptoH    = rawHoldings.filter((h) => h.asset_type === "crypto");
       const stockH     = rawHoldings.filter((h) => h.asset_type === "stock");
@@ -71,11 +72,18 @@ export default async function DashboardPage({
         commodityH.length > 0 ? getCommodityPrices(commodityH.map((h) => h.symbol))  : Promise.resolve({}),
       ]);
       priceMap = { ...buildPriceMap(coins), ...stockPrices, ...commodityPrices };
+      for (const c of coins) symbolToCoinId[c.symbol.toUpperCase()] = c.id;
     }
 
     const holdings: HoldingWithPrice[] = (rawHoldings ?? []).map((h) => {
       const currentPrice = priceMap[h.symbol] ?? h.avg_buy_price;
-      return { ...h, id: `${h.league_id}-${h.symbol}`, currentPrice, currentValue: currentPrice * h.quantity };
+      return {
+        ...h,
+        id: `${h.league_id}-${h.symbol}`,
+        currentPrice,
+        currentValue: currentPrice * h.quantity,
+        coinId: h.asset_type === "crypto" ? symbolToCoinId[h.symbol.toUpperCase()] : undefined,
+      };
     });
 
     const cashBalance    = memberInfo.league_cash_balance ?? 0;
@@ -177,6 +185,7 @@ export default async function DashboardPage({
   ]);
 
   let priceMap: Record<string, number> = {};
+  let symbolToCoinId: Record<string, string> = {};
   if (holdings && holdings.length > 0) {
     const cryptoH    = holdings.filter((h) => h.asset_type === "crypto");
     const stockH     = holdings.filter((h) => h.asset_type === "stock");
@@ -187,11 +196,17 @@ export default async function DashboardPage({
       commodityH.length > 0 ? getCommodityPrices(commodityH.map((h) => h.symbol))  : Promise.resolve({}),
     ]);
     priceMap = { ...buildPriceMap(coins), ...stockPrices, ...commodityPrices };
+    for (const c of coins) symbolToCoinId[c.symbol.toUpperCase()] = c.id;
   }
 
   const holdingsWithPrices: HoldingWithPrice[] = (holdings ?? []).map((h) => {
     const currentPrice = priceMap[h.symbol] ?? h.avg_buy_price;
-    return { ...h, currentPrice, currentValue: currentPrice * h.quantity };
+    return {
+      ...h,
+      currentPrice,
+      currentValue: currentPrice * h.quantity,
+      coinId: h.asset_type === "crypto" ? symbolToCoinId[h.symbol.toUpperCase()] : undefined,
+    };
   });
 
   const portfolioValue  = holdingsWithPrices.reduce((s, h) => s + h.currentValue, 0);

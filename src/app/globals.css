@@ -28,7 +28,7 @@
   /* ── Text (maximum contrast) ────────────────────────────── */
   --text-1: #ffffff;   /* primary  — pure white   */
   --text-2: #b4b4b4;   /* secondary — bright gray */
-  --text-3: #585858;   /* muted    — mid gray     */
+  --text-3: #909090;   /* muted    — mid gray     */
 
   /* ── Status ─────────────────────────────────────────────── */
   --gain:        #22c55e;
@@ -171,7 +171,7 @@
     radial-gradient(ellipse 50%  35% at  2% 38%, rgba(221,214,254,0.30) 0%, transparent 55%),
     radial-gradient(ellipse 50%  35% at 98% 38%, rgba(186,230,253,0.22) 0%, transparent 55%),
     radial-gradient(ellipse 60%  40% at 50% 105%, rgba(224,242,254,0.35) 0%, transparent 55%),
-    linear-gradient(180deg, #f8fbff 0%, #ffffff 35%, #f9fafb 100%);
+    linear-gradient(180deg, #dde8f0 0%, #e8eef4 35%, #dfe6ed 100%);
 }
 
 /* Scrollbar in light mode */

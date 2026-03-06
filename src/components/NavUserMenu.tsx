@@ -76,6 +76,19 @@ export default function NavUserMenu({ username, avatarUrl }: Props) {
         >
           {username ?? "Profile"}
         </span>
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          className="shrink-0 transition-transform duration-200"
+          style={{
+            color: open ? "var(--gold)" : "var(--text-3)",
+            transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        >
+          <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
       </button>
 
       {/* Dropdown */}

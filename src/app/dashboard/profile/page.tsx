@@ -60,7 +60,7 @@ export default async function ProfilePage() {
   });
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <div className="max-w-5xl mx-auto px-6 py-10">
       {/* Header */}
       <div className="mb-8">
         <p
@@ -76,7 +76,7 @@ export default async function ProfilePage() {
 
       {/* Avatar + identity card */}
       <div
-        className="rounded-2xl p-6 mb-6 flex items-center gap-8"
+        className="rounded-2xl p-10 mb-6 flex items-center gap-12"
         style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
       >
         <AvatarUpload
@@ -85,7 +85,7 @@ export default async function ProfilePage() {
           avatarUrl={profile.avatar_url}
         />
 
-        <div className="flex-1 min-w-0 space-y-5">
+        <div className="flex-1 min-w-0 space-y-7">
           <UsernameForm
             currentUsername={profile.username}
             usernameChangedAt={profile.username_changed_at ?? null}
@@ -98,7 +98,7 @@ export default async function ProfilePage() {
             >
               Email
             </p>
-            <p className="text-sm" style={{ color: "var(--text-2)" }}>
+            <p className="text-base" style={{ color: "var(--text-2)" }}>
               {user.email}
             </p>
           </div>
@@ -110,7 +110,7 @@ export default async function ProfilePage() {
             >
               Member Since
             </p>
-            <p className="text-sm" style={{ color: "var(--text-2)" }}>
+            <p className="text-base" style={{ color: "var(--text-2)" }}>
               {memberSince}
             </p>
           </div>
@@ -118,7 +118,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-3 gap-4 mb-8">
         {[
           { label: "Total Trades",  value: tradeCount ?? 0 },
           { label: "Cash Balance",  value: `$${Number(profile.cash_balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
@@ -126,14 +126,14 @@ export default async function ProfilePage() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl px-4 py-4 text-center"
+            className="rounded-xl px-6 py-7 text-center"
             style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
           >
-            <p className="font-mono font-bold text-xl text-gold-gradient mb-1">
+            <p className="font-mono font-bold text-3xl text-gold-gradient mb-2">
               {stat.value}
             </p>
             <p
-              className="font-mono text-[10px] tracking-[0.18em] uppercase"
+              className="font-mono text-xs tracking-[0.18em] uppercase"
               style={{ color: "var(--text-3)" }}
             >
               {stat.label}
@@ -158,11 +158,11 @@ export default async function ProfilePage() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {achievements.map((a) => (
             <div
               key={a.id}
-              className="rounded-xl px-4 py-4 flex items-start gap-3 transition-all"
+              className="rounded-xl px-6 py-5 flex items-start gap-4 transition-all"
               style={{
                 background: a.unlocked ? "var(--surface)" : "var(--surface)",
                 border: a.unlocked
@@ -171,16 +171,16 @@ export default async function ProfilePage() {
                 opacity: a.unlocked ? 1 : 0.45,
               }}
             >
-              <span className="text-2xl shrink-0">{a.icon}</span>
+              <span className="text-3xl shrink-0">{a.icon}</span>
               <div className="min-w-0">
                 <p
-                  className="font-semibold text-sm truncate"
+                  className="font-semibold text-base truncate"
                   style={{ color: a.unlocked ? "var(--gold)" : "var(--text-3)" }}
                 >
                   {a.title}
                 </p>
                 <p
-                  className="text-xs leading-snug mt-0.5"
+                  className="text-sm leading-snug mt-1"
                   style={{ color: "var(--text-3)" }}
                 >
                   {a.desc}

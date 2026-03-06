@@ -2,6 +2,7 @@ import Link from "next/link";
 import AssetTicker from "@/components/AssetTicker";
 import { BeamsBackground } from "@/components/BeamsBackground";
 import NavThemeToggle from "@/components/NavThemeToggle";
+import NavLinks from "@/components/NavLinks";
 
 const STATS = [
   { value: "250+",    label: "Coins"             },
@@ -50,26 +51,26 @@ export default function LandingPage() {
       <BeamsBackground />
 
       {/* ── Nav ──────────────────────────────────────────────── */}
-      <nav className="relative z-10 flex items-center justify-between px-8 py-5 max-w-6xl mx-auto">
-        <div className="flex items-center gap-3">
+      <nav
+        className="sticky top-0 z-50 h-14 flex items-center px-6 gap-4 backdrop-blur-md"
+        style={{ background: "var(--nav-bg)", borderBottom: "1px solid var(--border)" }}
+      >
+        <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-end gap-[3px]">
             <div className="w-[3px] h-3      rounded-sm" style={{ background: "var(--gold)" }} />
-            <div className="w-[3px] h-[18px] rounded-sm" style={{ background: "var(--gold)" }} />
+            <div className="w-[3px] h-[16px] rounded-sm" style={{ background: "var(--gold)" }} />
             <div className="w-[3px] h-2      rounded-sm" style={{ background: "var(--gold-dim)" }} />
           </div>
-          <span className="font-playfair font-bold text-xl tracking-wide" style={{ color: "var(--text-1)" }}>
-            Papyrus
+          <span className="font-mono font-bold text-sm tracking-[0.15em]" style={{ color: "var(--text-1)" }}>
+            PAPYRUS
           </span>
-        </div>
+        </Link>
 
-        <div className="flex items-center gap-3">
-          <Link
-            href="/dashboard/market"
-            className="font-cormorant text-base italic px-3 py-1.5 transition-colors"
-            style={{ color: "var(--text-3)" }}
-          >
-            Markets
-          </Link>
+        <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
+
+        <NavLinks />
+
+        <div className="ml-auto flex items-center gap-3">
           <NavThemeToggle />
           <Link
             href="/auth/login"
@@ -107,24 +108,24 @@ export default function LandingPage() {
         {/* Main headline — Playfair + glow */}
         <h1 className="font-playfair font-bold leading-[1.08] tracking-tight mb-4" style={{ fontSize: "clamp(2.8rem, 6vw, 4.5rem)" }}>
           Paper trade.{" "}
-          <span className="font-playfair italic text-gold-glow">
+          <span className="font-playfair text-gold-glow">
             Real competition.
           </span>
         </h1>
 
-        {/* Subheadline — Cormorant italic */}
+        {/* Subheadline — Cormorant */}
         <p
-          className="font-cormorant text-2xl italic mb-6 leading-relaxed"
-          style={{ color: "var(--text-2)" }}
+          className="font-cormorant text-2xl font-semibold mb-6 leading-relaxed"
+          style={{ color: "var(--text-1)" }}
         >
           The trading arena where{" "}
-          <span style={{ color: "var(--gold)", fontStyle: "italic" }}>skill, not luck,</span>
+          <span style={{ color: "var(--gold)" }}>skill, not luck,</span>
           {" "}determines the leaderboard.
         </p>
 
         <p
-          className="font-cormorant text-lg max-w-xl mx-auto mb-10 leading-loose"
-          style={{ color: "var(--text-2)" }}
+          className="font-cormorant text-lg font-medium max-w-xl mx-auto mb-10 leading-loose"
+          style={{ color: "var(--text-1)" }}
         >
           Start with <span className="font-semibold" style={{ color: "var(--gold-bright)" }}>$10,000</span> in virtual cash.
           {" "}Trade crypto, stocks, and commodities at live prices —
@@ -145,11 +146,11 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/dashboard/market"
-            className="font-cormorant italic text-lg px-8 py-3 rounded-xl transition-all duration-200"
+            className="font-cormorant text-lg px-8 py-3 rounded-xl transition-all duration-200"
             style={{
               background: "var(--card-bg)",
               border: "1px solid var(--border-mid)",
-              color: "var(--text-2)",
+              color: "var(--text-1)",
               backdropFilter: "blur(16px)",
             }}
           >
@@ -157,7 +158,7 @@ export default function LandingPage() {
           </Link>
         </div>
 
-        <p className="mt-5 font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>
+        <p className="mt-5 font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-2)" }}>
           Virtual funds only · No real money at risk
         </p>
       </section>
@@ -182,7 +183,7 @@ export default function LandingPage() {
               <p className="font-playfair font-bold text-2xl mb-1 text-gold-glow">
                 {s.value}
               </p>
-              <p className="font-mono text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--text-3)" }}>
+              <p className="font-mono text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--text-2)" }}>
                 {s.label}
               </p>
             </div>
@@ -192,13 +193,13 @@ export default function LandingPage() {
 
       {/* ── Features ─────────────────────────────────────────── */}
       <section className="relative z-10 max-w-4xl mx-auto px-8 pb-24">
-        <p className="font-mono text-[10px] tracking-[0.28em] uppercase text-center mb-3" style={{ color: "var(--text-3)" }}>
+        <p className="font-mono text-[10px] tracking-[0.28em] uppercase text-center mb-3" style={{ color: "var(--text-2)" }}>
           Everything you need
         </p>
         <h2 className="font-playfair text-3xl font-bold text-center mb-2" style={{ color: "var(--text-1)" }}>
           Built for serious traders
         </h2>
-        <p className="font-cormorant italic text-xl text-center mb-10" style={{ color: "var(--text-3)" }}>
+        <p className="font-cormorant text-xl font-medium text-center mb-10" style={{ color: "var(--text-2)" }}>
           The tools professionals use, with nothing to lose.
         </p>
 
@@ -223,7 +224,7 @@ export default function LandingPage() {
                 <h3 className="font-playfair font-semibold text-lg mb-2" style={{ color: "var(--text-1)" }}>
                   {f.title}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
+                <p className="text-sm font-medium leading-relaxed" style={{ color: "var(--text-2)" }}>
                   {f.desc}
                 </p>
               </div>
@@ -250,13 +251,13 @@ export default function LandingPage() {
           />
 
           <div className="relative z-10">
-            <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-4" style={{ color: "var(--text-3)" }}>
+            <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-4" style={{ color: "var(--text-2)" }}>
               Ready to compete?
             </p>
-            <h2 className="font-playfair text-4xl font-bold italic mb-3 text-gold-glow">
+            <h2 className="font-playfair text-4xl font-bold mb-3 text-gold-glow">
               Start with $10,000 today
             </h2>
-            <p className="font-cormorant italic text-xl mb-8" style={{ color: "var(--text-3)" }}>
+            <p className="font-cormorant text-xl font-medium mb-8" style={{ color: "var(--text-2)" }}>
               No credit card. No real money. Just strategy.
             </p>
             <Link
@@ -276,7 +277,7 @@ export default function LandingPage() {
 
       {/* ── Footer ───────────────────────────────────────────── */}
       <footer className="relative z-10 border-t pb-10 pt-8 text-center" style={{ borderColor: "var(--border)" }}>
-        <p className="font-cormorant italic text-base" style={{ color: "var(--text-3)" }}>
+        <p className="font-cormorant text-base font-medium" style={{ color: "var(--text-2)" }}>
           Papyrus — Virtual funds only · No real money at risk
         </p>
       </footer>

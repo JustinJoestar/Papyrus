@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import TradeModal from "./TradeModal";
+import HoldingDetailModal from "./HoldingDetailModal";
 
 export type HoldingWithPrice = {
   id: string;
@@ -12,6 +13,7 @@ export type HoldingWithPrice = {
   avg_buy_price: number;
   currentPrice: number;
   currentValue: number;
+  coinId?: string;
 };
 
 export default function HoldingsList({
@@ -25,6 +27,7 @@ export default function HoldingsList({
 }) {
   const router = useRouter();
   const [sellTarget, setSellTarget] = useState<HoldingWithPrice | null>(null);
+  const [detailTarget, setDetailTarget] = useState<HoldingWithPrice | null>(null);
 
   const fmt = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -68,7 +71,9 @@ export default function HoldingsList({
               style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border)",
+                cursor: "pointer",
               }}
+              onClick={() => setDetailTarget(h)}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.borderColor = "var(--border-mid)")
               }
@@ -114,7 +119,7 @@ export default function HoldingsList({
               </div>
 
               <button
-                onClick={() => setSellTarget(h)}
+                onClick={(e) => { e.stopPropagation(); setSellTarget(h); }}
                 className="shrink-0 px-3 py-1.5 text-xs font-mono font-medium rounded-lg transition-all duration-150 opacity-0 group-hover:opacity-100"
                 style={{
                   color: "var(--loss)",
@@ -135,6 +140,14 @@ export default function HoldingsList({
           );
         })}
       </div>
+
+      {detailTarget && (
+        <HoldingDetailModal
+          holding={detailTarget}
+          onClose={() => setDetailTarget(null)}
+          onSell={(h) => { setDetailTarget(null); setSellTarget(h); }}
+        />
+      )}
 
       {sellTarget && (
         <TradeModal

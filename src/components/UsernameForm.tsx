@@ -109,7 +109,7 @@ export default function UsernameForm({ currentUsername, usernameChangedAt }: Pro
         </div>
       ) : (
         <div className="flex items-center gap-3">
-          <span className="font-semibold text-lg" style={{ color: "var(--text-1)" }}>
+          <span className="font-semibold text-2xl" style={{ color: "var(--text-1)" }}>
             {currentUsername}
           </span>
           {canChange ? (
@@ -130,7 +130,7 @@ export default function UsernameForm({ currentUsername, usernameChangedAt }: Pro
             </button>
           ) : (
             <span className="font-mono text-[10px] tracking-wider" style={{ color: "var(--text-3)" }}>
-              Available {nextChangeDate}
+              Change on {nextChangeDate}
             </span>
           )}
           {success && (

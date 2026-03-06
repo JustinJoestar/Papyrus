@@ -66,7 +66,7 @@ export default function AssetTicker() {
             </div>
             <span
               className="font-mono text-xs font-semibold tracking-wide"
-              style={{ color: "var(--text-3)" }}
+              style={{ color: "var(--text-1)" }}
             >
               {asset.symbol}
             </span>
