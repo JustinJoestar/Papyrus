@@ -35,17 +35,19 @@ export default function TradeModal({
   const [buyIn,   setBuyIn]   = useState<"usd" | "coin">("usd");
 
   const parsed   = parseFloat(amount) || 0;
-  const quantity = mode === "sell" ? parsed : buyIn === "usd" ? parsed / coin.price : parsed;
+  const rawQty   = mode === "sell" ? parsed : buyIn === "usd" ? parsed / coin.price : parsed;
+  const quantity = mode === "sell" && maxQuantity !== undefined ? Math.min(rawQty, maxQuantity) : rawQty;
   const usdValue = mode === "sell" ? parsed * coin.price : buyIn === "usd" ? parsed : parsed * coin.price;
   const sliderPct = maxQuantity && maxQuantity > 0 ? (parsed / maxQuantity) * 100 : 0;
 
   function setPercent(pct: number) {
     if (!maxQuantity) return;
-    setAmount((maxQuantity * pct).toFixed(6));
+    setAmount(pct === 1 ? String(maxQuantity) : (maxQuantity * pct).toFixed(6));
   }
   function handleSlider(e: React.ChangeEvent<HTMLInputElement>) {
     if (!maxQuantity) return;
-    setAmount((maxQuantity * parseFloat(e.target.value) / 100).toFixed(6));
+    const pct = parseFloat(e.target.value) / 100;
+    setAmount(pct >= 1 ? String(maxQuantity) : (maxQuantity * pct).toFixed(6));
   }
 
   async function handleTrade() {

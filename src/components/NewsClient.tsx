@@ -32,7 +32,7 @@ function HeroCard({ article, onClick }: { article: NewsItem; onClick: () => void
   return (
     <button
       onClick={onClick}
-      className="w-full text-left rounded-xl overflow-hidden mb-3 group transition-opacity duration-150 hover:opacity-90"
+      className="w-full text-left rounded-xl overflow-hidden mb-4 group transition-opacity duration-150 hover:opacity-90"
       style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
     >
       {img && (
@@ -45,13 +45,13 @@ function HeroCard({ article, onClick }: { article: NewsItem; onClick: () => void
           />
         </div>
       )}
-      <div className="p-4">
+      <div className="p-6">
         {article.relatedTickers?.length ? (
-          <div className="flex gap-1 mb-2 flex-wrap">
+          <div className="flex gap-1.5 mb-3 flex-wrap">
             {article.relatedTickers.slice(0, 4).map((t) => (
               <span
                 key={t}
-                className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                className="text-xs font-mono px-2 py-0.5 rounded"
                 style={{
                   background: "var(--gold-glow)",
                   color: "var(--gold-bright)",
@@ -63,10 +63,10 @@ function HeroCard({ article, onClick }: { article: NewsItem; onClick: () => void
             ))}
           </div>
         ) : null}
-        <h2 className="text-base font-bold leading-snug mb-2" style={{ color: "var(--text-1)" }}>
+        <h2 className="text-xl font-bold leading-snug mb-3" style={{ color: "var(--text-1)" }}>
           {article.title}
         </h2>
-        <div className="flex items-center gap-1.5 text-xs" style={{ color: "var(--text-3)" }}>
+        <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-3)" }}>
           <span>{article.publisher}</span>
           <span>·</span>
           <span>{timeAgo(article.providerPublishTime)}</span>
@@ -83,15 +83,15 @@ function ListCard({ article, onClick }: { article: NewsItem; onClick: () => void
   return (
     <button
       onClick={onClick}
-      className="w-full text-left flex gap-3 py-4 transition-opacity duration-150 hover:opacity-75"
-      style={{ borderBottom: "1px solid var(--border)" }}
+      className="w-full text-left flex gap-4 py-5 px-4 transition-opacity duration-150 hover:opacity-75 rounded-xl mb-2"
+      style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
     >
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] font-mono mb-1" style={{ color: "var(--text-3)" }}>
+        <p className="text-xs font-mono mb-1.5" style={{ color: "var(--text-3)" }}>
           {article.publisher}&nbsp;·&nbsp;{timeAgo(article.providerPublishTime)}
         </p>
         <h3
-          className="text-sm font-semibold leading-snug"
+          className="text-base font-semibold leading-snug"
           style={{
             color: "var(--text-1)",
             display: "-webkit-box",
@@ -103,11 +103,11 @@ function ListCard({ article, onClick }: { article: NewsItem; onClick: () => void
           {article.title}
         </h3>
         {article.relatedTickers?.length ? (
-          <div className="flex gap-1 mt-1.5 flex-wrap">
+          <div className="flex gap-1.5 mt-2 flex-wrap">
             {article.relatedTickers.slice(0, 3).map((t) => (
               <span
                 key={t}
-                className="text-[10px] font-mono px-1.5 py-0.5 rounded"
+                className="text-xs font-mono px-2 py-0.5 rounded"
                 style={{
                   background: "var(--gold-glow)",
                   color: "var(--gold-bright)",
@@ -121,7 +121,7 @@ function ListCard({ article, onClick }: { article: NewsItem; onClick: () => void
         ) : null}
       </div>
       {img && (
-        <div className="shrink-0 w-[88px] h-[66px] rounded-lg overflow-hidden">
+        <div className="shrink-0 w-[120px] h-[90px] rounded-lg overflow-hidden">
           <img
             src={img}
             alt=""
@@ -186,7 +186,7 @@ function ArticleDetail({ article, onBack }: { article: NewsItem; onBack: () => v
             </div>
           </div>
 
-          <h1 className="text-xl font-bold leading-snug mb-5" style={{ color: "var(--text-1)" }}>
+          <h1 className="text-2xl font-bold leading-snug mb-5" style={{ color: "var(--text-1)" }}>
             {article.title}
           </h1>
 
@@ -243,7 +243,7 @@ export default function NewsClient({ news }: { news: NewsItem[] }) {
 
   if (selected) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-8 py-12">
         <ArticleDetail article={selected} onBack={() => setSelected(null)} />
       </div>
     );
@@ -252,16 +252,16 @@ export default function NewsClient({ news }: { news: NewsItem[] }) {
   const [featured, ...rest] = news;
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
-      <div className="mb-8">
+    <div className="max-w-4xl mx-auto px-8 py-12">
+      <div className="mb-10">
         <p
-          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
+          className="font-mono text-xs tracking-[0.28em] uppercase mb-1"
           style={{ color: "var(--text-3)" }}
         >
           Markets
         </p>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
-          Market
+        <h1 className="text-3xl font-bold" style={{ color: "var(--text-1)" }}>
+          Market News
         </h1>
       </div>
 

@@ -5,6 +5,13 @@ import { getCommodityPrices } from "@/lib/commodities";
 import ResetCountdown from "@/components/ResetCountdown";
 import LeaderboardClient from "@/components/LeaderboardClient";
 
+type Holding = {
+  symbol: string;
+  quantity: number;
+  assetType: string;
+  value: number;
+};
+
 type LeaderboardEntry = {
   username: string;
   avatarUrl: string | null;
@@ -12,6 +19,7 @@ type LeaderboardEntry = {
   cashBalance: number;
   rank: number;
   isCurrentUser: boolean;
+  holdings: Holding[];
 };
 
 type SnapshotEntry = {
@@ -82,14 +90,22 @@ export default async function LeaderboardPage() {
     ]);
 
     const priceMap: Record<string, number> = { ...buildPriceMap(coins), ...stockPrices, ...commodityPrices };
-    const userMap: Record<string, { username: string; cashBalance: number; holdingsValue: number }> = {};
+    const userMap: Record<string, { username: string; cashBalance: number; holdingsValue: number; holdings: Holding[] }> = {};
 
     for (const row of allRows) {
       if (!userMap[row.user_id]) {
-        userMap[row.user_id] = { username: row.username, cashBalance: row.cash_balance, holdingsValue: 0 };
+        userMap[row.user_id] = { username: row.username, cashBalance: row.cash_balance, holdingsValue: 0, holdings: [] };
       }
       if (row.symbol && row.quantity) {
-        userMap[row.user_id].holdingsValue += (priceMap[row.symbol] ?? 0) * row.quantity;
+        const price = priceMap[row.symbol] ?? 0;
+        const value = price * row.quantity;
+        userMap[row.user_id].holdingsValue += value;
+        userMap[row.user_id].holdings.push({
+          symbol: row.symbol,
+          quantity: row.quantity,
+          assetType: row.asset_type ?? "crypto",
+          value,
+        });
       }
     }
 
@@ -108,6 +124,7 @@ export default async function LeaderboardPage() {
         cashBalance: data.cashBalance,
         rank: 0,
         isCurrentUser: userId === user?.id,
+        holdings: data.holdings.sort((a, b) => b.value - a.value),
       }))
       .sort((a, b) => b.totalValue - a.totalValue)
       .map((entry, i) => ({ ...entry, rank: i + 1 }));

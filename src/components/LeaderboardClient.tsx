@@ -1,6 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+
+type Holding = {
+  symbol: string;
+  quantity: number;
+  assetType: string;
+  value: number;
+};
 
 type Entry = {
   username: string;
@@ -9,6 +17,7 @@ type Entry = {
   cashBalance: number;
   rank: number;
   isCurrentUser: boolean;
+  holdings: Holding[];
 };
 
 function Avatar({ username, avatarUrl, size = 8 }: { username: string; avatarUrl: string | null; size?: number }) {
@@ -47,6 +56,130 @@ const PODIUM = {
   3: { border: "rgba(180,110,60,0.28)",  badgeBg: "rgba(180,110,60,0.08)",  badgeColor: "#c07040",            valueColor: "#c07040",            label: "BRONZE" },
 } as const;
 
+function ProfileDetail({ entry, onBack }: { entry: Entry; onBack: () => void }) {
+  const fmt = (n: number) =>
+    n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const holdingsValue = entry.totalValue - entry.cashBalance;
+  const podiumStyle = PODIUM[entry.rank as 1 | 2 | 3] ?? null;
+
+  return (
+    <div>
+      <button
+        onClick={onBack}
+        className="flex items-center gap-2 mb-6 text-base font-medium transition-opacity hover:opacity-70"
+        style={{ color: "var(--text-2)" }}
+      >
+        <ArrowLeft size={16} />
+        Back to Leaderboard
+      </button>
+
+      {/* Profile card */}
+      <div
+        className="rounded-2xl px-8 py-8 mb-6 flex items-center gap-6"
+        style={{
+          background: "var(--surface)",
+          border: `1px solid ${podiumStyle ? podiumStyle.border : "var(--border-mid)"}`,
+        }}
+      >
+        <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={20} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-2xl font-bold truncate" style={{ color: "var(--text-1)" }}>
+              {entry.username}
+            </h1>
+            {entry.isCurrentUser && (
+              <span
+                className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0"
+                style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "var(--gold)" }}
+              >
+                YOU
+              </span>
+            )}
+          </div>
+          <p className="font-mono text-sm" style={{ color: "var(--text-3)" }}>
+            Rank #{entry.rank}
+            {podiumStyle ? ` · ${podiumStyle.label}` : ""}
+          </p>
+        </div>
+        <div className="text-right shrink-0">
+          <p
+            className="font-mono font-bold text-2xl"
+            style={{ color: podiumStyle ? podiumStyle.valueColor : "var(--text-1)" }}
+          >
+            ${fmt(entry.totalValue)}
+          </p>
+          <p className="font-mono text-sm mt-0.5" style={{ color: "var(--text-3)" }}>total value</p>
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-2 gap-4 mb-8">
+        <div
+          className="rounded-xl px-5 py-4"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <p className="font-mono text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-3)" }}>Cash</p>
+          <p className="font-mono font-semibold text-lg" style={{ color: "var(--text-1)" }}>${fmt(entry.cashBalance)}</p>
+        </div>
+        <div
+          className="rounded-xl px-5 py-4"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <p className="font-mono text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-3)" }}>Invested</p>
+          <p className="font-mono font-semibold text-lg" style={{ color: "var(--text-1)" }}>${fmt(holdingsValue)}</p>
+        </div>
+      </div>
+
+      {/* Portfolio */}
+      <div className="mb-2">
+        <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1" style={{ color: "var(--text-3)" }}>Portfolio</p>
+        <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--text-2)" }}>Holdings</h2>
+      </div>
+
+      {entry.holdings.length === 0 ? (
+        <div
+          className="rounded-xl px-6 py-10 text-center"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <p className="font-mono text-sm" style={{ color: "var(--text-3)" }}>No holdings — all cash</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {entry.holdings.map((h) => (
+            <div
+              key={h.symbol}
+              className="rounded-xl px-5 py-4 flex items-center gap-4"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              <div
+                className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
+              >
+                <span className="font-mono font-bold text-xs" style={{ color: "var(--gold-bright)" }}>
+                  {h.symbol.slice(0, 3)}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-mono font-semibold text-sm" style={{ color: "var(--text-1)" }}>{h.symbol}</p>
+                <p className="font-mono text-xs mt-0.5" style={{ color: "var(--text-3)" }}>
+                  {h.quantity.toLocaleString("en-US", { maximumFractionDigits: 6 })} units · {h.assetType}
+                </p>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="font-mono font-semibold text-sm" style={{ color: "var(--text-2)" }}>${fmt(h.value)}</p>
+                <p className="font-mono text-xs mt-0.5" style={{ color: "var(--text-3)" }}>
+                  {entry.totalValue > 0 ? ((h.value / entry.totalValue) * 100).toFixed(1) : "0.0"}%
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function LeaderboardClient({
   entries,
   lastWeekTop3,
@@ -57,9 +190,14 @@ export default function LeaderboardClient({
   lastWeekDate: string | null;
 }) {
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Entry | null>(null);
 
   const fmt = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  if (selected) {
+    return <ProfileDetail entry={selected} onBack={() => setSelected(null)} />;
+  }
 
   const filtered = search.trim()
     ? entries.filter((e) => e.username.toLowerCase().includes(search.toLowerCase()))
@@ -101,12 +239,13 @@ export default function LeaderboardClient({
                 const s    = PODIUM[entry.rank as 1 | 2 | 3] ?? PODIUM[3];
                 const isMe = entry.isCurrentUser;
                 return (
-                  <div
+                  <button
                     key={entry.username}
-                    className="relative rounded-2xl px-8 py-7 flex items-center gap-6"
+                    onClick={() => setSelected(entry)}
+                    className="w-full text-left relative rounded-2xl px-8 py-7 flex items-center gap-6 transition-opacity hover:opacity-80 cursor-pointer"
                     style={{
-                      background: isMe ? "rgba(201,168,76,0.04)" : "var(--surface)",
-                      border: `1px solid ${isMe ? "rgba(201,168,76,0.35)" : s.border}`,
+                      background: "var(--surface)",
+                      border: `1px solid ${s.border}`,
                       ...(entry.rank === 1 ? { animation: "rank1-aura 2.8s ease-in-out infinite" } : {}),
                     }}
                   >
@@ -137,7 +276,7 @@ export default function LeaderboardClient({
                       <p className="font-mono font-bold text-2xl" style={{ color: isMe ? "var(--gold-bright)" : s.valueColor }}>${fmt(entry.totalValue)}</p>
                       <p className="font-mono text-sm tracking-wide mt-1" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -147,12 +286,13 @@ export default function LeaderboardClient({
           {rest.length > 0 && (
             <div className="space-y-1.5 mb-12">
               {rest.map((entry) => (
-                <div
+                <button
                   key={entry.username}
-                  className="rounded-xl px-6 py-5 flex items-center gap-5 transition-colors"
+                  onClick={() => setSelected(entry)}
+                  className="w-full text-left rounded-xl px-6 py-5 flex items-center gap-5 transition-opacity hover:opacity-80 cursor-pointer"
                   style={{
-                    background: entry.isCurrentUser ? "rgba(201,168,76,0.03)" : "var(--surface)",
-                    border: `1px solid ${entry.isCurrentUser ? "rgba(201,168,76,0.2)" : "var(--border)"}`,
+                    background: "var(--surface)",
+                    border: "1px solid var(--border)",
                   }}
                 >
                   <span className="font-mono text-base w-10 shrink-0 tabular-nums" style={{ color: "var(--text-3)" }}>
@@ -167,7 +307,7 @@ export default function LeaderboardClient({
                     <p className="font-mono font-semibold text-base" style={{ color: entry.isCurrentUser ? "var(--gold)" : "var(--text-2)" }}>${fmt(entry.totalValue)}</p>
                     <p className="font-mono text-xs" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           )}
