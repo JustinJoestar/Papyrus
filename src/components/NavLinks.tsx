@@ -7,8 +7,8 @@ const links = [
   { href: "/dashboard",             label: "Portfolio"    },
   { href: "/dashboard/market",      label: "Market"       },
   { href: "/dashboard/leaderboard", label: "Leaderboard"  },
-  { href: "/dashboard/leagues",     label: "Leagues"      },
   { href: "/dashboard/news",        label: "News"         },
+  { href: "/dashboard/leagues",     label: "Leagues"      },
 ];
 
 export default function NavLinks() {
