@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import LeaderboardHoldingModal from "./LeaderboardHoldingModal";
 
 type Holding = {
   symbol: string;
@@ -62,6 +63,7 @@ function ProfileDetail({ entry, onBack }: { entry: Entry; onBack: () => void }) 
 
   const holdingsValue = entry.totalValue - entry.cashBalance;
   const podiumStyle = PODIUM[entry.rank as 1 | 2 | 3] ?? null;
+  const [selectedHolding, setSelectedHolding] = useState<Holding | null>(null);
 
   return (
     <div>
@@ -147,9 +149,10 @@ function ProfileDetail({ entry, onBack }: { entry: Entry; onBack: () => void }) 
       ) : (
         <div className="space-y-2">
           {entry.holdings.map((h) => (
-            <div
+            <button
               key={h.symbol}
-              className="rounded-xl px-5 py-4 flex items-center gap-4"
+              onClick={() => setSelectedHolding(h)}
+              className="w-full text-left rounded-xl px-5 py-4 flex items-center gap-4 transition-opacity hover:opacity-75 cursor-pointer"
               style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
             >
               <div
@@ -172,9 +175,17 @@ function ProfileDetail({ entry, onBack }: { entry: Entry; onBack: () => void }) 
                   {entry.totalValue > 0 ? ((h.value / entry.totalValue) * 100).toFixed(1) : "0.0"}%
                 </p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
+      )}
+
+      {selectedHolding && (
+        <LeaderboardHoldingModal
+          symbol={selectedHolding.symbol}
+          assetType={selectedHolding.assetType}
+          onClose={() => setSelectedHolding(null)}
+        />
       )}
     </div>
   );
