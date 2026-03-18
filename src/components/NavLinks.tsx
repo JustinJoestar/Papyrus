@@ -4,11 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/dashboard",             label: "Portfolio"    },
-  { href: "/dashboard/market",      label: "Market"       },
-  { href: "/dashboard/leaderboard", label: "Leaderboard"  },
-  { href: "/dashboard/news",        label: "News"         },
-  { href: "/dashboard/leagues",     label: "Leagues"      },
+  { href: "/dashboard",                  label: "Portfolio"     },
+  { href: "/dashboard/market",           label: "Market"        },
+  { href: "/dashboard/leaderboard",      label: "Leaderboard"   },
+  { href: "/dashboard/news",             label: "News"          },
+  { href: "/dashboard/leagues",          label: "Leagues"       },
+  { href: "/dashboard/achievements",     label: "Achievements"  },
 ];
 
 export default function NavLinks() {

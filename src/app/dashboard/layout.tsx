@@ -3,6 +3,7 @@ import NavLinks from "@/components/NavLinks";
 import NavUserMenu from "@/components/NavUserMenu";
 import NavNotifications from "@/components/NavNotifications";
 import NavThemeToggle from "@/components/NavThemeToggle";
+import NotificationToast from "@/components/NotificationToast";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardLayout({
@@ -72,6 +73,9 @@ export default async function DashboardLayout({
       <main className="relative" style={{ zIndex: 1 }}>
         {children}
       </main>
+
+      {/* Toast layer — renders above everything */}
+      <NotificationToast userId={user?.id ?? null} />
     </div>
   );
 }

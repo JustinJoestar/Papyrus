@@ -3,6 +3,7 @@ import AssetTicker from "@/components/AssetTicker";
 import { BeamsBackground } from "@/components/BeamsBackground";
 import NavThemeToggle from "@/components/NavThemeToggle";
 import NavLinks from "@/components/NavLinks";
+import PulseSection from "@/components/PulseSection";
 
 const STATS = [
   { value: "250+",    label: "Coins"             },
@@ -232,6 +233,9 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
+
+      {/* ── Pulse Beams ──────────────────────────────────────── */}
+      <PulseSection />
 
       {/* ── Bottom CTA ───────────────────────────────────────── */}
       <section className="relative z-10 max-w-4xl mx-auto px-8 pb-24 text-center">

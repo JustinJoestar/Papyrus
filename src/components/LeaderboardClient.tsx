@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, RefreshCw } from "lucide-react";
 import LeaderboardHoldingModal from "./LeaderboardHoldingModal";
+
+const REFRESH_INTERVAL_MS = 60_000; // re-fetch prices every 60 s
 
 type Holding = {
   symbol: string;
@@ -200,8 +203,30 @@ export default function LeaderboardClient({
   lastWeekTop3: SnapshotEntry[];
   lastWeekDate: string | null;
 }) {
-  const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<Entry | null>(null);
+  const router = useRouter();
+  const [search,       setSearch]       = useState("");
+  const [selected,     setSelected]     = useState<Entry | null>(null);
+  const [secondsAgo,   setSecondsAgo]   = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const refresh = useCallback(() => {
+    setIsRefreshing(true);
+    router.refresh();
+    // Give the server a moment to respond, then clear the spinner
+    setTimeout(() => { setIsRefreshing(false); setSecondsAgo(0); }, 1500);
+  }, [router]);
+
+  // Auto-refresh every 60 s
+  useEffect(() => {
+    const interval = setInterval(refresh, REFRESH_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [refresh]);
+
+  // Tick the "X s ago" counter every second
+  useEffect(() => {
+    const tick = setInterval(() => setSecondsAgo((s) => s + 1), 1000);
+    return () => clearInterval(tick);
+  }, []);
 
   const fmt = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -219,6 +244,48 @@ export default function LeaderboardClient({
 
   return (
     <>
+      {/* Live status bar */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div
+            className="w-1.5 h-1.5 rounded-full animate-blink-dot"
+            style={{ background: "var(--gold)" }}
+          />
+          <span className="font-mono text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--text-3)" }}>
+            Live · updates every 60s
+          </span>
+          {secondsAgo > 0 && (
+            <span className="font-mono text-[10px]" style={{ color: "var(--text-3)", opacity: 0.6 }}>
+              · last updated {secondsAgo}s ago
+            </span>
+          )}
+        </div>
+        <button
+          onClick={refresh}
+          disabled={isRefreshing}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-all disabled:opacity-50"
+          style={{
+            background: "var(--surface)",
+            border: "1px solid var(--border-mid)",
+            color: "var(--text-2)",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "var(--gold-border)";
+            e.currentTarget.style.color = "var(--gold)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "var(--border-mid)";
+            e.currentTarget.style.color = "var(--text-2)";
+          }}
+        >
+          <RefreshCw
+            size={11}
+            className={isRefreshing ? "animate-spin" : ""}
+          />
+          Refresh
+        </button>
+      </div>
+
       {/* Search */}
       <div className="mb-6">
         <input
