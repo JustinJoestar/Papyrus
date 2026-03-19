@@ -1,560 +1,518 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  Rocket,
-  TrendingUp,
-  Globe,
-  Trophy,
-  Crown,
-  Gem,
-  Zap,
-  Shield,
-  Lock,
-  Star,
+  Rocket, TrendingUp, Globe, Gem, Zap, Shield,
+  Trophy, Crown, Lock, Flame, Sparkles, Medal,
 } from "lucide-react";
 
-// ─── Achievement definitions ───────────────────────────────────────────────
+// ─── Layout constants ────────────────────────────────────────────────────────
+const CELL_W  = 214;   // horizontal spacing per column
+const CELL_H  = 134;   // vertical spacing per row
+const NODE_W  = 178;   // node card width
+const NODE_H  = 86;    // node card height
+const ICON_SZ = 54;    // icon box width
+const PAD_X   = 80;
+const PAD_Y   = 62;
+const VP_H    = 560;   // viewport height
 
-type Rarity = "common" | "uncommon" | "rare" | "epic";
+// ─── Types ───────────────────────────────────────────────────────────────────
+type Rarity  = "common" | "uncommon" | "rare" | "epic";
+type Status  = "unlocked" | "accessible" | "locked";
 
-interface AchievementDef {
-  id: string;
-  title: string;
-  hint: string;         // shown when locked
-  desc: string;         // shown when unlocked
-  Icon: React.ElementType;
-  rarity: Rarity;
-  category: string;
+interface AchDef {
+  id:       string;
+  title:    string;
+  desc:     string;   // shown when unlocked
+  hint:     string;   // shown when locked
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Icon:     any;
+  col:      number;
+  row:      number;
+  parents:  string[];
+  rarity:   Rarity;
+  section:  "trading" | "competition";
 }
 
-const CATEGORIES = ["Origins", "The Arena", "Legends"] as const;
-
-const ACHIEVEMENTS: AchievementDef[] = [
-  // ─ Origins ───────────────────────────────────────────────
+// ─── Achievement definitions ─────────────────────────────────────────────────
+const ACH: AchDef[] = [
+  // ── Trading tree ──────────────────────────────────────────────────────────
   {
-    id: "first_trade",
-    title: "First Trade",
-    hint: "Make your first move.",
-    desc: "You executed your first buy. The journey begins.",
-    Icon: Rocket,
-    rarity: "common",
-    category: "Origins",
+    id: "first_trade", title: "The First Move",
+    desc: "Executed your first trade. The market is now your battleground.",
+    hint: "Make any trade to begin your journey.",
+    Icon: Rocket,  col: 4, row: 0, parents: [], rarity: "common", section: "trading",
   },
   {
-    id: "ten_trades",
-    title: "Volume Trader",
-    hint: "Keep trading to unlock.",
-    desc: "10 total transactions completed. You're building momentum.",
-    Icon: TrendingUp,
-    rarity: "uncommon",
-    category: "Origins",
+    id: "ten_trades", title: "Momentum",
+    desc: "10 trades completed. You're building rhythm in the market.",
+    hint: "Complete 10 total trades.",
+    Icon: TrendingUp, col: 2, row: 2, parents: ["first_trade"], rarity: "uncommon", section: "trading",
   },
   {
-    id: "diversified",
-    title: "Diversified",
-    hint: "Spread across every market.",
-    desc: "Holding crypto, stocks, and a commodity at the same time.",
-    Icon: Globe,
-    rarity: "rare",
-    category: "Origins",
-  },
-  // ─ The Arena ─────────────────────────────────────────────
-  {
-    id: "top_10",
-    title: "Top 10",
-    hint: "Climb the global leaderboard.",
-    desc: "Reached the top 10 on the global leaderboard. Elite territory.",
-    Icon: Trophy,
-    rarity: "rare",
-    category: "The Arena",
+    id: "diversified", title: "All Markets",
+    desc: "Crypto, stocks, and a commodity — held simultaneously. Spread thin, never broke.",
+    hint: "Hold all three asset types at once.",
+    Icon: Globe, col: 4, row: 2, parents: ["first_trade"], rarity: "uncommon", section: "trading",
   },
   {
-    id: "league_winner",
-    title: "League Champion",
-    hint: "Win a private league.",
-    desc: "Finished #1 in a private league. Undisputed.",
-    Icon: Crown,
-    rarity: "epic",
-    category: "The Arena",
-  },
-  // ─ Legends ───────────────────────────────────────────────
-  {
-    id: "diamond_hands",
-    title: "Diamond Hands",
-    hint: "Hold on through the storm.",
-    desc: "Held a position for a full week without selling. Unshakeable.",
-    Icon: Gem,
-    rarity: "uncommon",
-    category: "Legends",
+    id: "diamond_hands", title: "Iron Grip",
+    desc: "Held a position for a full week without flinching. The market tested you — you held.",
+    hint: "Hold any position for one full week.",
+    Icon: Gem, col: 6, row: 2, parents: ["first_trade"], rarity: "uncommon", section: "trading",
   },
   {
-    id: "comeback",
-    title: "Comeback Kid",
-    hint: "Rise from the ashes.",
-    desc: "Recovered from −20% to finish the week positive. Legendary.",
-    Icon: Zap,
-    rarity: "epic",
-    category: "Legends",
+    id: "hundred_trades", title: "Centurion",
+    desc: "100 total trades. You don't visit the market — you live here.",
+    hint: "Complete 100 total trades.",
+    Icon: Flame, col: 1, row: 4, parents: ["ten_trades"], rarity: "rare", section: "trading",
   },
   {
-    id: "weekly_reset",
-    title: "Veteran",
-    hint: "Survive the long game.",
-    desc: "Lived through 4 weekly resets. Seasoned and battle-hardened.",
-    Icon: Shield,
-    rarity: "rare",
-    category: "Legends",
+    id: "day_trader", title: "The Blitz",
+    desc: "5 trades in a single day. Speed is your sharpest edge.",
+    hint: "Execute 5+ trades within 24 hours.",
+    Icon: Zap, col: 3, row: 4, parents: ["ten_trades"], rarity: "rare", section: "trading",
+  },
+  {
+    id: "comeback", title: "Phoenix",
+    desc: "Down −20% and still came back to finish the week positive. Absolute legend.",
+    hint: "Recover from −20% to finish the week positive.",
+    Icon: Sparkles, col: 5, row: 4, parents: ["diversified"], rarity: "epic", section: "trading",
+  },
+  {
+    id: "weekly_reset", title: "Battle-Hardened",
+    desc: "Survived 4 weekly resets. Every phase of the market — and you kept going.",
+    hint: "Survive 4 weekly resets.",
+    Icon: Shield, col: 7, row: 4, parents: ["diamond_hands"], rarity: "rare", section: "trading",
+  },
+  // ── Competition tree ──────────────────────────────────────────────────────
+  {
+    id: "top_10", title: "The Elite Ten",
+    desc: "Reached the global top 10. You are in rarified air.",
+    hint: "Climb to the global top 10.",
+    Icon: Trophy, col: 10, row: 0, parents: [], rarity: "rare", section: "competition",
+  },
+  {
+    id: "top_3", title: "The Podium",
+    desc: "Global top 3. The crowd has turned to watch you.",
+    hint: "Break into the global top 3.",
+    Icon: Medal, col: 10, row: 2, parents: ["top_10"], rarity: "epic", section: "competition",
+  },
+  {
+    id: "league_winner", title: "League Tyrant",
+    desc: "Finished #1 in a private league. Absolutely, undeniably dominant.",
+    hint: "Win a private league outright.",
+    Icon: Crown, col: 10, row: 4, parents: ["top_3"], rarity: "epic", section: "competition",
   },
 ];
 
-// ─── Rarity config ─────────────────────────────────────────────────────────
+const ACH_MAP = new Map(ACH.map(a => [a.id, a]));
+const MAX_COL = Math.max(...ACH.map(a => a.col));
+const MAX_ROW = Math.max(...ACH.map(a => a.row));
+const CANVAS_W = PAD_X * 2 + (MAX_COL + 1) * CELL_W;
+const CANVAS_H = PAD_Y * 2 + (MAX_ROW + 1) * CELL_H;
 
-const RARITY_CONFIG: Record<
-  Rarity,
-  { label: string; borderColor: string; glowColor: string; iconBg: string; badgeClass: string }
-> = {
-  common: {
-    label: "Common",
-    borderColor: "var(--gold-dim)",
-    glowColor: "rgba(138, 111, 53, 0.25)",
-    iconBg: "rgba(138, 111, 53, 0.15)",
-    badgeClass: "text-[var(--gold-dim)]",
-  },
-  uncommon: {
-    label: "Uncommon",
-    borderColor: "var(--gold)",
-    glowColor: "rgba(201, 168, 76, 0.3)",
-    iconBg: "rgba(201, 168, 76, 0.15)",
-    badgeClass: "text-[var(--gold)]",
-  },
-  rare: {
-    label: "Rare",
-    borderColor: "var(--gold-bright)",
-    glowColor: "rgba(232, 198, 106, 0.35)",
-    iconBg: "rgba(232, 198, 106, 0.18)",
-    badgeClass: "text-[var(--gold-bright)]",
-  },
-  epic: {
-    label: "Epic",
-    borderColor: "#e8c66a",
-    glowColor: "rgba(232, 198, 106, 0.5)",
-    iconBg: "rgba(232, 198, 106, 0.22)",
-    badgeClass: "text-[#e8c66a]",
-  },
+// ─── Rarity config ────────────────────────────────────────────────────────────
+const RARITY_CFG: Record<Rarity, { border: string; glow: string; text: string; label: string }> = {
+  common:   { border: "#3a2e10", glow: "rgba(58,46,16,0.3)",    text: "#7a6830", label: "Common"   },
+  uncommon: { border: "#6a521e", glow: "rgba(106,82,30,0.35)",  text: "#c9a84c", label: "Uncommon" },
+  rare:     { border: "#c9a84c", glow: "rgba(201,168,76,0.4)",  text: "#e8c66a", label: "Rare"     },
+  epic:     { border: "#e8c66a", glow: "rgba(232,198,106,0.55)",text: "#fff0a0", label: "Epic"     },
 };
 
-// ─── Sparkle burst ─────────────────────────────────────────────────────────
-
-function Sparkles() {
-  const sparks = [
-    { x: -18, y: -18, delay: 0 },
-    { x: 18,  y: -18, delay: 0.15 },
-    { x: -18, y: 18,  delay: 0.3 },
-    { x: 18,  y: 18,  delay: 0.45 },
-    { x: 0,   y: -22, delay: 0.1 },
-    { x: 0,   y: 22,  delay: 0.35 },
-  ];
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-visible">
-      {sparks.map((s, i) => (
-        <motion.div
-          key={i}
-          className="absolute top-1/2 left-1/2 w-1 h-1 rounded-full"
-          style={{ background: "var(--gold-bright)", translateX: "-50%", translateY: "-50%" }}
-          animate={{
-            x: [0, s.x * 2.5],
-            y: [0, s.y * 2.5],
-            opacity: [0, 1, 0],
-            scale: [0, 1.4, 0],
-          }}
-          transition={{
-            duration: 1.2,
-            delay: s.delay,
-            repeat: Infinity,
-            repeatDelay: 4,
-            ease: "easeOut",
-          }}
-        />
-      ))}
-    </div>
-  );
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function nodeCenter(col: number, row: number) {
+  return {
+    x: PAD_X + col * CELL_W + CELL_W / 2,
+    y: PAD_Y + row * CELL_H + CELL_H / 2,
+  };
 }
 
-// ─── Single achievement tile ────────────────────────────────────────────────
-
-interface TileProps {
-  def: AchievementDef;
-  unlocked: boolean;
-  unlockedAt: string | null;
-  index: number;
+function getStatus(id: string, unlocked: Set<string>): Status {
+  if (unlocked.has(id)) return "unlocked";
+  const ach = ACH_MAP.get(id);
+  if (!ach || ach.parents.every(p => unlocked.has(p))) return "accessible";
+  return "locked";
 }
 
-function AchievementTile({ def, unlocked, unlockedAt, index }: TileProps) {
-  const r = RARITY_CONFIG[def.rarity];
-  const isNew =
-    unlocked && unlockedAt
-      ? Date.now() - new Date(unlockedAt).getTime() < 7 * 24 * 60 * 60 * 1000
-      : false;
+function edgeColor(parentId: string, childId: string, unlocked: Set<string>): string {
+  if (unlocked.has(parentId) && unlocked.has(childId)) return "#c9a84c";
+  if (unlocked.has(parentId)) return "#2e2416";
+  return "#141414";
+}
+
+function edgePath(parent: AchDef, child: AchDef): string {
+  const p = nodeCenter(parent.col, parent.row);
+  const c = nodeCenter(child.col, child.row);
+  const py = p.y + NODE_H / 2 + 2;
+  const cy = c.y - NODE_H / 2 - 2;
+  const mid = (py + cy) / 2;
+  return `M ${p.x} ${py} L ${p.x} ${mid} L ${c.x} ${mid} L ${c.x} ${cy}`;
+}
+
+// ─── Achievement node ─────────────────────────────────────────────────────────
+function AchNode({
+  ach, status, onEnter, onLeave,
+}: {
+  ach: AchDef;
+  status: Status;
+  onEnter: (id: string) => void;
+  onLeave: () => void;
+}) {
+  const { x, y } = nodeCenter(ach.col, ach.row);
+  const r = RARITY_CFG[ach.rarity];
+  const borderC = status === "unlocked" ? r.border : status === "accessible" ? "#252525" : "#181818";
+  const bg      = status === "unlocked" ? "#0f0e0a" : "#090909";
+  const opacity = status === "locked" ? 0.32 : 1;
+  const glow    = status === "unlocked"
+    ? `0 0 18px ${r.glow}, 0 0 0 1px ${r.border}30` : "none";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.4, delay: index * 0.07, ease: "easeOut" }}
-      whileHover={unlocked ? { scale: 1.025, y: -2 } : { scale: 1.01 }}
-      className="relative rounded-xl overflow-hidden cursor-default"
+    <div
+      onMouseEnter={() => onEnter(ach.id)}
+      onMouseLeave={onLeave}
       style={{
-        background: unlocked
-          ? `linear-gradient(135deg, var(--surface) 0%, var(--elevated) 100%)`
-          : "var(--surface)",
-        border: `1px solid ${unlocked ? r.borderColor : "var(--border)"}`,
-        boxShadow: unlocked
-          ? `0 0 20px ${r.glowColor}, inset 0 1px 0 rgba(255,255,255,0.04)`
-          : "none",
-        opacity: unlocked ? 1 : 0.45,
-        transition: "box-shadow 0.3s ease",
+        position: "absolute",
+        left: x - NODE_W / 2,
+        top:  y - NODE_H / 2,
+        width: NODE_W,
+        height: NODE_H,
+        background: bg,
+        border: `1px solid ${borderC}`,
+        borderRadius: 8,
+        opacity,
+        boxShadow: glow,
+        overflow: "hidden",
+        cursor: "default",
+        userSelect: "none",
       }}
     >
-      {/* Shimmer sweep on unlocked */}
-      {unlocked && (
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "linear-gradient(105deg, transparent 35%, rgba(232,198,106,0.08) 50%, transparent 65%)",
-            backgroundSize: "200% 100%",
-          }}
-          animate={{ backgroundPosition: ["200% 0", "-200% 0"] }}
-          transition={{ duration: 3.5, repeat: Infinity, repeatDelay: 2, ease: "linear" }}
-        />
+      {/* Top shimmer line */}
+      {status === "unlocked" && (
+        <div style={{
+          position: "absolute", top: 0, left: 0, right: 0, height: 1,
+          background: `linear-gradient(90deg, transparent, ${r.border}99, transparent)`,
+        }} />
       )}
 
-      {/* Top accent line */}
-      {unlocked && (
-        <div
-          className="absolute top-0 inset-x-0 h-px"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${r.borderColor} 40%, ${r.borderColor} 60%, transparent)`,
-            opacity: 0.7,
-          }}
-        />
-      )}
-
-      <div className="relative flex items-center gap-4 px-5 py-4">
-        {/* Icon box */}
-        <div
-          className="relative shrink-0 w-14 h-14 rounded-xl flex items-center justify-center"
-          style={{
-            background: unlocked ? r.iconBg : "var(--elevated)",
-            border: `1px solid ${unlocked ? r.borderColor : "var(--border)"}`,
-          }}
-        >
-          {unlocked ? (
-            <>
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {(() => { const I = def.Icon as any; return <I size={24} style={{ color: r.borderColor }} strokeWidth={1.5} />; })()}
-              {isNew && <Sparkles />}
-            </>
-          ) : (
-            <Lock size={20} style={{ color: "var(--text-3)" }} strokeWidth={1.5} />
-          )}
+      <div style={{ display: "flex", height: "100%", alignItems: "center" }}>
+        {/* Icon */}
+        <div style={{
+          width: ICON_SZ, height: "100%",
+          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+          background: status === "unlocked" ? `${r.border}16` : "#0d0d0d",
+          borderRight: `1px solid ${borderC}`,
+        }}>
+          {status === "locked"
+            ? <Lock size={17} color="#282828" strokeWidth={1.5} />
+            : <ach.Icon size={20} color={status === "unlocked" ? r.text : "#303030"} strokeWidth={1.5} />
+          }
         </div>
 
         {/* Text */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap mb-0.5">
-            <p
-              className="font-mono font-bold text-sm tracking-wide"
-              style={{ color: unlocked ? r.borderColor : "var(--text-3)" }}
-            >
-              {def.title}
-            </p>
-            {unlocked && (
-              <span
-                className={`font-mono text-[9px] tracking-[0.18em] uppercase px-1.5 py-0.5 rounded-md ${r.badgeClass}`}
-                style={{ background: r.iconBg, border: `1px solid ${r.borderColor}`, opacity: 0.9 }}
-              >
-                {r.label}
-              </span>
-            )}
-            {isNew && (
-              <motion.span
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ duration: 1.2, repeat: Infinity }}
-                className="font-mono text-[9px] tracking-[0.2em] uppercase px-1.5 py-0.5 rounded-md"
-                style={{
-                  background: "rgba(201,168,76,0.2)",
-                  border: "1px solid var(--gold)",
-                  color: "var(--gold)",
-                }}
-              >
-                NEW
-              </motion.span>
-            )}
+        <div style={{ flex: 1, padding: "8px 10px 8px 10px", overflow: "hidden" }}>
+          <div style={{
+            fontFamily: "var(--font-geist-mono)",
+            fontWeight: 700,
+            fontSize: 10.5,
+            letterSpacing: "0.05em",
+            lineHeight: 1.2,
+            marginBottom: 4,
+            color: status === "unlocked" ? r.text : status === "accessible" ? "#444" : "#282828",
+            whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
+          }}>
+            {ach.title}
           </div>
-
-          <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>
-            {unlocked ? def.desc : def.hint}
-          </p>
-
-          {unlocked && unlockedAt && (
-            <p className="font-mono text-[10px] mt-1.5" style={{ color: "var(--text-3)" }}>
-              Unlocked{" "}
-              {new Date(unlockedAt).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </p>
-          )}
-        </div>
-
-        {/* Epic glow orb */}
-        {unlocked && def.rarity === "epic" && (
-          <motion.div
-            className="absolute -right-6 -top-6 w-24 h-24 rounded-full pointer-events-none"
-            style={{ background: "radial-gradient(circle, rgba(232,198,106,0.12) 0%, transparent 70%)" }}
-            animate={{ scale: [1, 1.3, 1], opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          />
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-// ─── Category header ────────────────────────────────────────────────────────
-
-function CategoryHeader({ label, total, unlocked }: { label: string; total: number; unlocked: number }) {
-  const pct = total > 0 ? (unlocked / total) * 100 : 0;
-  return (
-    <div className="flex items-center gap-4 mb-4">
-      <div className="h-px flex-1" style={{ background: "var(--border-mid)" }} />
-      <div className="flex items-center gap-3 shrink-0">
-        <span
-          className="font-mono text-[10px] tracking-[0.28em] uppercase"
-          style={{ color: "var(--text-3)" }}
-        >
-          {label}
-        </span>
-        <div
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-          style={{ background: "var(--elevated)", border: "1px solid var(--border)" }}
-        >
-          <div
-            className="w-16 h-1 rounded-full overflow-hidden"
-            style={{ background: "var(--border-mid)" }}
-          >
-            <motion.div
-              className="h-full rounded-full"
-              style={{ background: "linear-gradient(90deg, var(--gold-dim), var(--gold))" }}
-              initial={{ width: 0 }}
-              animate={{ width: `${pct}%` }}
-              transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-            />
+          <div style={{
+            fontSize: 9.5,
+            lineHeight: 1.35,
+            color: status === "unlocked" ? "#5a5040" : "#252525",
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical" as const,
+            fontFamily: "var(--font-geist-sans)",
+          }}>
+            {status === "unlocked" ? ach.desc : ach.hint}
           </div>
-          <span className="font-mono text-[9px]" style={{ color: "var(--text-3)" }}>
-            {unlocked}/{total}
-          </span>
         </div>
       </div>
-      <div className="h-px flex-1" style={{ background: "var(--border-mid)" }} />
     </div>
   );
 }
 
-// ─── Main component ─────────────────────────────────────────────────────────
+// ─── Main component ───────────────────────────────────────────────────────────
+interface UnlockedRecord { achievement_id: string; unlocked_at: string; }
 
-interface UnlockedRecord {
-  achievement_id: string;
-  unlocked_at: string;
-}
-
-interface Props {
+export default function AchievementsClient({
+  unlockedAchievements,
+}: {
   unlockedAchievements: UnlockedRecord[];
   tradeCount: number;
-}
+}) {
+  const unlockedSet = new Set(unlockedAchievements.map(r => r.achievement_id));
+  const unlockedMap = new Map(unlockedAchievements.map(r => [r.achievement_id, r.unlocked_at]));
+  const totalUnlocked = unlockedAchievements.length;
 
-export default function AchievementsClient({ unlockedAchievements }: Props) {
-  const unlockedMap = new Map(
-    unlockedAchievements.map((a) => [a.achievement_id, a.unlocked_at])
-  );
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const hoveredAch = hoveredId ? ACH_MAP.get(hoveredId) : null;
 
-  const enriched = ACHIEVEMENTS.map((a) => ({
-    ...a,
-    unlocked: unlockedMap.has(a.id),
-    unlockedAt: unlockedMap.get(a.id) ?? null,
-  }));
+  // Drag-to-pan
+  const vpRef    = useRef<HTMLDivElement>(null);
+  const panning  = useRef(false);
+  const panStart = useRef({ mx: 0, my: 0, sl: 0, st: 0 });
 
-  const totalUnlocked = enriched.filter((a) => a.unlocked).length;
-  const totalCount = ACHIEVEMENTS.length;
-  const pct = Math.round((totalUnlocked / totalCount) * 100);
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    panning.current = true;
+    panStart.current = { mx: e.clientX, my: e.clientY, sl: vpRef.current!.scrollLeft, st: vpRef.current!.scrollTop };
+    vpRef.current!.setPointerCapture(e.pointerId);
+  }, []);
 
-  let tileIndex = 0;
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!panning.current || !vpRef.current) return;
+    vpRef.current.scrollLeft = panStart.current.sl - (e.clientX - panStart.current.mx);
+    vpRef.current.scrollTop  = panStart.current.st - (e.clientY - panStart.current.my);
+  }, []);
+
+  const onPointerUp = useCallback(() => { panning.current = false; }, []);
+
+  // Center on first_trade on mount
+  useEffect(() => {
+    const vp = vpRef.current;
+    if (!vp) return;
+    const { x, y } = nodeCenter(4, 0);
+    vp.scrollLeft = x - vp.clientWidth / 2;
+    vp.scrollTop  = Math.max(0, y - VP_H / 3);
+  }, []);
+
+  // Build edges
+  const edges = ACH.flatMap(ach =>
+    ach.parents.map(pid => {
+      const parent = ACH_MAP.get(pid);
+      if (!parent) return null;
+      return {
+        key:    `${pid}-${ach.id}`,
+        path:   edgePath(parent, ach),
+        color:  edgeColor(pid, ach.id, unlockedSet),
+        dashed: !unlockedSet.has(pid),
+      };
+    }).filter(Boolean)
+  ) as Array<{ key: string; path: string; color: string; dashed: boolean }>;
+
+  // Divider x between trading (max col 7) and competition (col 10)
+  const divX = PAD_X + 8.5 * CELL_W;
+
+  // Detail panel content
+  const detailStatus  = hoveredAch ? getStatus(hoveredAch.id, unlockedSet) : null;
+  const detailUnlockedAt = hoveredId ? unlockedMap.get(hoveredId) : undefined;
+  const detailRarity  = hoveredAch ? RARITY_CFG[hoveredAch.rarity] : null;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="max-w-full px-6 py-10">
 
-      {/* ── Panel header (Minecraft-style title bar) ───────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: -16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative rounded-2xl mb-8 overflow-hidden"
-        style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border-mid)",
-        }}
+      {/* ── Panel header ────────────────────────────────────── */}
+      <div
+        className="max-w-3xl mx-auto mb-6 rounded-2xl overflow-hidden"
+        style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
       >
-        {/* Top gold accent line */}
-        <div
-          className="h-px w-full"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, var(--gold-dim) 20%, var(--gold) 40%, var(--gold-bright) 50%, var(--gold) 60%, var(--gold-dim) 80%, transparent)",
-          }}
-        />
-
-        <div className="px-8 py-6 flex items-center gap-6">
-          {/* Icon */}
+        <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, var(--gold-dim) 20%, var(--gold) 50%, var(--gold-dim) 80%, transparent)" }} />
+        <div className="px-8 py-5 flex items-center gap-6">
           <div
-            className="relative w-16 h-16 rounded-xl flex items-center justify-center shrink-0"
-            style={{
-              background: "rgba(201,168,76,0.12)",
-              border: "1px solid var(--gold-border)",
-            }}
+            className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: "rgba(201,168,76,0.1)", border: "1px solid var(--gold-border)" }}
           >
-            <Star size={28} style={{ color: "var(--gold)" }} strokeWidth={1.5} />
-            <motion.div
-              className="absolute inset-0 rounded-xl pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(circle at 50% 50%, rgba(201,168,76,0.2) 0%, transparent 70%)",
-              }}
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-            />
+            <Trophy size={24} style={{ color: "var(--gold)" }} strokeWidth={1.5} />
           </div>
-
-          {/* Title + progress */}
           <div className="flex-1 min-w-0">
-            <p
-              className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
-              style={{ color: "var(--text-3)" }}
-            >
-              Hall of Records
-            </p>
-            <h1
-              className="font-playfair text-2xl font-bold mb-3 text-gold-glow"
-            >
-              Achievements
-            </h1>
-
-            {/* Master progress bar */}
+            <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-0.5" style={{ color: "var(--text-3)" }}>Hall of Records</p>
+            <h1 className="font-playfair text-2xl font-bold text-gold-glow mb-2">Achievements</h1>
             <div className="flex items-center gap-3">
-              <div
-                className="flex-1 h-2 rounded-full overflow-hidden"
-                style={{ background: "var(--elevated)", border: "1px solid var(--border)" }}
-              >
-                <motion.div
-                  className="h-full rounded-full"
+              <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--elevated)", border: "1px solid var(--border)" }}>
+                <div
+                  className="h-full rounded-full transition-all duration-700"
                   style={{
-                    background:
-                      "linear-gradient(90deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
+                    width: `${(totalUnlocked / ACH.length) * 100}%`,
+                    background: "linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright))",
                   }}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${pct}%` }}
-                  transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
                 />
               </div>
               <span className="font-mono text-xs shrink-0" style={{ color: "var(--gold)" }}>
-                {totalUnlocked} / {totalCount}
-              </span>
-              <span
-                className="font-mono text-[10px] shrink-0"
-                style={{ color: "var(--text-3)" }}
-              >
-                {pct}%
+                {totalUnlocked} / {ACH.length}
               </span>
             </div>
           </div>
         </div>
-
-        {/* Bottom gold accent line */}
-        <div
-          className="h-px w-full"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, var(--border-mid) 30%, var(--border-mid) 70%, transparent)",
-          }}
-        />
-      </motion.div>
-
-      {/* ── Achievement categories ─────────────────────────────────── */}
-      <div className="space-y-10">
-        {CATEGORIES.map((cat) => {
-          const catAchievements = enriched.filter((a) => a.category === cat);
-          const catUnlocked = catAchievements.filter((a) => a.unlocked).length;
-
-          return (
-            <div key={cat}>
-              <CategoryHeader
-                label={cat}
-                total={catAchievements.length}
-                unlocked={catUnlocked}
-              />
-
-              <div className="space-y-3">
-                {catAchievements.map((a) => {
-                  const idx = tileIndex++;
-                  return (
-                    <AchievementTile
-                      key={a.id}
-                      def={a}
-                      unlocked={a.unlocked}
-                      unlockedAt={a.unlockedAt ?? null}
-                      index={idx}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+        <div className="px-8 pb-4">
+          <p className="font-mono text-[10px]" style={{ color: "var(--text-3)", opacity: 0.6 }}>
+            ← Drag to explore the tree · Hover an achievement for details
+          </p>
+        </div>
       </div>
 
-      {/* ── Completion banner ─────────────────────────────────────── */}
-      {totalUnlocked === totalCount && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-10 rounded-2xl p-8 text-center relative overflow-hidden"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--gold-border)",
-            boxShadow: "0 0 40px rgba(201,168,76,0.25)",
-          }}
-        >
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse 80% 60% at 50% 100%, rgba(201,168,76,0.1) 0%, transparent 70%)",
-            }}
-          />
-          <div className="relative">
-            <p className="text-3xl mb-2">🏆</p>
-            <p className="font-playfair text-xl font-bold text-gold-glow mb-1">
-              Complete!
-            </p>
-            <p className="font-cormorant text-base" style={{ color: "var(--text-2)" }}>
-              All achievements unlocked. You are a Papyrus legend.
+      {/* ── Tree viewport ────────────────────────────────────── */}
+      <div
+        ref={vpRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        style={{
+          width: "100%",
+          height: VP_H,
+          overflow: "hidden",
+          cursor: panning.current ? "grabbing" : "grab",
+          borderRadius: 16,
+          border: "1px solid var(--border)",
+          background: "#070707",
+          backgroundImage: "radial-gradient(rgba(201,168,76,0.03) 1px, transparent 1px)",
+          backgroundSize: "22px 22px",
+          position: "relative",
+        }}
+      >
+        <div style={{ position: "relative", width: CANVAS_W, height: CANVAS_H }}>
+
+          {/* SVG: edges + labels + divider */}
+          <svg
+            style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+            width={CANVAS_W}
+            height={CANVAS_H}
+          >
+            {/* Divider line */}
+            <line
+              x1={divX} y1={PAD_Y / 2} x2={divX} y2={CANVAS_H - PAD_Y / 2}
+              stroke="#1a1a1a" strokeWidth={1} strokeDasharray="6 4"
+            />
+
+            {/* Section labels */}
+            <text x={PAD_X + 3.5 * CELL_W} y={PAD_Y / 2 - 4}
+              textAnchor="middle" fill="#3a3020" fontSize={9}
+              fontFamily="monospace" letterSpacing="3">
+              TRADING MASTERY
+            </text>
+            <text x={PAD_X + 10 * CELL_W + CELL_W / 2} y={PAD_Y / 2 - 4}
+              textAnchor="middle" fill="#3a3020" fontSize={9}
+              fontFamily="monospace" letterSpacing="3">
+              COMPETITION
+            </text>
+
+            {/* Edges */}
+            {edges.map(e => (
+              <path
+                key={e.key}
+                d={e.path}
+                stroke={e.color}
+                strokeWidth={e.dashed ? 1 : 1.5}
+                strokeDasharray={e.dashed ? "5 4" : undefined}
+                fill="none"
+                strokeLinecap="square"
+              />
+            ))}
+
+            {/* Gold dot on unlocked node centers */}
+            {ACH.map(ach => {
+              const st = getStatus(ach.id, unlockedSet);
+              if (st !== "unlocked") return null;
+              const { x, y } = nodeCenter(ach.col, ach.row);
+              return (
+                <circle key={`dot-${ach.id}`} cx={x} cy={y - NODE_H / 2 - 2} r={2.5}
+                  fill={RARITY_CFG[ach.rarity].border} />
+              );
+            })}
+          </svg>
+
+          {/* Achievement nodes */}
+          {ACH.map(ach => (
+            <AchNode
+              key={ach.id}
+              ach={ach}
+              status={getStatus(ach.id, unlockedSet)}
+              onEnter={setHoveredId}
+              onLeave={() => setHoveredId(null)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* ── Detail panel ─────────────────────────────────────── */}
+      <div
+        className="max-w-3xl mx-auto mt-4 rounded-2xl overflow-hidden transition-all duration-200"
+        style={{
+          background: "var(--surface)",
+          border: hoveredAch
+            ? `1px solid ${detailRarity!.border}55`
+            : "1px solid var(--border)",
+          minHeight: 90,
+        }}
+      >
+        {hoveredAch && detailStatus ? (
+          <div className="flex items-center gap-5 px-6 py-5">
+            {/* Large icon */}
+            <div
+              className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
+              style={{
+                background: detailStatus === "unlocked" ? `${detailRarity!.border}18` : "var(--elevated)",
+                border: `1px solid ${detailStatus === "unlocked" ? detailRarity!.border : "var(--border-mid)"}55`,
+              }}
+            >
+              {detailStatus === "locked"
+                ? <Lock size={22} style={{ color: "var(--text-3)" }} strokeWidth={1.5} />
+                : <hoveredAch.Icon size={24} color={detailStatus === "unlocked" ? detailRarity!.text : "var(--text-3)"} strokeWidth={1.5} />
+              }
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="font-mono font-bold text-sm" style={{ color: detailStatus === "unlocked" ? detailRarity!.text : "var(--text-2)" }}>
+                  {hoveredAch.title}
+                </span>
+                {detailStatus === "unlocked" && (
+                  <span
+                    className="font-mono text-[9px] tracking-[0.18em] uppercase px-1.5 py-0.5 rounded"
+                    style={{
+                      background: `${detailRarity!.border}18`,
+                      border: `1px solid ${detailRarity!.border}44`,
+                      color: detailRarity!.text,
+                    }}
+                  >
+                    {detailRarity!.label}
+                  </span>
+                )}
+                {detailStatus === "accessible" && (
+                  <span className="font-mono text-[9px] tracking-[0.18em] uppercase px-1.5 py-0.5 rounded"
+                    style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-3)" }}>
+                    Available
+                  </span>
+                )}
+                {detailStatus === "locked" && (
+                  <span className="font-mono text-[9px] tracking-[0.18em] uppercase px-1.5 py-0.5 rounded"
+                    style={{ background: "var(--elevated)", border: "1px solid var(--border)", color: "var(--text-3)" }}>
+                    Locked
+                  </span>
+                )}
+              </div>
+              <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
+                {detailStatus === "unlocked" ? hoveredAch.desc : hoveredAch.hint}
+              </p>
+              {detailStatus === "unlocked" && detailUnlockedAt && (
+                <p className="font-mono text-[10px] mt-1.5" style={{ color: "var(--text-3)", opacity: 0.6 }}>
+                  Unlocked {new Date(detailUnlockedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </p>
+              )}
+              {detailStatus !== "unlocked" && hoveredAch.parents.length > 0 && (
+                <p className="font-mono text-[10px] mt-1.5" style={{ color: "var(--text-3)", opacity: 0.6 }}>
+                  Requires: {hoveredAch.parents.map(pid => ACH_MAP.get(pid)?.title).filter(Boolean).join(", ")}
+                </p>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="px-6 py-7 text-center">
+            <p className="font-mono text-xs" style={{ color: "var(--text-3)", opacity: 0.5 }}>
+              Hover an achievement to see its details
             </p>
           </div>
-        </motion.div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
