@@ -114,10 +114,10 @@ const CANVAS_H = PAD_Y * 2 + (MAX_ROW + 1) * CELL_H;
 
 // ─── Rarity config ────────────────────────────────────────────────────────────
 const RARITY_CFG: Record<Rarity, { border: string; glow: string; text: string; label: string }> = {
-  common:   { border: "#3a2e10", glow: "rgba(58,46,16,0.3)",    text: "#7a6830", label: "Common"   },
-  uncommon: { border: "#6a521e", glow: "rgba(106,82,30,0.35)",  text: "#c9a84c", label: "Uncommon" },
-  rare:     { border: "#c9a84c", glow: "rgba(201,168,76,0.4)",  text: "#e8c66a", label: "Rare"     },
-  epic:     { border: "#e8c66a", glow: "rgba(232,198,106,0.55)",text: "#fff0a0", label: "Epic"     },
+  common:   { border: "#6a541e", glow: "rgba(106,84,30,0.5)",   text: "#b09040", label: "Common"   },
+  uncommon: { border: "#a87c28", glow: "rgba(168,124,40,0.55)", text: "#d4aa58", label: "Uncommon" },
+  rare:     { border: "#c9a84c", glow: "rgba(201,168,76,0.65)", text: "#f0cc70", label: "Rare"     },
+  epic:     { border: "#e8c66a", glow: "rgba(232,198,106,0.8)", text: "#fff8b0", label: "Epic"     },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -137,8 +137,8 @@ function getStatus(id: string, unlocked: Set<string>): Status {
 
 function edgeColor(parentId: string, childId: string, unlocked: Set<string>): string {
   if (unlocked.has(parentId) && unlocked.has(childId)) return "#c9a84c";
-  if (unlocked.has(parentId)) return "#2e2416";
-  return "#141414";
+  if (unlocked.has(parentId)) return "#5a4020";
+  return "#2e2e2e";
 }
 
 function edgePath(parent: AchDef, child: AchDef): string {
@@ -161,11 +161,11 @@ function AchNode({
 }) {
   const { x, y } = nodeCenter(ach.col, ach.row);
   const r = RARITY_CFG[ach.rarity];
-  const borderC = status === "unlocked" ? r.border : status === "accessible" ? "#252525" : "#181818";
-  const bg      = status === "unlocked" ? "#0f0e0a" : "#090909";
-  const opacity = status === "locked" ? 0.32 : 1;
+  const borderC = status === "unlocked" ? r.border : status === "accessible" ? "#3a3a3a" : "#272727";
+  const bg      = status === "unlocked" ? "#1c1808" : "#161616";
+  const opacity = status === "locked" ? 0.45 : 1;
   const glow    = status === "unlocked"
-    ? `0 0 18px ${r.glow}, 0 0 0 1px ${r.border}30` : "none";
+    ? `0 0 24px ${r.glow}, 0 0 0 1px ${r.border}50` : "none";
 
   return (
     <div
@@ -200,12 +200,12 @@ function AchNode({
         <div style={{
           width: ICON_SZ, height: "100%",
           display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-          background: status === "unlocked" ? `${r.border}16` : "#0d0d0d",
+          background: status === "unlocked" ? `${r.border}28` : "#1e1e1e",
           borderRight: `1px solid ${borderC}`,
         }}>
           {status === "locked"
-            ? <Lock size={17} color="#282828" strokeWidth={1.5} />
-            : <ach.Icon size={20} color={status === "unlocked" ? r.text : "#303030"} strokeWidth={1.5} />
+            ? <Lock size={17} color="#4a4a4a" strokeWidth={1.5} />
+            : <ach.Icon size={20} color={status === "unlocked" ? r.text : "#5a5a5a"} strokeWidth={1.5} />
           }
         </div>
 
@@ -218,7 +218,7 @@ function AchNode({
             letterSpacing: "0.05em",
             lineHeight: 1.2,
             marginBottom: 4,
-            color: status === "unlocked" ? r.text : status === "accessible" ? "#444" : "#282828",
+            color: status === "unlocked" ? r.text : status === "accessible" ? "#707070" : "#484848",
             whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
           }}>
             {ach.title}
@@ -226,7 +226,7 @@ function AchNode({
           <div style={{
             fontSize: 9.5,
             lineHeight: 1.35,
-            color: status === "unlocked" ? "#5a5040" : "#252525",
+            color: status === "unlocked" ? "#9a8060" : "#484848",
             overflow: "hidden",
             display: "-webkit-box",
             WebkitLineClamp: 2,
@@ -362,8 +362,8 @@ export default function AchievementsClient({
           cursor: panning.current ? "grabbing" : "grab",
           borderRadius: 16,
           border: "1px solid var(--border)",
-          background: "#070707",
-          backgroundImage: "radial-gradient(rgba(201,168,76,0.03) 1px, transparent 1px)",
+          background: "#0e0d0a",
+          backgroundImage: "radial-gradient(rgba(201,168,76,0.09) 1px, transparent 1px)",
           backgroundSize: "22px 22px",
           position: "relative",
         }}
@@ -379,17 +379,17 @@ export default function AchievementsClient({
             {/* Divider line */}
             <line
               x1={divX} y1={PAD_Y / 2} x2={divX} y2={CANVAS_H - PAD_Y / 2}
-              stroke="#1a1a1a" strokeWidth={1} strokeDasharray="6 4"
+              stroke="#333322" strokeWidth={1} strokeDasharray="6 4"
             />
 
             {/* Section labels */}
             <text x={PAD_X + 3.5 * CELL_W} y={PAD_Y / 2 - 4}
-              textAnchor="middle" fill="#3a3020" fontSize={9}
+              textAnchor="middle" fill="#6a5a30" fontSize={9}
               fontFamily="monospace" letterSpacing="3">
               TRADING MASTERY
             </text>
             <text x={PAD_X + 10 * CELL_W + CELL_W / 2} y={PAD_Y / 2 - 4}
-              textAnchor="middle" fill="#3a3020" fontSize={9}
+              textAnchor="middle" fill="#6a5a30" fontSize={9}
               fontFamily="monospace" letterSpacing="3">
               COMPETITION
             </text>

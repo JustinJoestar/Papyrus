@@ -7,11 +7,11 @@ import PulseSection from "@/components/PulseSection";
 import { createClient } from "@/lib/supabase/server";
 
 const STATS = [
-  { value: "250+",    label: "Coins",              rot: -2.5, dy: 8   },
-  { value: "35+",     label: "Stocks",             rot: 1.5,  dy: -10 },
-  { value: "10",      label: "Commodities",        rot: -1,   dy: 4   },
-  { value: "$10,000", label: "Starting Balance",   rot: 2.5,  dy: -6  },
-  { value: "Weekly",  label: "Competition Reset",  rot: -2,   dy: 10  },
+  { value: "250+",    label: "Coins"             },
+  { value: "35+",     label: "Stocks"            },
+  { value: "10",      label: "Commodities"       },
+  { value: "$10,000", label: "Starting Balance"  },
+  { value: "Weekly",  label: "Competition Reset" },
 ];
 
 const FEATURES = [
@@ -49,6 +49,8 @@ export default async function LandingPage() {
   const { data: { user } } = await supabase.auth.getUser();
   const isLoggedIn = !!user;
 
+  const ctaHref = isLoggedIn ? "/dashboard" : "/auth/signup";
+
   return (
     <div
       className="min-h-screen relative overflow-hidden landing-bg"
@@ -73,6 +75,7 @@ export default async function LandingPage() {
         </Link>
 
         <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
+
         <NavLinks />
 
         <div className="ml-auto flex items-center gap-3">
@@ -113,101 +116,49 @@ export default async function LandingPage() {
       </nav>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative z-10 max-w-5xl mx-auto px-8 pt-20 pb-16">
-        {/* Dark backdrop for text legibility */}
+      <section className="relative z-10 max-w-4xl mx-auto px-8 pt-20 pb-16 text-center">
+        {/* Live badge */}
         <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse 70% 100% at 50% 40%, rgba(0,0,0,0.55) 0%, transparent 70%)" }}
-        />
-
-        {/* Left tilted card */}
-        <div
-          className="absolute left-0 top-20 hidden lg:block pointer-events-none"
-          style={{ transform: "rotate(-5deg)", width: 168 }}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
+          style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
         >
-          <div
-            className="rounded-2xl p-4"
-            style={{
-              background: "rgba(13,13,13,0.82)",
-              border: "1px solid var(--gold-border)",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            <p className="font-cormorant italic text-base font-semibold leading-snug" style={{ color: "var(--text-1)" }}>
-              "$10,000 in virtual cash — real market prices."
-            </p>
-            <p className="font-mono text-[9px] tracking-widest uppercase mt-2" style={{ color: "var(--gold-dim)" }}>
-              Zero risk
-            </p>
-          </div>
+          <div className="w-1.5 h-1.5 rounded-full animate-blink-dot" style={{ background: "var(--gold)" }} />
+          <span className="font-mono text-[10px] tracking-[0.2em] uppercase" style={{ color: "var(--gold)" }}>
+            Live Markets · Zero Risk
+          </span>
         </div>
 
-        {/* Right tilted card */}
-        <div
-          className="absolute right-0 top-28 hidden lg:block pointer-events-none"
-          style={{ transform: "rotate(4deg)", width: 155 }}
+        {/* Main headline — Playfair + glow */}
+        <h1 className="font-playfair font-bold leading-[1.08] tracking-tight mb-4" style={{ fontSize: "clamp(2.8rem, 6vw, 4.5rem)" }}>
+          Paper trade.{" "}
+          <span className="font-playfair text-gold-glow">
+            Real competition.
+          </span>
+        </h1>
+
+        {/* Subheadline — Cormorant */}
+        <p
+          className="font-cormorant text-2xl font-semibold mb-6 leading-relaxed"
+          style={{ color: "var(--text-1)" }}
         >
-          <div
-            className="rounded-2xl p-4"
-            style={{
-              background: "rgba(13,13,13,0.82)",
-              border: "1px solid var(--border-mid)",
-              backdropFilter: "blur(12px)",
-            }}
-          >
-            <p className="font-mono text-[10px] tracking-wide leading-relaxed" style={{ color: "var(--text-2)" }}>
-              Reset every<br />Monday.<br />Compete fresh.
-            </p>
-            <div className="mt-2 flex items-center gap-1.5">
-              <div className="w-1.5 h-1.5 rounded-full animate-blink-dot" style={{ background: "var(--gold)" }} />
-              <span className="font-mono text-[8px] tracking-[0.2em] uppercase" style={{ color: "var(--gold-dim)" }}>
-                Live Markets
-              </span>
-            </div>
-          </div>
-        </div>
+          The trading arena where{" "}
+          <span style={{ color: "var(--gold)" }}>skill, not luck,</span>
+          {" "}determines the leaderboard.
+        </p>
 
-        {/* Center content */}
-        <div className="relative text-center max-w-2xl mx-auto">
-          {/* Live badge */}
-          <div
-            className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8"
-            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
-          >
-            <div className="w-1.5 h-1.5 rounded-full animate-blink-dot" style={{ background: "var(--gold)" }} />
-            <span className="font-mono text-[10px] tracking-[0.2em] uppercase" style={{ color: "var(--gold)" }}>
-              Live Markets · Zero Risk
-            </span>
-          </div>
+        <p
+          className="font-cormorant text-lg font-medium max-w-xl mx-auto mb-10 leading-loose"
+          style={{ color: "var(--text-1)" }}
+        >
+          Start with <span className="font-semibold" style={{ color: "var(--gold-bright)" }}>$10,000</span> in virtual cash.
+          {" "}Trade crypto, stocks, and commodities at live prices —
+          {" "}compete weekly, reset every Monday.
+        </p>
 
-          <h1
-            className="font-playfair font-bold leading-[1.06] tracking-tight mb-5"
-            style={{
-              fontSize: "clamp(3rem, 7vw, 5rem)",
-              textShadow: "0 2px 24px rgba(0,0,0,0.9)",
-            }}
-          >
-            Paper trade.{" "}
-            <span className="font-playfair italic text-gold-glow">
-              Real competition.
-            </span>
-          </h1>
-
-          <p
-            className="font-cormorant italic text-2xl font-semibold mb-10 leading-relaxed"
-            style={{
-              color: "rgba(255,255,255,0.92)",
-              textShadow: "0 1px 12px rgba(0,0,0,0.95)",
-            }}
-          >
-            The trading arena where{" "}
-            <span style={{ color: "var(--gold)" }}>skill, not luck,</span>
-            {" "}determines the leaderboard.
-          </p>
-
+        <div className="flex items-center justify-center gap-4 flex-wrap">
           <Link
-            href={isLoggedIn ? "/dashboard" : "/auth/signup"}
-            className="inline-block font-bold font-mono text-sm tracking-[0.12em] px-10 py-4 rounded-xl transition-all duration-200 hover:scale-105"
+            href={ctaHref}
+            className="font-bold font-mono text-sm tracking-[0.1em] px-8 py-3.5 rounded-xl transition-all duration-200"
             style={{
               background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
               color: "var(--surface)",
@@ -216,11 +167,23 @@ export default async function LandingPage() {
           >
             {isLoggedIn ? "GO TO DASHBOARD →" : "START TRADING FREE →"}
           </Link>
-
-          <p className="mt-5 font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>
-            Virtual funds only · No real money at risk
-          </p>
+          <Link
+            href="/dashboard/market"
+            className="font-cormorant text-lg px-8 py-3 rounded-xl transition-all duration-200"
+            style={{
+              background: "var(--card-bg)",
+              border: "1px solid var(--border-mid)",
+              color: "var(--text-1)",
+              backdropFilter: "blur(16px)",
+            }}
+          >
+            Browse Markets
+          </Link>
         </div>
+
+        <p className="mt-5 font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-2)" }}>
+          Virtual funds only · No real money at risk
+        </p>
       </section>
 
       {/* ── Asset Ticker ─────────────────────────────────────── */}
@@ -229,52 +192,21 @@ export default async function LandingPage() {
       </div>
 
       {/* ── Stats bar ────────────────────────────────────────── */}
-      <section className="relative z-10 w-full py-16 overflow-hidden">
-        {/* Left vertical text */}
+      <section className="relative z-10 max-w-4xl mx-auto px-8 py-16">
         <div
-          className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none hidden lg:block"
-          style={{ writingMode: "vertical-rl", transform: "rotate(180deg) translateY(50%)" }}
+          className="rounded-2xl px-8 py-6 grid grid-cols-5 gap-4"
+          style={{
+            background: "var(--card-bg)",
+            border: "1px solid var(--border-mid)",
+            backdropFilter: "blur(16px)",
+          }}
         >
-          <p className="font-cormorant italic text-lg font-semibold tracking-wide" style={{ color: "var(--text-3)", opacity: 0.5 }}>
-            No margin calls. No blown accounts.
-          </p>
-        </div>
-
-        {/* Right vertical text */}
-        <div
-          className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none hidden lg:block"
-          style={{ writingMode: "vertical-rl", transform: "translateY(-50%)" }}
-        >
-          <p className="font-cormorant italic text-lg font-semibold tracking-wide" style={{ color: "var(--text-3)", opacity: 0.5 }}>
-            Just pure strategy.
-          </p>
-        </div>
-
-        {/* Stat cards */}
-        <div className="flex items-center justify-center gap-4 px-24 flex-wrap">
-          {STATS.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-2xl px-6 py-5 text-center shrink-0"
-              style={{
-                transform: `rotate(${s.rot}deg) translateY(${s.dy}px)`,
-                background: "rgba(13,13,13,0.80)",
-                border: "1px solid var(--gold-border)",
-                backdropFilter: "blur(16px)",
-                minWidth: 110,
-              }}
-            >
-              <p
-                className="font-cormorant italic font-semibold mb-1"
-                style={{
-                  fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
-                  color: "var(--gold)",
-                  lineHeight: 1,
-                }}
-              >
+          {STATS.map((s, i) => (
+            <div key={s.label} className={`text-center px-4 ${i < STATS.length - 1 ? "border-r" : ""}`} style={{ borderColor: "var(--border)" }}>
+              <p className="font-playfair font-bold text-2xl mb-1 text-gold-glow">
                 {s.value}
               </p>
-              <p className="font-mono text-[9px] tracking-[0.22em] uppercase" style={{ color: "var(--text-3)" }}>
+              <p className="font-mono text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--text-2)" }}>
                 {s.label}
               </p>
             </div>
@@ -290,7 +222,7 @@ export default async function LandingPage() {
         <h2 className="font-playfair text-3xl font-bold text-center mb-2" style={{ color: "var(--text-1)" }}>
           Built for serious traders
         </h2>
-        <p className="font-cormorant italic text-xl font-semibold text-center mb-10" style={{ color: "var(--text-2)", textShadow: "0 1px 8px rgba(0,0,0,0.8)" }}>
+        <p className="font-cormorant text-xl font-medium text-center mb-10" style={{ color: "var(--text-2)" }}>
           The tools professionals use, with nothing to lose.
         </p>
 
@@ -333,10 +265,12 @@ export default async function LandingPage() {
           className="rounded-2xl p-12 relative overflow-hidden"
           style={{ background: "var(--card-bg)", border: "1px solid var(--border-mid)", backdropFilter: "blur(16px)" }}
         >
+          {/* Ambient radial glow */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{ background: `radial-gradient(ellipse 60% 80% at 50% 120%, var(--cta-radial) 0%, transparent 65%)` }}
           />
+          {/* Top accent line */}
           <div
             className="h-px absolute top-0 inset-x-0"
             style={{ background: "linear-gradient(90deg, transparent, var(--gold) 35%, var(--gold-bright) 50%, var(--gold) 65%, transparent)" }}
@@ -349,12 +283,12 @@ export default async function LandingPage() {
             <h2 className="font-playfair text-4xl font-bold mb-3 text-gold-glow">
               Start with $10,000 today
             </h2>
-            <p className="font-cormorant italic text-xl font-semibold mb-8" style={{ color: "var(--text-2)" }}>
+            <p className="font-cormorant text-xl font-medium mb-8" style={{ color: "var(--text-2)" }}>
               No credit card. No real money. Just strategy.
             </p>
             <Link
-              href={isLoggedIn ? "/dashboard" : "/auth/signup"}
-              className="inline-block font-bold font-mono text-sm tracking-[0.1em] px-10 py-3.5 rounded-xl transition-all duration-200 hover:scale-105"
+              href={ctaHref}
+              className="inline-block font-bold font-mono text-sm tracking-[0.1em] px-10 py-3.5 rounded-xl transition-all duration-200"
               style={{
                 background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
                 color: "var(--surface)",
@@ -369,7 +303,7 @@ export default async function LandingPage() {
 
       {/* ── Footer ───────────────────────────────────────────── */}
       <footer className="relative z-10 border-t pb-10 pt-8 text-center" style={{ borderColor: "var(--border)" }}>
-        <p className="font-cormorant italic text-base font-semibold" style={{ color: "var(--text-2)" }}>
+        <p className="font-cormorant text-base font-medium" style={{ color: "var(--text-2)" }}>
           Papyrus — Virtual funds only · No real money at risk
         </p>
       </footer>
