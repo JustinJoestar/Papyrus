@@ -27,13 +27,13 @@ export function BeamsBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
       <BeamsCanvas
-        beamWidth={2}
-        beamHeight={14}
-        beamNumber={10}
-        lightColor="#555555"
-        speed={2}
-        noiseIntensity={1.4}
-        scale={0.13}
+        beamWidth={2.5}
+        beamHeight={18}
+        beamNumber={12}
+        lightColor="#aaaaaa"
+        speed={2.5}
+        noiseIntensity={1.8}
+        scale={0.15}
         rotation={43}
         backgroundColor="#000000"
       />
