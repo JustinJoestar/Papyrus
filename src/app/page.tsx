@@ -1,6 +1,6 @@
 import Link from "next/link";
 import AssetTicker from "@/components/AssetTicker";
-import { BeamsBackground } from "@/components/BeamsBackground";
+import { DarkBackground } from "@/components/DarkBackground";
 import NavThemeToggle from "@/components/NavThemeToggle";
 import PulseSection from "@/components/PulseSection";
 import { createClient } from "@/lib/supabase/server";
@@ -30,16 +30,7 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden landing-bg" style={{ color: "var(--text-1)" }}>
-      <BeamsBackground />
-
-      {/* Readability veil — sits between beams and content */}
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          zIndex: 1,
-          background: "linear-gradient(180deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 100%)",
-        }}
-      />
+      <DarkBackground />
 
       {/* ── Nav ─────────────────────────────────────────────── */}
       <nav

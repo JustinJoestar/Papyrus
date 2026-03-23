@@ -176,8 +176,10 @@ export default function HeroTerminal() {
   const tickRef   = useRef(0);
   const autoRef   = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const idxRef = useRef(0); // mirrors idx, safe to read in intervals
+
   const goTo = useCallback((next: number) => {
-    // Animate out → swap content → animate in
+    idxRef.current = next;
     setVisible(false);
     setTimeout(() => {
       const a = ASSETS[next];
@@ -192,33 +194,18 @@ export default function HeroTerminal() {
     }, 160);
   }, []);
 
-  // Auto-advance every 10 seconds
+  // Auto-advance every 5 seconds
+  const [autoKey, setAutoKey] = useState(0); // increment to reset timer
   useEffect(() => {
-    autoRef.current = setInterval(() => {
-      setIdx(i => {
-        const next = (i + 1) % ASSETS.length;
-        goTo(next);
-        return next;
-      });
-    }, 10000);
-    return () => { if (autoRef.current) clearInterval(autoRef.current); };
-  }, [goTo]);
+    const id = setInterval(() => {
+      goTo((idxRef.current + 1) % ASSETS.length);
+    }, 5000);
+    return () => clearInterval(id);
+  }, [goTo, autoKey]);
 
-  // Reset auto-timer on manual navigation
   const navigate = useCallback((dir: 1 | -1) => {
-    if (autoRef.current) clearInterval(autoRef.current);
-    setIdx(i => {
-      const next = (i + dir + ASSETS.length) % ASSETS.length;
-      goTo(next);
-      autoRef.current = setInterval(() => {
-        setIdx(i2 => {
-          const n2 = (i2 + 1) % ASSETS.length;
-          goTo(n2);
-          return n2;
-        });
-      }, 10000);
-      return next;
-    });
+    goTo((idxRef.current + dir + ASSETS.length) % ASSETS.length);
+    setAutoKey(k => k + 1); // reset the 5s timer
   }, [goTo]);
 
   // Live price jitter
