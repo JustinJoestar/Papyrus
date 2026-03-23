@@ -272,9 +272,8 @@ export default function HeroTerminal() {
           border: "1px solid var(--border-mid)",
           boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
           opacity: visible ? 1 : 0,
-          transform: visible ? "scaleY(1)" : "scaleY(0.92)",
-          transition: "opacity 0.15s ease, transform 0.15s ease",
-          transformOrigin: "top",
+          transform: visible ? "translateY(0)" : "translateY(-8px)",
+          transition: "opacity 0.18s ease, transform 0.18s ease",
         }}
       >
         {/* Top accent */}

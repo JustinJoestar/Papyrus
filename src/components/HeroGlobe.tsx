@@ -29,7 +29,7 @@ export default function HeroGlobe() {
     });
 
     function animate() {
-      phi += 0.0032;
+      phi += 0.009;
       globe.update({ phi });
       rafId = requestAnimationFrame(animate);
     }
