@@ -373,36 +373,36 @@ body {
 .dark-blob {
   position: absolute;
   border-radius: 50%;
-  filter: blur(110px);
+  filter: blur(80px);
 }
 
-/* Large ambient sweep — upper-left, cool charcoal */
+/* Large ambient sweep — upper-left, cool slate */
 .dark-blob-1 {
   width: 85%;
   height: 70%;
-  top: -25%;
-  left: -20%;
-  background: radial-gradient(circle, rgba(68,70,90,0.30) 0%, rgba(45,47,62,0.14) 50%, transparent 72%);
+  top: -20%;
+  left: -15%;
+  background: radial-gradient(circle, rgba(90,95,130,0.55) 0%, rgba(60,64,90,0.25) 50%, transparent 72%);
   animation: blob-drift-1 28s ease-in-out infinite;
 }
 
-/* Lower-right counter-drift — slightly warmer neutral */
+/* Lower-right counter-drift */
 .dark-blob-2 {
   width: 65%;
   height: 65%;
-  bottom: -20%;
-  right: -15%;
-  background: radial-gradient(circle, rgba(55,56,72,0.22) 0%, rgba(36,37,50,0.10) 52%, transparent 72%);
+  bottom: -15%;
+  right: -10%;
+  background: radial-gradient(circle, rgba(70,74,105,0.45) 0%, rgba(48,51,76,0.20) 52%, transparent 72%);
   animation: blob-drift-2 36s ease-in-out infinite;
 }
 
-/* Centre soft glow — barely-there depth break */
+/* Centre soft glow */
 .dark-blob-3 {
-  width: 50%;
+  width: 55%;
   height: 55%;
-  top: 22%;
-  left: 26%;
-  background: radial-gradient(circle, rgba(48,50,66,0.16) 0%, rgba(30,31,44,0.06) 55%, transparent 70%);
+  top: 20%;
+  left: 24%;
+  background: radial-gradient(circle, rgba(75,78,108,0.30) 0%, rgba(50,53,78,0.12) 55%, transparent 70%);
   animation: blob-drift-3 22s ease-in-out infinite;
 }
 
