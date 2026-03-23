@@ -37,6 +37,15 @@ export default async function LandingPage() {
     <div className="min-h-screen relative overflow-hidden landing-bg" style={{ color: "var(--text-1)" }}>
       <BeamsBackground />
 
+      {/* Readability veil — sits between beams and content */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: 1,
+          background: "linear-gradient(180deg, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.65) 100%)",
+        }}
+      />
+
       {/* ── Nav ─────────────────────────────────────────────── */}
       <nav
         className="sticky top-0 z-50 h-14 flex items-center px-8 gap-4 backdrop-blur-md"
@@ -121,7 +130,7 @@ export default async function LandingPage() {
           at live prices. Compete on a global leaderboard that resets every week.
         </p>
 
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center">
           <Link
             href={ctaHref}
             className="font-mono font-semibold text-sm tracking-wide px-7 py-3 rounded-lg transition-all duration-200"
@@ -132,16 +141,6 @@ export default async function LandingPage() {
             }}
           >
             {isLoggedIn ? "Open Dashboard" : "Start for free"}
-          </Link>
-          <Link
-            href="/dashboard/market"
-            className="text-sm px-7 py-3 rounded-lg transition-all duration-200"
-            style={{
-              border: "1px solid var(--border-mid)",
-              color: "var(--text-2)",
-            }}
-          >
-            Browse markets
           </Link>
         </div>
       </section>
@@ -179,7 +178,7 @@ export default async function LandingPage() {
           <h2 className="font-playfair text-3xl font-bold mb-3" style={{ color: "var(--text-1)" }}>
             Everything in one place
           </h2>
-          <p className="text-sm" style={{ color: "var(--text-3)" }}>
+          <p className="text-sm" style={{ color: "var(--text-2)" }}>
             The infrastructure of a real trading desk, built for learning and competition.
           </p>
         </div>
