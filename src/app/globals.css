@@ -408,3 +408,53 @@ body {
   72%        { transform: translate(4%,   -7%)   scale(1.02); }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   LOADING SCREEN
+═══════════════════════════════════════════════════════════════ */
+
+/* Equalizer bars */
+.loading-bar {
+  width: 4px;
+  border-radius: 2px;
+  background: var(--gold);
+  animation: bar-eq 1.1s ease-in-out infinite;
+  transform-origin: bottom;
+}
+.loading-bar-1 { height: 14px; animation-delay: 0s;    }
+.loading-bar-2 { height: 22px; animation-delay: 0.18s; }
+.loading-bar-3 { height: 10px; animation-delay: 0.36s; }
+
+@keyframes bar-eq {
+  0%, 100% { transform: scaleY(1);    opacity: 1;    }
+  50%       { transform: scaleY(2.4); opacity: 0.75; }
+}
+
+/* Wordmark fade pulse */
+.loading-wordmark {
+  animation: wm-pulse 2s ease-in-out infinite;
+}
+@keyframes wm-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1;   }
+}
+
+/* Sweep line */
+.loading-sweep-wrap {
+  width: 120px;
+  height: 1px;
+  background: rgba(201,168,76,0.12);
+  border-radius: 1px;
+  overflow: hidden;
+  position: relative;
+}
+.loading-sweep-line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
+  animation: sweep 1.6s ease-in-out infinite;
+}
+@keyframes sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%);  }
+}
+
