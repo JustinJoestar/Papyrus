@@ -382,7 +382,7 @@ body {
   height: 65%;
   top: -18%;
   left: -12%;
-  background: radial-gradient(circle, rgba(180,182,188,0.14) 0%, rgba(140,142,148,0.06) 52%, transparent 72%);
+  background: radial-gradient(circle, rgba(180,182,188,0.28) 0%, rgba(140,142,148,0.12) 52%, transparent 72%);
   animation: blob-drift-1 30s ease-in-out infinite;
 }
 
@@ -392,7 +392,7 @@ body {
   height: 60%;
   bottom: -15%;
   right: -10%;
-  background: radial-gradient(circle, rgba(165,167,174,0.11) 0%, rgba(120,122,130,0.05) 52%, transparent 72%);
+  background: radial-gradient(circle, rgba(165,167,174,0.22) 0%, rgba(120,122,130,0.09) 52%, transparent 72%);
   animation: blob-drift-2 38s ease-in-out infinite;
 }
 
