@@ -21,7 +21,6 @@ export function DarkBackground() {
       {/* Slow drifting cool-grey depth blobs — near-midnight palette */}
       <div className="dark-blob dark-blob-1" />
       <div className="dark-blob dark-blob-2" />
-      <div className="dark-blob dark-blob-3" />
     </div>
   );
 }
