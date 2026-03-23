@@ -172,18 +172,24 @@ export default function HeroTerminal() {
   const [lastPrice, setLastPrice] = useState(ASSETS[0].midPrice);
   const [lastSide, setLastSide]   = useState<"buy" | "sell">("buy");
   const [flash, setFlash]         = useState(false);
+  const [visible, setVisible]     = useState(true);
   const tickRef   = useRef(0);
   const autoRef   = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const goTo = useCallback((next: number) => {
-    const a = ASSETS[next];
-    setIdx(next);
-    setAsks(a.asks.map(r => ({ ...r })));
-    setBids(a.bids.map(r => ({ ...r })));
-    setSpark([...a.spark]);
-    setLastPrice(a.midPrice);
-    setLastSide("buy");
-    tickRef.current = 0;
+    // Animate out → swap content → animate in
+    setVisible(false);
+    setTimeout(() => {
+      const a = ASSETS[next];
+      setIdx(next);
+      setAsks(a.asks.map(r => ({ ...r })));
+      setBids(a.bids.map(r => ({ ...r })));
+      setSpark([...a.spark]);
+      setLastPrice(a.midPrice);
+      setLastSide("buy");
+      tickRef.current = 0;
+      setVisible(true);
+    }, 160);
   }, []);
 
   // Auto-advance every 10 seconds
@@ -278,6 +284,10 @@ export default function HeroTerminal() {
           background: "#000000",
           border: "1px solid var(--border-mid)",
           boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
+          opacity: visible ? 1 : 0,
+          transform: visible ? "scaleY(1)" : "scaleY(0.92)",
+          transition: "opacity 0.15s ease, transform 0.15s ease",
+          transformOrigin: "top",
         }}
       >
         {/* Top accent */}
