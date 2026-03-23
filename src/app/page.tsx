@@ -176,9 +176,8 @@ export default async function LandingPage() {
         <AssetTicker />
       </div>
 
-
       {/* ── Features ────────────────────────────────────────── */}
-      <section className="relative z-10 max-w-5xl mx-auto px-10 pb-32">
+      <section className="relative z-10 max-w-5xl mx-auto px-10 pt-28 pb-32">
         <div className="mb-14 text-center">
           <h2 className="font-playfair text-4xl font-bold mb-4" style={{ color: "var(--text-1)" }}>
             Everything in one place
