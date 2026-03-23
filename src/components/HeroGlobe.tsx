@@ -14,17 +14,17 @@ export default function HeroGlobe() {
 
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: 2,
-      width: 420,
-      height: 420,
+      width: 360,
+      height: 360,
       phi,
       theta: 0.22,
       dark: 1,
-      diffuse: 1.4,
+      diffuse: 2.0,
       mapSamples: 16000,
-      mapBrightness: 2.2,
-      baseColor:   [0.10, 0.09, 0.04],
-      markerColor: [0.788, 0.659, 0.298],
-      glowColor:   [0.40, 0.32, 0.12],
+      mapBrightness: 8,
+      baseColor:   [0.18, 0.14, 0.04],
+      markerColor: [1.0, 0.82, 0.30],
+      glowColor:   [0.70, 0.55, 0.18],
       markers: [
         { location: [40.7128, -74.006],  size: 0.055 }, // New York
         { location: [51.5074, -0.1278],  size: 0.048 }, // London
@@ -53,22 +53,24 @@ export default function HeroGlobe() {
   }, []);
 
   return (
-    <div className="relative flex items-center justify-center" style={{ width: 280, height: 280 }}>
-      {/* Outer glow ring */}
+    <div className="relative flex items-center justify-center" style={{ width: 240, height: 240 }}>
+      {/* Outer glow */}
       <div
-        className="absolute inset-0 rounded-full pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)",
-          boxShadow: "0 0 80px rgba(201,168,76,0.12), 0 0 160px rgba(201,168,76,0.05)",
+          inset: -20,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(201,168,76,0.10) 30%, transparent 72%)",
+          boxShadow: "0 0 60px rgba(201,168,76,0.22), 0 0 120px rgba(201,168,76,0.09)",
         }}
       />
       <canvas
         ref={canvasRef}
-        width={420}
-        height={420}
+        width={360}
+        height={360}
         style={{
-          width: 280,
-          height: 280,
+          width: 240,
+          height: 240,
           borderRadius: "50%",
         }}
       />

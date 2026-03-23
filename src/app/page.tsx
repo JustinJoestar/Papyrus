@@ -97,16 +97,19 @@ export default async function LandingPage() {
       </nav>
 
       {/* ── Hero ────────────────────────────────────────────── */}
-      <section className="relative z-10 max-w-6xl mx-auto px-8 pt-20 pb-16">
-        <div className="flex items-center gap-8">
+      <section className="relative z-10 mx-auto px-8 pt-20 pb-16" style={{ maxWidth: 1400 }}>
+        <div className="relative flex items-center justify-center">
 
-          {/* Left — live order book terminal */}
-          <div className="hidden lg:flex shrink-0 items-center justify-center" style={{ width: 288 }}>
+          {/* Left — live order book terminal (absolute, doesn't affect center) */}
+          <div
+            className="hidden xl:flex items-center justify-center absolute"
+            style={{ left: 0, top: "50%", transform: "translateY(-50%)" }}
+          >
             <HeroTerminalPanel />
           </div>
 
           {/* Center — copy */}
-          <div className="flex-1 text-center min-w-0">
+          <div className="text-center" style={{ maxWidth: 520 }}>
             {/* Status pill */}
             <div
               className="inline-flex items-center gap-2 rounded-full px-3.5 py-1 mb-8"
@@ -157,8 +160,11 @@ export default async function LandingPage() {
             </div>
           </div>
 
-          {/* Right — globe */}
-          <div className="hidden lg:flex shrink-0 items-center justify-center" style={{ width: 288 }}>
+          {/* Right — globe (absolute, doesn't affect center) */}
+          <div
+            className="hidden xl:flex items-center justify-center absolute"
+            style={{ right: 0, top: "50%", transform: "translateY(-50%)" }}
+          >
             <HeroGlobePanel />
           </div>
 

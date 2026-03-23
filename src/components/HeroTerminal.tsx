@@ -93,10 +93,10 @@ export default function HeroTerminal() {
     <div
       className="rounded-2xl overflow-hidden select-none"
       style={{
-        width: 288,
-        background: "var(--surface)",
+        width: 240,
+        background: "#000000",
         border: "1px solid var(--border-mid)",
-        boxShadow: "0 32px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(201,168,76,0.06)",
+        boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
       }}
     >
       {/* Top accent */}
