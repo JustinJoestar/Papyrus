@@ -8,7 +8,10 @@ import { fetchCommodities } from "@/lib/commodities";
 // Also callable manually: GET /api/reset  (Authorization: Bearer <CRON_SECRET>)
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  const isVercelCron = req.headers.get("x-vercel-cron") === "1";
+  const secret = process.env.CRON_SECRET;
+  const validSecret = secret && auth === `Bearer ${secret}`;
+  if (!isVercelCron && !validSecret) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -12,7 +12,7 @@ export default async function SettingsPage() {
   if (!user) redirect("/auth/login");
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       {/* Header */}
       <div className="mb-8">
         <p

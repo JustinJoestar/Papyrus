@@ -120,7 +120,7 @@ export default function HoldingsList({
 
               <button
                 onClick={(e) => { e.stopPropagation(); setSellTarget(h); }}
-                className="shrink-0 px-3 py-1.5 text-xs font-mono font-medium rounded-lg transition-all duration-150 opacity-0 group-hover:opacity-100"
+                className="shrink-0 px-3 py-1.5 text-xs font-mono font-medium rounded-lg transition-all duration-150 opacity-100 md:opacity-0 md:group-hover:opacity-100"
                 style={{
                   color: "var(--loss)",
                   border: "1px solid var(--loss-border)",

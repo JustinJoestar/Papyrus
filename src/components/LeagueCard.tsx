@@ -13,6 +13,8 @@ type League = {
   is_owner: boolean;
   member_count: number;
   starting_balance: number;
+  duration_days: number;
+  ends_at: string | null;
   created_at: string;
 };
 
@@ -52,13 +54,13 @@ export default function LeagueCard({ league, currentUserId }: Props) {
 
   return (
     <div
-      className="rounded-2xl px-6 py-5"
+      className="rounded-2xl px-4 sm:px-6 py-4 sm:py-5"
       style={{
         background: "var(--surface)",
         border: "1px solid var(--border-mid)",
       }}
     >
-      <div className="flex items-start justify-between gap-4 mb-4">
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="font-semibold text-base" style={{ color: "var(--text-1)" }}>
@@ -83,6 +85,20 @@ export default function LeagueCard({ league, currentUserId }: Props) {
             <span className="font-mono" style={{ color: "var(--gold-dim)" }}>
               ${league.starting_balance.toLocaleString()} start
             </span>
+            {league.ends_at && (() => {
+              const end = new Date(league.ends_at);
+              const now = new Date();
+              const ended = end < now;
+              const label = end.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+              return (
+                <>
+                  {" · "}
+                  <span className="font-mono" style={{ color: ended ? "var(--loss)" : "var(--text-3)" }}>
+                    {ended ? `Ended ${label}` : `Ends ${label}`}
+                  </span>
+                </>
+              );
+            })()}
           </p>
         </div>
 

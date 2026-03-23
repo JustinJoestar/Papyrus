@@ -60,7 +60,7 @@ export default async function ProfilePage() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       {/* Header */}
       <div className="mb-8">
         <p
@@ -76,7 +76,7 @@ export default async function ProfilePage() {
 
       {/* Avatar + identity card */}
       <div
-        className="rounded-2xl p-10 mb-6 flex items-center gap-12"
+        className="rounded-2xl p-6 sm:p-10 mb-6 flex flex-col sm:flex-row items-center gap-6 sm:gap-12"
         style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
       >
         <AvatarUpload
@@ -118,7 +118,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-8">
         {[
           { label: "Total Trades",  value: tradeCount ?? 0 },
           { label: "Cash Balance",  value: `$${Number(profile.cash_balance).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
@@ -126,7 +126,7 @@ export default async function ProfilePage() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl px-6 py-7 text-center"
+            className="rounded-xl px-3 py-5 sm:px-6 sm:py-7 text-center"
             style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
           >
             <p className="font-mono font-bold text-3xl text-gold-gradient mb-2">
@@ -158,7 +158,7 @@ export default async function ProfilePage() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {achievements.map((a) => (
             <div
               key={a.id}

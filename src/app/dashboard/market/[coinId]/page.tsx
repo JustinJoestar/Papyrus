@@ -42,7 +42,7 @@ export default async function CoinDetailPage({
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10">
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <Link
         href="/dashboard/market"
         className="inline-flex items-center font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8"

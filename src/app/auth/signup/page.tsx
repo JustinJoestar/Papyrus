@@ -12,13 +12,29 @@ export default function SignupPage() {
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [ageOk,    setAgeOk]    = useState(false);
+  const [tosOk,    setTosOk]    = useState(false);
   const [error,    setError]    = useState<string | null>(null);
   const [loading,  setLoading]  = useState(false);
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
+      setError("Username must be 3–20 characters: letters, numbers, underscores only");
+      return;
+    }
+    if (!ageOk) {
+      setError("You must be 13 or older to create an account");
+      return;
+    }
+    if (!tosOk) {
+      setError("You must agree to the Terms of Service");
+      return;
+    }
+
+    setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -180,9 +196,56 @@ export default function SignupPage() {
                 </div>
               ))}
 
+              {/* Age + ToS checkboxes */}
+              <div className="space-y-2.5 pt-1">
+                {[
+                  { checked: ageOk, set: setAgeOk, label: "I am 13 years of age or older" },
+                  { checked: tosOk, set: setTosOk, label: null },
+                ].map(({ checked, set, label }, i) => (
+                  <label
+                    key={i}
+                    className="flex items-start gap-3 cursor-pointer group"
+                  >
+                    <div
+                      className="w-4 h-4 rounded flex items-center justify-center shrink-0 mt-0.5 transition-all"
+                      style={{
+                        background: checked ? "var(--gold)" : "var(--elevated)",
+                        border: `1px solid ${checked ? "var(--gold)" : "var(--border-mid)"}`,
+                      }}
+                      onClick={() => set(!checked)}
+                    >
+                      {checked && (
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                          <path d="M1 4l2.5 2.5L9 1" stroke="#0a0800" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </div>
+                    <input type="checkbox" checked={checked} onChange={() => set(!checked)} className="sr-only" />
+                    <span className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>
+                      {label ?? (
+                        <>
+                          I agree to the{" "}
+                          <a
+                            href="/tos"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline transition-colors"
+                            style={{ color: "var(--gold)" }}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Terms of Service
+                          </a>
+                          . This is a simulation — no real money involved.
+                        </>
+                      )}
+                    </span>
+                  </label>
+                ))}
+              </div>
+
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !ageOk || !tosOk}
                 className="w-full mt-1 font-bold font-mono text-sm tracking-[0.1em] py-2.5 rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 style={{
                   background:

@@ -95,7 +95,7 @@ export default async function DashboardPage({
     const isGain         = totalReturn >= 0;
 
     return (
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <div className="mb-8">
           <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1" style={{ color: "var(--text-3)" }}>
             Welcome back
@@ -133,7 +133,7 @@ export default async function DashboardPage({
                 {leagueInfo?.name} — Portfolio
               </p>
             </div>
-            <p className="font-mono text-5xl font-bold tracking-tight mb-4 text-gold-shimmer">
+            <p className="font-mono text-4xl sm:text-5xl font-bold tracking-tight mb-4 text-gold-shimmer">
               ${fmt(totalValue)}
             </p>
             <div className="flex items-center gap-3">
@@ -155,7 +155,7 @@ export default async function DashboardPage({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
           <div className="rounded-2xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
             <p className="font-mono text-[10px] tracking-[0.22em] uppercase mb-3" style={{ color: "var(--text-3)" }}>League Cash</p>
             <p className="font-mono text-2xl font-bold text-gold-gradient">${fmt(cashBalance)}</p>
@@ -217,7 +217,7 @@ export default async function DashboardPage({
   const isGain          = totalReturn >= 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <div className="mb-8">
         <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1" style={{ color: "var(--text-3)" }}>
           Welcome back
@@ -251,7 +251,7 @@ export default async function DashboardPage({
           <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-3" style={{ color: "var(--text-3)" }}>
             Total Portfolio Value
           </p>
-          <p className="font-mono text-5xl font-bold tracking-tight mb-4 text-gold-shimmer">
+          <p className="font-mono text-4xl sm:text-5xl font-bold tracking-tight mb-4 text-gold-shimmer">
             ${fmt(totalValue)}
           </p>
           <div className="flex items-center gap-3">

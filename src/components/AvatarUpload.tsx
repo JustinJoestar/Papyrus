@@ -22,6 +22,11 @@ export default function AvatarUpload({ userId, username, avatarUrl }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
+    if (!ALLOWED.includes(file.type)) {
+      setError("Only JPG, PNG, or WebP images are allowed");
+      return;
+    }
     if (file.size > 2 * 1024 * 1024) {
       setError("Image must be under 2 MB");
       return;

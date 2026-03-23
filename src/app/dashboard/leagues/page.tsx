@@ -11,6 +11,8 @@ type League = {
   is_owner: boolean;
   member_count: number;
   starting_balance: number;
+  duration_days: number;
+  ends_at: string | null;
   created_at: string;
 };
 
@@ -25,7 +27,7 @@ export default async function LeaguesPage() {
   const { data: leagues } = await supabase.rpc("get_my_leagues");
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <div className="mb-8">
         <p
           className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"

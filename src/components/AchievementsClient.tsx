@@ -161,11 +161,18 @@ function AchNode({
 }) {
   const { x, y } = nodeCenter(ach.col, ach.row);
   const r = RARITY_CFG[ach.rarity];
-  const borderC = status === "unlocked" ? r.border : status === "accessible" ? "#3a3a3a" : "#272727";
-  const bg      = status === "unlocked" ? "#1c1808" : "#161616";
-  const opacity = status === "locked" ? 0.45 : 1;
+  const borderC = status === "unlocked"
+    ? r.border
+    : status === "accessible"
+      ? `${r.border}99`
+      : `${r.border}50`;
+  const bg      = status === "unlocked" ? "#1c1808" : status === "accessible" ? "#161410" : "#131210";
+  const opacity = status === "locked" ? 0.78 : 1;
   const glow    = status === "unlocked"
-    ? `0 0 24px ${r.glow}, 0 0 0 1px ${r.border}50` : "none";
+    ? `0 0 24px ${r.glow}, 0 0 0 1px ${r.border}50`
+    : status === "accessible"
+      ? `0 0 12px ${r.border}30, 0 0 0 1px ${r.border}28`
+      : `0 0 6px ${r.border}18`;
 
   return (
     <div
@@ -188,10 +195,12 @@ function AchNode({
       }}
     >
       {/* Top shimmer line */}
-      {status === "unlocked" && (
+      {(status === "unlocked" || status === "accessible") && (
         <div style={{
           position: "absolute", top: 0, left: 0, right: 0, height: 1,
-          background: `linear-gradient(90deg, transparent, ${r.border}99, transparent)`,
+          background: status === "unlocked"
+            ? `linear-gradient(90deg, transparent, ${r.border}99, transparent)`
+            : `linear-gradient(90deg, transparent, ${r.border}55, transparent)`,
         }} />
       )}
 
@@ -200,12 +209,12 @@ function AchNode({
         <div style={{
           width: ICON_SZ, height: "100%",
           display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-          background: status === "unlocked" ? `${r.border}28` : "#1e1e1e",
+          background: status === "unlocked" ? `${r.border}28` : status === "accessible" ? `${r.border}14` : "#1a1815",
           borderRight: `1px solid ${borderC}`,
         }}>
           {status === "locked"
-            ? <Lock size={17} color="#4a4a4a" strokeWidth={1.5} />
-            : <ach.Icon size={20} color={status === "unlocked" ? r.text : "#5a5a5a"} strokeWidth={1.5} />
+            ? <Lock size={17} color={`${r.border}90`} strokeWidth={1.5} />
+            : <ach.Icon size={20} color={status === "unlocked" ? r.text : `${r.text}80`} strokeWidth={1.5} />
           }
         </div>
 
@@ -218,7 +227,7 @@ function AchNode({
             letterSpacing: "0.05em",
             lineHeight: 1.2,
             marginBottom: 4,
-            color: status === "unlocked" ? r.text : status === "accessible" ? "#707070" : "#484848",
+            color: status === "unlocked" ? r.text : status === "accessible" ? `${r.text}90` : `${r.text}60`,
             whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
           }}>
             {ach.title}
@@ -226,7 +235,7 @@ function AchNode({
           <div style={{
             fontSize: 9.5,
             lineHeight: 1.35,
-            color: status === "unlocked" ? "#9a8060" : "#484848",
+            color: status === "unlocked" ? "#9a8060" : status === "accessible" ? "#6a5a45" : "#4a3e30",
             overflow: "hidden",
             display: "-webkit-box",
             WebkitLineClamp: 2,
@@ -308,7 +317,7 @@ export default function AchievementsClient({
   const detailRarity  = hoveredAch ? RARITY_CFG[hoveredAch.rarity] : null;
 
   return (
-    <div className="max-w-full px-6 py-10">
+    <div className="max-w-full px-3 sm:px-6 py-8 sm:py-10">
 
       {/* ── Panel header ────────────────────────────────────── */}
       <div

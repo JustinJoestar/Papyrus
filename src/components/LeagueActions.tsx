@@ -13,6 +13,13 @@ function fmtPreset(n: number) {
   return `$${n}`;
 }
 
+const DURATION_PRESETS = [
+  { label: "1 week",   days: 7   },
+  { label: "2 weeks",  days: 14  },
+  { label: "1 month",  days: 30  },
+  { label: "3 months", days: 90  },
+];
+
 export default function LeagueActions() {
   const supabase = createClient();
   const router = useRouter();
@@ -20,6 +27,8 @@ export default function LeagueActions() {
   const [createName, setCreateName] = useState("");
   const [startingBalance, setStartingBalance] = useState(10000);
   const [customBalance, setCustomBalance] = useState("");
+  const [durationDays, setDurationDays] = useState(7);
+  const [customDuration, setCustomDuration] = useState("");
   const [joinCode, setJoinCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +39,8 @@ export default function LeagueActions() {
     setCreateName("");
     setStartingBalance(10000);
     setCustomBalance("");
+    setDurationDays(7);
+    setCustomDuration("");
     setJoinCode("");
   }
 
@@ -44,6 +55,12 @@ export default function LeagueActions() {
     if (!isNaN(parsed)) setStartingBalance(parsed);
   }
 
+  function handleCustomDuration(raw: string) {
+    setCustomDuration(raw);
+    const parsed = parseInt(raw.replace(/[^0-9]/g, ""), 10);
+    if (!isNaN(parsed) && parsed > 0) setDurationDays(parsed);
+  }
+
   async function handleCreate() {
     if (!createName.trim()) return;
     setLoading(true);
@@ -51,6 +68,7 @@ export default function LeagueActions() {
     const { data, error: rpcError } = await supabase.rpc("create_league", {
       p_name: createName.trim(),
       p_starting_balance: startingBalance,
+      p_duration_days: durationDays,
     });
     setLoading(false);
     if (rpcError || data?.success === false) {
@@ -177,6 +195,45 @@ export default function LeagueActions() {
               value={customBalance}
               onChange={(e) => handleCustomBalance(e.target.value)}
               placeholder="Custom amount"
+              className="w-full rounded-xl px-4 py-2 text-sm focus:outline-none transition-all font-mono"
+              style={inputStyle}
+              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
+              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+            />
+          </div>
+
+          {/* Duration */}
+          <div className="mb-4">
+            <p
+              className="font-mono text-[10px] tracking-[0.2em] uppercase mb-2"
+              style={{ color: "var(--text-3)" }}
+            >
+              Duration
+            </p>
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {DURATION_PRESETS.map(({ label, days }) => {
+                const active = durationDays === days && !customDuration;
+                return (
+                  <button
+                    key={days}
+                    onClick={() => { setDurationDays(days); setCustomDuration(""); }}
+                    className="font-mono text-xs px-3 py-1.5 rounded-lg transition-all"
+                    style={{
+                      background: active ? "var(--gold-glow)" : "var(--elevated)",
+                      border: `1px solid ${active ? "var(--gold-border)" : "var(--border-mid)"}`,
+                      color: active ? "var(--gold)" : "var(--text-3)",
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+            <input
+              type="text"
+              value={customDuration}
+              onChange={(e) => handleCustomDuration(e.target.value)}
+              placeholder="Custom days (e.g. 21)"
               className="w-full rounded-xl px-4 py-2 text-sm focus:outline-none transition-all font-mono"
               style={inputStyle}
               onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}

@@ -68,7 +68,7 @@ export default function UsernameForm({ currentUsername, usernameChangedAt }: Pro
       </p>
 
       {editing ? (
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <input
             type="text"
             value={value}
@@ -81,7 +81,8 @@ export default function UsernameForm({ currentUsername, usernameChangedAt }: Pro
               background: "var(--elevated)",
               border: "1px solid var(--gold-border)",
               color: "var(--text-1)",
-              width: "200px",
+              width: "min(200px, 100%)",
+              flex: "1 1 140px",
             }}
           />
           <button

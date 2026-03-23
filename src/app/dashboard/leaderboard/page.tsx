@@ -145,7 +145,7 @@ export default async function LeaderboardPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       {/* Header */}
       <div className="mb-8">
         <p
@@ -161,7 +161,7 @@ export default async function LeaderboardPage() {
 
       {/* Reset countdown */}
       <div
-        className="rounded-2xl px-6 py-5 mb-8 flex items-center justify-between"
+        className="rounded-2xl px-4 sm:px-6 py-4 sm:py-5 mb-8 flex flex-wrap items-center justify-between gap-4"
         style={{
           background: "var(--surface)",
           border: "1px solid var(--border-mid)",
