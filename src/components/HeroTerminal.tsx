@@ -165,16 +165,16 @@ function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
 }
 
 export default function HeroTerminal() {
-  const [idx, setIdx]         = useState(0);
-  const [asks, setAsks]       = useState(ASSETS[0].asks.map(r => ({ ...r })));
-  const [bids, setBids]       = useState(ASSETS[0].bids.map(r => ({ ...r })));
-  const [spark, setSpark]     = useState([...ASSETS[0].spark]);
+  const [idx, setIdx]             = useState(0);
+  const [asks, setAsks]           = useState(ASSETS[0].asks.map(r => ({ ...r })));
+  const [bids, setBids]           = useState(ASSETS[0].bids.map(r => ({ ...r })));
+  const [spark, setSpark]         = useState([...ASSETS[0].spark]);
   const [lastPrice, setLastPrice] = useState(ASSETS[0].midPrice);
   const [lastSide, setLastSide]   = useState<"buy" | "sell">("buy");
-  const [flash, setFlash]     = useState(false);
-  const tickRef = useRef(0);
+  const [flash, setFlash]         = useState(false);
+  const tickRef   = useRef(0);
+  const autoRef   = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Reset state when asset changes
   const goTo = useCallback((next: number) => {
     const a = ASSETS[next];
     setIdx(next);
@@ -186,9 +186,36 @@ export default function HeroTerminal() {
     tickRef.current = 0;
   }, []);
 
-  const prev = () => goTo((idx - 1 + ASSETS.length) % ASSETS.length);
-  const next = () => goTo((idx + 1) % ASSETS.length);
+  // Auto-advance every 10 seconds
+  useEffect(() => {
+    autoRef.current = setInterval(() => {
+      setIdx(i => {
+        const next = (i + 1) % ASSETS.length;
+        goTo(next);
+        return next;
+      });
+    }, 10000);
+    return () => { if (autoRef.current) clearInterval(autoRef.current); };
+  }, [goTo]);
 
+  // Reset auto-timer on manual navigation
+  const navigate = useCallback((dir: 1 | -1) => {
+    if (autoRef.current) clearInterval(autoRef.current);
+    setIdx(i => {
+      const next = (i + dir + ASSETS.length) % ASSETS.length;
+      goTo(next);
+      autoRef.current = setInterval(() => {
+        setIdx(i2 => {
+          const n2 = (i2 + 1) % ASSETS.length;
+          goTo(n2);
+          return n2;
+        });
+      }, 10000);
+      return next;
+    });
+  }, [goTo]);
+
+  // Live price jitter
   useEffect(() => {
     const asset = ASSETS[idx];
     const id = setInterval(() => {
@@ -204,138 +231,136 @@ export default function HeroTerminal() {
     return () => clearInterval(id);
   }, [idx]);
 
-  const asset   = ASSETS[idx];
-  const maxSize = Math.max(...asks.map(r => r.size), ...bids.map(r => r.size));
-  const pos     = parseFloat(asset.change) >= 0;
+  const asset    = ASSETS[idx];
+  const maxSize  = Math.max(...asks.map(r => r.size), ...bids.map(r => r.size));
+  const pos      = parseFloat(asset.change) >= 0;
   const isCrypto = asset.type === "crypto";
 
-  return (
-    <div
-      className="rounded-2xl overflow-hidden select-none"
+  const ArrowBtn = ({ dir }: { dir: 1 | -1 }) => (
+    <button
+      onClick={() => navigate(dir)}
+      className="absolute flex items-center justify-center rounded-md transition-all duration-150"
       style={{
-        width: 240,
-        background: "#000000",
+        top: "50%", transform: "translateY(-50%)",
+        [dir === -1 ? "left" : "right"]: -18,
+        width: 16, height: 28,
+        background: "rgba(0,0,0,0.7)",
         border: "1px solid var(--border-mid)",
-        boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
+        color: "var(--text-3)",
+        zIndex: 10,
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.color = "var(--gold)";
+        e.currentTarget.style.borderColor = "var(--gold-border)";
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.color = "var(--text-3)";
+        e.currentTarget.style.borderColor = "var(--border-mid)";
       }}
     >
-      {/* Top accent */}
-      <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, var(--gold-dim) 30%, var(--gold) 50%, var(--gold-dim) 70%, transparent)" }} />
+      <svg width="7" height="10" viewBox="0 0 7 10" fill="none">
+        {dir === -1
+          ? <path d="M5 1L1.5 5 5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          : <path d="M2 1l3.5 4L2 9"  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        }
+      </svg>
+    </button>
+  );
 
-      {/* Header with nav arrows */}
-      <div className="px-3 pt-3 pb-2.5 flex items-center justify-between" style={{ borderBottom: "1px solid var(--border)" }}>
-        <button
-          onClick={prev}
-          className="flex items-center justify-center w-5 h-5 rounded transition-colors shrink-0"
-          style={{ color: "var(--text-3)", border: "1px solid var(--border-mid)" }}
-          onMouseEnter={e => (e.currentTarget.style.color = "var(--gold)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
-        >
-          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-            <path d="M5 1L2 4l3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
+  return (
+    <div className="relative select-none" style={{ width: 240 }}>
+      <ArrowBtn dir={-1} />
+      <ArrowBtn dir={1} />
 
-        <div className="flex items-center gap-1.5 flex-1 justify-center px-2">
-          <span className="font-mono font-bold text-[11px]" style={{ color: "var(--text-1)" }}>{asset.symbol}</span>
-          <span
-            className="font-mono text-[8px] px-1 py-0.5 rounded"
-            style={isCrypto
-              ? { background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }
-              : { background: "rgba(37,99,235,0.10)", border: "1px solid rgba(37,99,235,0.25)", color: "#60a5fa" }
-            }
-          >
-            {isCrypto ? "CRYPTO" : "STOCK"}
+      <div
+        className="rounded-2xl overflow-hidden"
+        style={{
+          background: "#000000",
+          border: "1px solid var(--border-mid)",
+          boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
+        }}
+      >
+        {/* Top accent */}
+        <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, var(--gold-dim) 30%, var(--gold) 50%, var(--gold-dim) 70%, transparent)" }} />
+
+        {/* Header */}
+        <div className="px-4 pt-3.5 pb-3 flex items-center justify-between" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div className="flex items-center gap-2">
+            <span className="font-mono font-bold text-sm" style={{ color: "var(--text-1)" }}>{asset.symbol}</span>
+            <span
+              className="font-mono text-[9px] px-1.5 py-0.5 rounded"
+              style={isCrypto
+                ? { background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }
+                : { background: "rgba(37,99,235,0.10)", border: "1px solid rgba(37,99,235,0.25)", color: "#60a5fa" }
+              }
+            >
+              {isCrypto ? "SPOT" : "STOCK"}
+            </span>
+          </div>
+          <Sparkline data={spark} positive={pos} />
+        </div>
+
+        {/* Mid price */}
+        <div className="px-4 py-2.5 flex items-center justify-between" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div>
+            <div
+              className="font-mono font-bold text-lg leading-none transition-colors duration-150"
+              style={{ color: flash ? "#e8c66a" : lastSide === "buy" ? "#22c55e" : "#f43f5e" }}
+            >
+              ${fmtPrice(lastPrice)}
+            </div>
+            <div className="font-mono text-[9px] mt-0.5" style={{ color: "var(--text-3)" }}>
+              LAST TRADE · {lastSide.toUpperCase()}
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="font-mono text-xs font-semibold" style={{ color: pos ? "#22c55e" : "#f43f5e" }}>
+              {pos ? "+" : ""}{asset.change}%
+            </div>
+            <div className="font-mono text-[9px]" style={{ color: "var(--text-3)" }}>24H</div>
+          </div>
+        </div>
+
+        {/* Order book header */}
+        <div className="px-4 pt-2.5 pb-1 grid grid-cols-2 gap-0" style={{ borderBottom: "1px solid var(--border)" }}>
+          <span className="font-mono text-[9px] tracking-widest" style={{ color: "var(--text-3)" }}>PRICE (USD)</span>
+          <span className="font-mono text-[9px] tracking-widest text-right" style={{ color: "var(--text-3)" }}>SIZE ({asset.unit.toUpperCase()})</span>
+        </div>
+
+        {/* Asks */}
+        <div className="px-4 pt-1 space-y-[2px]">
+          {asks.slice().reverse().map((row, i) => (
+            <div key={i} className="relative flex items-center justify-between py-[2px]">
+              <div className="absolute right-0 top-0 bottom-0 opacity-20 rounded-sm"
+                style={{ width: `${(row.size / maxSize) * 65}%`, background: "#f43f5e" }} />
+              <span className="font-mono text-[11px] relative z-10" style={{ color: "#f87171" }}>{fmtPrice(row.price)}</span>
+              <span className="font-mono text-[11px] relative z-10" style={{ color: "var(--text-3)" }}>{fmtSize(row.size, asset.unit)}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Spread */}
+        <div className="px-4 py-1.5 flex items-center gap-2" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+          <span className="font-mono text-[9px]" style={{ color: "var(--text-3)" }}>SPREAD</span>
+          <span className="font-mono text-[10px]" style={{ color: "var(--gold)" }}>
+            ${(asset.asks[0].price - asset.bids[0].price).toFixed(2)}
+          </span>
+          <span className="font-mono text-[9px] ml-auto" style={{ color: "var(--text-3)" }}>
+            {(((asset.asks[0].price - asset.bids[0].price) / asset.bids[0].price) * 100).toFixed(3)}%
           </span>
         </div>
 
-        <button
-          onClick={next}
-          className="flex items-center justify-center w-5 h-5 rounded transition-colors shrink-0"
-          style={{ color: "var(--text-3)", border: "1px solid var(--border-mid)" }}
-          onMouseEnter={e => (e.currentTarget.style.color = "var(--gold)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "var(--text-3)")}
-        >
-          <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-            <path d="M3 1l3 3-3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Price + sparkline */}
-      <div className="px-3 py-2 flex items-center justify-between" style={{ borderBottom: "1px solid var(--border)" }}>
-        <div>
-          <div
-            className="font-mono font-bold text-base leading-none transition-colors duration-150"
-            style={{ color: flash ? "#e8c66a" : lastSide === "buy" ? "#22c55e" : "#f43f5e" }}
-          >
-            ${fmtPrice(lastPrice)}
-          </div>
-          <div className="flex items-center gap-1.5 mt-0.5">
-            <span className="font-mono text-[9px] font-semibold" style={{ color: pos ? "#22c55e" : "#f43f5e" }}>
-              {pos ? "+" : ""}{asset.change}%
-            </span>
-            <span className="font-mono text-[8px]" style={{ color: "var(--text-3)" }}>24H</span>
-          </div>
+        {/* Bids */}
+        <div className="px-4 pb-3 pt-1 space-y-[2px]">
+          {bids.map((row, i) => (
+            <div key={i} className="relative flex items-center justify-between py-[2px]">
+              <div className="absolute right-0 top-0 bottom-0 opacity-20 rounded-sm"
+                style={{ width: `${(row.size / maxSize) * 65}%`, background: "#22c55e" }} />
+              <span className="font-mono text-[11px] relative z-10" style={{ color: "#4ade80" }}>{fmtPrice(row.price)}</span>
+              <span className="font-mono text-[11px] relative z-10" style={{ color: "var(--text-3)" }}>{fmtSize(row.size, asset.unit)}</span>
+            </div>
+          ))}
         </div>
-        <Sparkline data={spark} positive={pos} />
-      </div>
-
-      {/* Order book header */}
-      <div className="px-3 pt-2 pb-1 flex justify-between" style={{ borderBottom: "1px solid var(--border)" }}>
-        <span className="font-mono text-[8px] tracking-widest" style={{ color: "var(--text-3)" }}>PRICE</span>
-        <span className="font-mono text-[8px] tracking-widest" style={{ color: "var(--text-3)" }}>SIZE ({asset.unit.toUpperCase()})</span>
-      </div>
-
-      {/* Asks */}
-      <div className="px-3 pt-1 space-y-[2px]">
-        {asks.slice().reverse().map((row, i) => (
-          <div key={i} className="relative flex items-center justify-between py-[1px]">
-            <div className="absolute right-0 top-0 bottom-0 opacity-[0.15] rounded-sm"
-              style={{ width: `${(row.size / maxSize) * 70}%`, background: "#f43f5e" }} />
-            <span className="font-mono text-[10px] relative z-10" style={{ color: "#f87171" }}>{fmtPrice(row.price)}</span>
-            <span className="font-mono text-[10px] relative z-10" style={{ color: "var(--text-3)" }}>{fmtSize(row.size, asset.unit)}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Spread */}
-      <div className="px-3 py-1 flex items-center gap-2" style={{ borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
-        <span className="font-mono text-[8px]" style={{ color: "var(--text-3)" }}>SPREAD</span>
-        <span className="font-mono text-[9px]" style={{ color: "var(--gold)" }}>
-          ${(asset.asks[0].price - asset.bids[0].price).toFixed(2)}
-        </span>
-        <span className="font-mono text-[8px] ml-auto" style={{ color: "var(--text-3)" }}>
-          {(((asset.asks[0].price - asset.bids[0].price) / asset.bids[0].price) * 100).toFixed(3)}%
-        </span>
-      </div>
-
-      {/* Bids */}
-      <div className="px-3 pb-3 pt-1 space-y-[2px]">
-        {bids.map((row, i) => (
-          <div key={i} className="relative flex items-center justify-between py-[1px]">
-            <div className="absolute right-0 top-0 bottom-0 opacity-[0.15] rounded-sm"
-              style={{ width: `${(row.size / maxSize) * 70}%`, background: "#22c55e" }} />
-            <span className="font-mono text-[10px] relative z-10" style={{ color: "#4ade80" }}>{fmtPrice(row.price)}</span>
-            <span className="font-mono text-[10px] relative z-10" style={{ color: "var(--text-3)" }}>{fmtSize(row.size, asset.unit)}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Dot indicators */}
-      <div className="flex items-center justify-center gap-1 pb-2.5">
-        {ASSETS.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => goTo(i)}
-            className="rounded-full transition-all duration-150"
-            style={{
-              width: i === idx ? 12 : 4,
-              height: 4,
-              background: i === idx ? "var(--gold)" : "var(--border-mid)",
-            }}
-          />
-        ))}
       </div>
     </div>
   );
