@@ -19,12 +19,12 @@ export default function HeroGlobe() {
       phi,
       theta: 0.22,
       dark: 1,
-      diffuse: 2.0,
-      mapSamples: 16000,
-      mapBrightness: 8,
-      baseColor:   [0.18, 0.14, 0.04],
+      diffuse: 1.8,
+      mapSamples: 20000,
+      mapBrightness: 14,
+      baseColor:   [0.08, 0.06, 0.02],
       markerColor: [1.0, 0.82, 0.30],
-      glowColor:   [0.70, 0.55, 0.18],
+      glowColor:   [0.80, 0.62, 0.20],
       markers: [
         { location: [40.7128, -74.006],  size: 0.055 }, // New York
         { location: [51.5074, -0.1278],  size: 0.048 }, // London

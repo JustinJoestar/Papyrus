@@ -97,7 +97,7 @@ export default async function LandingPage() {
       </nav>
 
       {/* ── Hero ────────────────────────────────────────────── */}
-      <section className="relative z-10 mx-auto px-8 pt-20 pb-16" style={{ maxWidth: 1400 }}>
+      <section className="relative z-10 mx-auto px-8 pt-32 pb-24" style={{ maxWidth: 1400 }}>
         <div className="relative flex items-center justify-center">
 
           {/* Left — live order book terminal (absolute, doesn't affect center) */}
@@ -109,7 +109,7 @@ export default async function LandingPage() {
           </div>
 
           {/* Center — copy */}
-          <div className="text-center" style={{ maxWidth: 520 }}>
+          <div className="text-center" style={{ maxWidth: 620 }}>
             {/* Status pill */}
             <div
               className="inline-flex items-center gap-2 rounded-full px-3.5 py-1 mb-8"
@@ -122,15 +122,15 @@ export default async function LandingPage() {
             </div>
 
             <h1
-              className="font-playfair font-bold tracking-tight mb-5"
-              style={{ fontSize: "clamp(2.4rem, 4.5vw, 4rem)", lineHeight: 1.08 }}
+              className="font-playfair font-bold tracking-tight mb-6"
+              style={{ fontSize: "clamp(2.8rem, 5vw, 4.8rem)", lineHeight: 1.06 }}
             >
               Trade everything.{" "}
               <span className="text-gold-glow">Risk nothing.</span>
             </h1>
 
             <p
-              className="text-base leading-relaxed max-w-sm mx-auto mb-8"
+              className="text-base leading-relaxed max-w-md mx-auto mb-10"
               style={{ color: "var(--text-2)" }}
             >
               Start with $10,000 in virtual cash. Trade real crypto, stocks, and
@@ -178,27 +178,27 @@ export default async function LandingPage() {
 
 
       {/* ── Features ────────────────────────────────────────── */}
-      <section className="relative z-10 max-w-3xl mx-auto px-8 pb-24">
-        <div className="mb-10 text-center">
-          <h2 className="font-playfair text-3xl font-bold mb-3" style={{ color: "var(--text-1)" }}>
+      <section className="relative z-10 max-w-5xl mx-auto px-10 pb-32">
+        <div className="mb-14 text-center">
+          <h2 className="font-playfair text-4xl font-bold mb-4" style={{ color: "var(--text-1)" }}>
             Everything in one place
           </h2>
-          <p className="text-sm" style={{ color: "var(--text-2)" }}>
+          <p className="text-base" style={{ color: "var(--text-2)" }}>
             The infrastructure of a real trading desk, built for learning and competition.
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-5">
           {FEATURES.map((f) => (
             <div
               key={f.title}
-              className="rounded-xl p-5"
+              className="rounded-xl p-7"
               style={{
                 background: "var(--surface)",
                 border: "1px solid var(--border-mid)",
               }}
             >
-              <h3 className="font-semibold text-sm mb-2" style={{ color: "var(--text-1)" }}>
+              <h3 className="font-semibold text-base mb-3" style={{ color: "var(--text-1)" }}>
                 {f.title}
               </h3>
               <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
@@ -213,9 +213,9 @@ export default async function LandingPage() {
       <PulseSection />
 
       {/* ── Bottom CTA ──────────────────────────────────────── */}
-      <section className="relative z-10 max-w-3xl mx-auto px-8 pb-24 text-center">
+      <section className="relative z-10 max-w-4xl mx-auto px-10 pb-32 text-center">
         <div
-          className="rounded-2xl px-12 py-14 relative overflow-hidden"
+          className="rounded-2xl px-16 py-20 relative overflow-hidden"
           style={{
             background: "var(--surface)",
             border: "1px solid var(--border-mid)",
@@ -233,10 +233,10 @@ export default async function LandingPage() {
           />
 
           <div className="relative z-10">
-            <h2 className="font-playfair text-3xl font-bold mb-3" style={{ color: "var(--text-1)" }}>
+            <h2 className="font-playfair text-4xl font-bold mb-4" style={{ color: "var(--text-1)" }}>
               Ready to compete?
             </h2>
-            <p className="text-sm mb-8" style={{ color: "var(--text-3)" }}>
+            <p className="text-base mb-10" style={{ color: "var(--text-3)" }}>
               No card required. Your $10,000 is waiting.
             </p>
             <Link
