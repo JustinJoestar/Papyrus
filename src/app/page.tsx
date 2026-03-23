@@ -4,13 +4,8 @@ import { BeamsBackground } from "@/components/BeamsBackground";
 import NavThemeToggle from "@/components/NavThemeToggle";
 import PulseSection from "@/components/PulseSection";
 import { createClient } from "@/lib/supabase/server";
+import { HeroGlobePanel, HeroTerminalPanel } from "@/components/HeroSidePanels";
 
-const STATS = [
-  { value: "250+",    label: "Cryptocurrencies" },
-  { value: "35+",     label: "Stocks"           },
-  { value: "10",      label: "Commodities"      },
-  { value: "$10,000", label: "Starting balance" },
-];
 
 const FEATURES = [
   {
@@ -102,46 +97,71 @@ export default async function LandingPage() {
       </nav>
 
       {/* ── Hero ────────────────────────────────────────────── */}
-      <section className="relative z-10 max-w-3xl mx-auto px-8 pt-24 pb-20 text-center">
-        {/* Status pill */}
-        <div
-          className="inline-flex items-center gap-2 rounded-full px-3.5 py-1 mb-10"
-          style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
-        >
-          <div className="w-1.5 h-1.5 rounded-full animate-blink-dot" style={{ background: "var(--gold)" }} />
-          <span className="font-mono text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--gold)" }}>
-            Live markets · Zero risk
-          </span>
-        </div>
+      <section className="relative z-10 max-w-6xl mx-auto px-8 pt-20 pb-16">
+        <div className="flex items-center gap-8">
 
-        <h1
-          className="font-playfair font-bold tracking-tight mb-6"
-          style={{ fontSize: "clamp(3rem, 6.5vw, 5rem)", lineHeight: 1.06 }}
-        >
-          Trade everything.{" "}
-          <span className="text-gold-glow">Risk nothing.</span>
-        </h1>
+          {/* Left — live order book terminal */}
+          <div className="hidden lg:flex shrink-0 items-center justify-center" style={{ width: 288 }}>
+            <HeroTerminalPanel />
+          </div>
 
-        <p
-          className="text-lg leading-relaxed max-w-xl mx-auto mb-10"
-          style={{ color: "var(--text-2)" }}
-        >
-          Start with $10,000 in virtual cash and trade real crypto, stocks, and commodities
-          at live prices. Compete on a global leaderboard that resets every week.
-        </p>
+          {/* Center — copy */}
+          <div className="flex-1 text-center min-w-0">
+            {/* Status pill */}
+            <div
+              className="inline-flex items-center gap-2 rounded-full px-3.5 py-1 mb-8"
+              style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
+            >
+              <div className="w-1.5 h-1.5 rounded-full animate-blink-dot" style={{ background: "var(--gold)" }} />
+              <span className="font-mono text-[10px] tracking-[0.18em] uppercase" style={{ color: "var(--gold)" }}>
+                Live markets · Zero risk
+              </span>
+            </div>
 
-        <div className="flex items-center justify-center">
-          <Link
-            href={ctaHref}
-            className="font-mono font-semibold text-sm tracking-wide px-7 py-3 rounded-lg transition-all duration-200"
-            style={{
-              background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 60%, var(--gold-bright) 100%)",
-              color: "#0a0800",
-              boxShadow: "var(--primary-glow)",
-            }}
-          >
-            {isLoggedIn ? "Open Dashboard" : "Start for free"}
-          </Link>
+            <h1
+              className="font-playfair font-bold tracking-tight mb-5"
+              style={{ fontSize: "clamp(2.4rem, 4.5vw, 4rem)", lineHeight: 1.08 }}
+            >
+              Trade everything.{" "}
+              <span className="text-gold-glow">Risk nothing.</span>
+            </h1>
+
+            <p
+              className="text-base leading-relaxed max-w-sm mx-auto mb-8"
+              style={{ color: "var(--text-2)" }}
+            >
+              Start with $10,000 in virtual cash. Trade real crypto, stocks, and
+              commodities at live prices — compete weekly, reset every Monday.
+            </p>
+
+            <Link
+              href={ctaHref}
+              className="inline-block font-mono font-semibold text-sm tracking-wide px-7 py-3 rounded-lg transition-all duration-200"
+              style={{
+                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 60%, var(--gold-bright) 100%)",
+                color: "#0a0800",
+                boxShadow: "var(--primary-glow)",
+              }}
+            >
+              {isLoggedIn ? "Open Dashboard" : "Start for free"}
+            </Link>
+
+            {/* Inline stats */}
+            <div className="flex items-center justify-center gap-6 mt-8">
+              {[["250+", "cryptos"], ["35+", "stocks"], ["$10k", "to start"]].map(([val, lbl]) => (
+                <div key={lbl} className="text-center">
+                  <div className="font-mono font-bold text-sm" style={{ color: "var(--gold)" }}>{val}</div>
+                  <div className="font-mono text-[9px] tracking-widest uppercase mt-0.5" style={{ color: "var(--text-3)" }}>{lbl}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — globe */}
+          <div className="hidden lg:flex shrink-0 items-center justify-center" style={{ width: 288 }}>
+            <HeroGlobePanel />
+          </div>
+
         </div>
       </section>
 
@@ -150,27 +170,6 @@ export default async function LandingPage() {
         <AssetTicker />
       </div>
 
-      {/* ── Stats ───────────────────────────────────────────── */}
-      <section className="relative z-10 max-w-3xl mx-auto px-8 py-16">
-        <div
-          className="grid grid-cols-4 divide-x rounded-2xl overflow-hidden"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-mid)",
-          }}
-        >
-          {STATS.map((s, i) => (
-            <div
-              key={s.label}
-              className="px-6 py-5 text-center"
-              style={{ borderRight: i < STATS.length - 1 ? "1px solid var(--border)" : "none" }}
-            >
-              <p className="font-playfair font-bold text-2xl mb-1 text-gold-glow">{s.value}</p>
-              <p className="text-xs" style={{ color: "var(--text-3)" }}>{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ── Features ────────────────────────────────────────── */}
       <section className="relative z-10 max-w-3xl mx-auto px-8 pb-24">
