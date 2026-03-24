@@ -19,12 +19,12 @@ export default function HeroGlobe() {
       phi,
       theta: 0.22,
       dark: 1,
-      diffuse: 1.8,
+      diffuse: 2.4,
       mapSamples: 20000,
-      mapBrightness: 14,
-      baseColor:   [0.08, 0.06, 0.02],
+      mapBrightness: 22,
+      baseColor:   [0.12, 0.10, 0.04],
       markerColor: [1.0, 0.88, 0.40],
-      glowColor:   [0.80, 0.62, 0.20],
+      glowColor:   [1.0, 0.80, 0.28],
       markers: [],
     });
 
