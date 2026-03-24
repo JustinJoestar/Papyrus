@@ -185,7 +185,7 @@ export default function HeroTerminal() {
   const targetRX  = useRef(0);   // mouse-driven rotateX target (also used for switch tilt)
   const curRY     = useRef(0);
   const curRX     = useRef(0);
-  const rafTilt   = useRef<number>();
+  const rafTilt   = useRef<number>(0);
 
   useEffect(() => {
     const tick = () => {
