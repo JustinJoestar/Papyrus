@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import type { CSSProperties } from "react";
 
 // ── Asset definitions (alternating crypto / stock) ─────────────────────────
 const ASSETS = [
@@ -178,6 +179,34 @@ export default function HeroTerminal() {
 
   const idxRef = useRef(0); // mirrors idx, safe to read in intervals
 
+  // ── 3D parallax (carousel-style mouse tracking) ─────────────
+  const cardRef  = useRef<HTMLDivElement>(null);
+  const mouseX   = useRef(0);
+  const mouseY   = useRef(0);
+  const rafTilt  = useRef<number>();
+
+  useEffect(() => {
+    const tick = () => {
+      if (cardRef.current) {
+        cardRef.current.style.setProperty("--mx", `${mouseX.current}px`);
+        cardRef.current.style.setProperty("--my", `${mouseY.current}px`);
+      }
+      rafTilt.current = requestAnimationFrame(tick);
+    };
+    rafTilt.current = requestAnimationFrame(tick);
+    return () => { if (rafTilt.current) cancelAnimationFrame(rafTilt.current); };
+  }, []);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    mouseX.current = e.clientX - (r.left + r.width  / 2);
+    mouseY.current = e.clientY - (r.top  + r.height / 2);
+  };
+
+  const handleMouseLeave = () => { mouseX.current = 0; mouseY.current = 0; };
+
   const goTo = useCallback((next: number) => {
     idxRef.current = next;
     setVisible(false);
@@ -261,20 +290,32 @@ export default function HeroTerminal() {
   );
 
   return (
-    <div className="relative select-none" style={{ width: 240 }}>
+    <div
+      className="relative select-none"
+      style={{ width: 240, perspective: "1200px", transformStyle: "preserve-3d" } as CSSProperties}
+    >
       <ArrowBtn dir={-1} />
       <ArrowBtn dir={1} />
 
       <div
+        ref={cardRef}
         className="rounded-2xl overflow-hidden"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         style={{
           background: "#000000",
           border: "1px solid var(--border-mid)",
           boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
           opacity: visible ? 1 : 0,
-          transform: visible ? "translateY(0)" : "translateY(-8px)",
-          transition: "opacity 0.18s ease, transform 0.18s ease",
-        }}
+          transform: visible
+            ? "translate3d(calc(var(--mx,0px) / 28), calc(var(--my,0px) / 28), 0) rotateX(0deg) scale(1)"
+            : "translate3d(0,0,0) rotateX(8deg) scale(0.97)",
+          transition: visible
+            ? "opacity 0.18s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1)"
+            : "opacity 0.18s ease, transform 0.28s cubic-bezier(0.4,0,0.2,1)",
+          transformOrigin: "bottom center",
+          willChange: "transform",
+        } as CSSProperties}
       >
         {/* Top accent */}
         <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, var(--gold-dim) 30%, var(--gold) 50%, var(--gold-dim) 70%, transparent)" }} />
