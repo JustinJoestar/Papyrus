@@ -22,30 +22,60 @@ export default function SignupPage() {
     e.preventDefault();
     setError(null);
 
-    if (!/^[a-zA-Z0-9_]{3,20}$/.test(username)) {
-      setError("Username must be 3–20 characters: letters, numbers, underscores only");
+    const trimmedUsername = username.trim();
+    const trimmedEmail    = email.trim().toLowerCase();
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(trimmedUsername)) {
+      setError("Username must be 3–20 characters: letters, numbers, and underscores only.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
       return;
     }
     if (!ageOk) {
-      setError("You must be 13 or older to create an account");
+      setError("You must be 13 or older to create an account.");
       return;
     }
     if (!tosOk) {
-      setError("You must agree to the Terms of Service");
+      setError("You must agree to the Terms of Service.");
       return;
     }
 
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
+
+    // Check username availability using the existing RPC (works for anon users)
+    const { data: takenEmail } = await supabase.rpc("get_email_by_username", { p_username: trimmedUsername });
+    if (takenEmail) {
+      setError("That username is already taken. Please choose a different one.");
+      setLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email:    trimmedEmail,
       password,
-      options: { data: { username } },
+      options:  { data: { username: trimmedUsername } },
     });
+
     if (error) {
-      setError(error.message);
+      const msg = error.message.toLowerCase();
+      if (msg.includes("already registered") || msg.includes("already exists")) {
+        setError("An account with this email already exists. Sign in instead.");
+      } else if (msg.includes("password")) {
+        setError("Password must be at least 6 characters.");
+      } else if (msg.includes("valid email") || msg.includes("invalid email")) {
+        setError("Please enter a valid email address.");
+      } else {
+        setError(error.message);
+      }
+      setLoading(false);
+    } else if ((data.user?.identities?.length ?? 1) === 0) {
+      // Supabase returns empty identities array for duplicate email when confirmation is on
+      setError("An account with this email already exists. Sign in instead.");
       setLoading(false);
     } else {
-      router.push(`/auth/verify?email=${encodeURIComponent(email)}`);
+      router.push(`/auth/verify?email=${encodeURIComponent(trimmedEmail)}`);
     }
   }
 

@@ -54,7 +54,16 @@ export default function LoginPage() {
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      setError(error.message);
+      const msg = error.message.toLowerCase();
+      if (msg.includes("invalid login") || msg.includes("invalid credentials") || msg.includes("wrong password")) {
+        setError("Incorrect password. Please try again.");
+      } else if (msg.includes("not confirmed") || msg.includes("email not confirmed")) {
+        setError("Please verify your email before signing in. Check your inbox for a confirmation link.");
+      } else if (msg.includes("too many") || msg.includes("rate limit")) {
+        setError("Too many attempts. Please wait a moment and try again.");
+      } else {
+        setError(error.message);
+      }
       setLoading(false);
     } else {
       router.push("/dashboard");
