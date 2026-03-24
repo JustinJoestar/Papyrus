@@ -71,7 +71,7 @@ export default function TradeModal({
       // Check achievements + leaderboard rank after every global trade
       if (!leagueId) {
         await supabase.rpc("check_trade_achievements");
-        supabase.rpc("check_leaderboard_notification");
+        void supabase.rpc("check_leaderboard_notification");
       }
       onSuccess();
     }
