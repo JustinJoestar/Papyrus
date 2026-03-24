@@ -20,7 +20,7 @@ const Slide = ({ slide, index, current, handleSlideClick }: SlideProps) => {
 
   const xRef = useRef(0);
   const yRef = useRef(0);
-  const frameRef = useRef<number>(0);
+  const frameRef = useRef<number>();
 
   useEffect(() => {
     const animate = () => {
