@@ -56,6 +56,11 @@ export default function RootLayout({
         <ThemeProvider>
           <CursorGlow />
           {children}
+          <footer className="footer-aurora w-full py-3 text-center">
+            <span className="font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: "var(--text-3)" }}>
+              Verse Productions
+            </span>
+          </footer>
         </ThemeProvider>
       </body>
     </html>

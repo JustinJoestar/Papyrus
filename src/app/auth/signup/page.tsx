@@ -213,7 +213,6 @@ export default function SignupPage() {
                         background: checked ? "var(--gold)" : "var(--elevated)",
                         border: `1px solid ${checked ? "var(--gold)" : "var(--border-mid)"}`,
                       }}
-                      onClick={() => set(!checked)}
                     >
                       {checked && (
                         <svg width="10" height="8" viewBox="0 0 10 8" fill="none">

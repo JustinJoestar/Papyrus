@@ -217,11 +217,14 @@ export default async function LandingPage() {
 
       {/* ── Footer ──────────────────────────────────────────── */}
       <footer
-        className="relative z-10 border-t py-8 text-center"
+        className="footer-aurora relative z-10 border-t py-8 text-center"
         style={{ borderColor: "var(--border)" }}
       >
-        <p className="text-sm" style={{ color: "var(--text-3)" }}>
+        <p className="text-sm mb-2" style={{ color: "var(--text-3)" }}>
           Papyrus — virtual funds only, no real money at risk
+        </p>
+        <p className="font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: "var(--text-3)" }}>
+          Verse Productions
         </p>
       </footer>
     </div>

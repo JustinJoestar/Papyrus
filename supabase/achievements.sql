@@ -41,8 +41,13 @@ create policy "Users can update own notifications"
   on public.notifications for update
   using (auth.uid() = user_id);
 
--- Enable realtime so the bell updates instantly
+-- Enable realtime
 alter publication supabase_realtime add table public.notifications;
+alter publication supabase_realtime add table public.user_achievements;
+
+-- Required for realtime row-level filtering to work correctly
+alter table public.notifications replica identity full;
+alter table public.user_achievements replica identity full;
 
 -- ============================================================
 -- award_achievement: idempotent — only inserts + notifies once

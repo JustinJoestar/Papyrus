@@ -236,6 +236,15 @@ export default function HeroTerminal() {
   }, []);
 
   // Auto-advance every 5 seconds
+  const [isLight, setIsLight] = useState(false);
+  useEffect(() => {
+    const check = () => setIsLight(document.documentElement.getAttribute("data-theme") === "light");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
   const [autoKey, setAutoKey] = useState(0); // increment to reset timer
   useEffect(() => {
     const id = setInterval(() => {
@@ -312,9 +321,11 @@ export default function HeroTerminal() {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
-          background: "#000000",
+          background: isLight ? "#ffffff" : "#000000",
           border: "1px solid var(--border-mid)",
-          boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
+          boxShadow: isLight
+            ? "0 24px 48px rgba(37,99,235,0.12), 0 0 0 1px rgba(37,99,235,0.10)"
+            : "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
           opacity: visible ? 1 : 0,
           transition: "opacity 0.18s ease",
           transformOrigin: "center center",

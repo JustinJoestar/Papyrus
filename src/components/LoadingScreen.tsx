@@ -4,7 +4,7 @@ export default function LoadingScreen() {
   return (
     <div
       className="fixed inset-0 flex flex-col items-center justify-center"
-      style={{ background: "#09090b", zIndex: 9999 }}
+      style={{ background: "var(--base)", zIndex: 9999 }}
     >
       {/* Logo mark — three bars, equalizer animation */}
       <div className="flex items-end gap-[5px] mb-5" style={{ height: 36 }}>

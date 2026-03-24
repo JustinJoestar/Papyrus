@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import {
   Rocket, TrendingUp, Globe, Gem, Zap, Shield,
   Trophy, Crown, Lock, Flame, Sparkles, Medal,
@@ -120,6 +122,17 @@ const RARITY_CFG: Record<Rarity, { border: string; glow: string; text: string; l
   epic:     { border: "#e8c66a", glow: "rgba(232,198,106,0.8)", text: "#fff8b0", label: "Epic"     },
 };
 
+const RARITY_CFG_LIGHT: Record<Rarity, { border: string; glow: string; text: string; label: string }> = {
+  common:   { border: "#60a5fa", glow: "rgba(96,165,250,0.45)",  text: "#2563eb", label: "Common"   },
+  uncommon: { border: "#3b82f6", glow: "rgba(59,130,246,0.50)",  text: "#1d4ed8", label: "Uncommon" },
+  rare:     { border: "#2563eb", glow: "rgba(37,99,235,0.60)",   text: "#1e40af", label: "Rare"     },
+  epic:     { border: "#1d4ed8", glow: "rgba(29,78,216,0.75)",   text: "#1e3a8a", label: "Epic"     },
+};
+
+function getRarity(rarity: Rarity, isLight: boolean) {
+  return isLight ? RARITY_CFG_LIGHT[rarity] : RARITY_CFG[rarity];
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function nodeCenter(col: number, row: number) {
   return {
@@ -135,10 +148,10 @@ function getStatus(id: string, unlocked: Set<string>): Status {
   return "locked";
 }
 
-function edgeColor(parentId: string, childId: string, unlocked: Set<string>): string {
-  if (unlocked.has(parentId) && unlocked.has(childId)) return "#c9a84c";
-  if (unlocked.has(parentId)) return "#5a4020";
-  return "#2e2e2e";
+function edgeColor(parentId: string, childId: string, unlocked: Set<string>, isLight: boolean): string {
+  if (unlocked.has(parentId) && unlocked.has(childId)) return isLight ? "#2563eb" : "#c9a84c";
+  if (unlocked.has(parentId)) return isLight ? "#93c5fd" : "#5a4020";
+  return isLight ? "#cbd5e1" : "#2e2e2e";
 }
 
 function edgePath(parent: AchDef, child: AchDef): string {
@@ -152,27 +165,33 @@ function edgePath(parent: AchDef, child: AchDef): string {
 
 // ─── Achievement node ─────────────────────────────────────────────────────────
 function AchNode({
-  ach, status, onEnter, onLeave,
+  ach, status, onEnter, onLeave, isLight, isHovered,
 }: {
   ach: AchDef;
   status: Status;
   onEnter: (id: string) => void;
   onLeave: () => void;
+  isLight: boolean;
+  isHovered: boolean;
 }) {
   const { x, y } = nodeCenter(ach.col, ach.row);
-  const r = RARITY_CFG[ach.rarity];
+  const r = getRarity(ach.rarity, isLight);
   const borderC = status === "unlocked"
     ? r.border
     : status === "accessible"
       ? `${r.border}99`
       : `${r.border}50`;
-  const bg      = status === "unlocked" ? "#1c1808" : status === "accessible" ? "#161410" : "#131210";
+  const bg = isLight
+    ? status === "unlocked" ? "#dbeafe" : status === "accessible" ? "#f8fbff" : "#f1f5f9"
+    : status === "unlocked" ? "#2a1f06" : status === "accessible" ? "#161410" : "#0f0e0c";
   const opacity = status === "locked" ? 0.78 : 1;
-  const glow    = status === "unlocked"
-    ? `0 0 24px ${r.glow}, 0 0 0 1px ${r.border}50`
-    : status === "accessible"
-      ? `0 0 12px ${r.border}30, 0 0 0 1px ${r.border}28`
-      : `0 0 6px ${r.border}18`;
+  const glow    = isHovered
+    ? `0 0 32px ${r.glow}, 0 0 0 1.5px ${r.border}`
+    : status === "unlocked"
+      ? `0 0 24px ${r.glow}, 0 0 0 1px ${r.border}50`
+      : status === "accessible"
+        ? `0 0 12px ${r.border}30, 0 0 0 1px ${r.border}28`
+        : `0 0 6px ${r.border}18`;
 
   return (
     <div
@@ -192,6 +211,9 @@ function AchNode({
         overflow: "hidden",
         cursor: "default",
         userSelect: "none",
+        transform: isHovered ? "scale(1.10)" : "scale(1)",
+        transition: "transform 0.15s ease, box-shadow 0.15s ease",
+        zIndex: isHovered ? 10 : 1,
       }}
     >
       {/* Top shimmer line */}
@@ -209,7 +231,7 @@ function AchNode({
         <div style={{
           width: ICON_SZ, height: "100%",
           display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-          background: status === "unlocked" ? `${r.border}28` : status === "accessible" ? `${r.border}14` : "#1a1815",
+          background: status === "unlocked" ? `${r.border}28` : status === "accessible" ? `${r.border}14` : isLight ? "#e8e4da" : "#1a1815",
           borderRight: `1px solid ${borderC}`,
         }}>
           {status === "locked"
@@ -235,7 +257,9 @@ function AchNode({
           <div style={{
             fontSize: 9.5,
             lineHeight: 1.35,
-            color: status === "unlocked" ? "#9a8060" : status === "accessible" ? "#6a5a45" : "#4a3e30",
+            color: isLight
+              ? status === "unlocked" ? "#475569" : status === "accessible" ? "#64748b" : "#94a3b8"
+              : status === "unlocked" ? "#9a8060" : status === "accessible" ? "#6a5a45" : "#4a3e30",
             overflow: "hidden",
             display: "-webkit-box",
             WebkitLineClamp: 2,
@@ -246,6 +270,17 @@ function AchNode({
           </div>
         </div>
       </div>
+
+      {/* Tiny lock in bottom-right for incomplete */}
+      {status !== "unlocked" && (
+        <div style={{
+          position: "absolute", bottom: 4, right: 5,
+          opacity: status === "accessible" ? 0.5 : 0.35,
+          pointerEvents: "none",
+        }}>
+          <Lock size={8} color={r.border} strokeWidth={2.5} />
+        </div>
+      )}
     </div>
   );
 }
@@ -255,16 +290,42 @@ interface UnlockedRecord { achievement_id: string; unlocked_at: string; }
 
 export default function AchievementsClient({
   unlockedAchievements,
+  userId,
 }: {
   unlockedAchievements: UnlockedRecord[];
   tradeCount: number;
+  userId: string;
 }) {
+  const router = useRouter();
   const unlockedSet = new Set(unlockedAchievements.map(r => r.achievement_id));
   const unlockedMap = new Map(unlockedAchievements.map(r => [r.achievement_id, r.unlocked_at]));
   const totalUnlocked = unlockedAchievements.length;
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const hoveredAch = hoveredId ? ACH_MAP.get(hoveredId) : null;
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsLight(document.documentElement.getAttribute("data-theme") === "light");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
+  // Refresh when a new achievement is awarded
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`ach:${userId}`)
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "user_achievements",
+        filter: `user_id=eq.${userId}`,
+      }, () => { router.refresh(); })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [userId, router]);
 
   // Drag-to-pan
   const vpRef    = useRef<HTMLDivElement>(null);
@@ -302,7 +363,7 @@ export default function AchievementsClient({
       return {
         key:    `${pid}-${ach.id}`,
         path:   edgePath(parent, ach),
-        color:  edgeColor(pid, ach.id, unlockedSet),
+        color:  edgeColor(pid, ach.id, unlockedSet, isLight),
         dashed: !unlockedSet.has(pid),
       };
     }).filter(Boolean)
@@ -311,216 +372,90 @@ export default function AchievementsClient({
   // Divider x between trading (max col 7) and competition (col 10)
   const divX = PAD_X + 8.5 * CELL_W;
 
-  // Detail panel content
-  const detailStatus  = hoveredAch ? getStatus(hoveredAch.id, unlockedSet) : null;
-  const detailUnlockedAt = hoveredId ? unlockedMap.get(hoveredId) : undefined;
-  const detailRarity  = hoveredAch ? RARITY_CFG[hoveredAch.rarity] : null;
-
   return (
-    <div className="max-w-full px-3 sm:px-6 py-8 sm:py-10">
+    <div
+      ref={vpRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      style={{
+        width: "100%",
+        height: "calc(100vh - 56px)",
+        overflow: "hidden",
+        cursor: panning.current ? "grabbing" : "grab",
+        background: isLight ? "#eef4fb" : "#0e0d0a",
+        backgroundImage: isLight
+          ? "radial-gradient(rgba(37,99,235,0.12) 1px, transparent 1px)"
+          : "radial-gradient(rgba(201,168,76,0.09) 1px, transparent 1px)",
+        backgroundSize: "22px 22px",
+        position: "relative",
+      }}
+    >
+      <div style={{ position: "relative", width: CANVAS_W, height: CANVAS_H }}>
 
-      {/* ── Panel header ────────────────────────────────────── */}
-      <div
-        className="max-w-3xl mx-auto mb-6 rounded-2xl overflow-hidden"
-        style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
-      >
-        <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, var(--gold-dim) 20%, var(--gold) 50%, var(--gold-dim) 80%, transparent)" }} />
-        <div className="px-8 py-5 flex items-center gap-6">
-          <div
-            className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: "rgba(201,168,76,0.1)", border: "1px solid var(--gold-border)" }}
-          >
-            <Trophy size={24} style={{ color: "var(--gold)" }} strokeWidth={1.5} />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-0.5" style={{ color: "var(--text-3)" }}>Hall of Records</p>
-            <h1 className="font-playfair text-2xl font-bold text-gold-glow mb-2">Achievements</h1>
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--elevated)", border: "1px solid var(--border)" }}>
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{
-                    width: `${(totalUnlocked / ACH.length) * 100}%`,
-                    background: "linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-bright))",
-                  }}
-                />
-              </div>
-              <span className="font-mono text-xs shrink-0" style={{ color: "var(--gold)" }}>
-                {totalUnlocked} / {ACH.length}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="px-8 pb-4">
-          <p className="font-mono text-[10px]" style={{ color: "var(--text-3)", opacity: 0.6 }}>
-            ← Drag to explore the tree · Hover an achievement for details
-          </p>
-        </div>
-      </div>
+        {/* SVG: edges + labels + divider */}
+        <svg
+          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+          width={CANVAS_W}
+          height={CANVAS_H}
+        >
+          {/* Divider line */}
+          <line
+            x1={divX} y1={PAD_Y / 2} x2={divX} y2={CANVAS_H - PAD_Y / 2}
+            stroke={isLight ? "#bfdbfe" : "#333322"} strokeWidth={1} strokeDasharray="6 4"
+          />
 
-      {/* ── Tree viewport ────────────────────────────────────── */}
-      <div
-        ref={vpRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        style={{
-          width: "100%",
-          height: VP_H,
-          overflow: "hidden",
-          cursor: panning.current ? "grabbing" : "grab",
-          borderRadius: 16,
-          border: "1px solid var(--border)",
-          background: "#0e0d0a",
-          backgroundImage: "radial-gradient(rgba(201,168,76,0.09) 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-          position: "relative",
-        }}
-      >
-        <div style={{ position: "relative", width: CANVAS_W, height: CANVAS_H }}>
+          {/* Section labels */}
+          <text x={PAD_X + 3.5 * CELL_W} y={PAD_Y / 2 - 4}
+            textAnchor="middle" fontSize={9}
+            style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
+            fontFamily="monospace" letterSpacing="3">
+            TRADING MASTERY
+          </text>
+          <text x={PAD_X + 10 * CELL_W + CELL_W / 2} y={PAD_Y / 2 - 4}
+            textAnchor="middle" fontSize={9}
+            style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
+            fontFamily="monospace" letterSpacing="3">
+            COMPETITION
+          </text>
 
-          {/* SVG: edges + labels + divider */}
-          <svg
-            style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-            width={CANVAS_W}
-            height={CANVAS_H}
-          >
-            {/* Divider line */}
-            <line
-              x1={divX} y1={PAD_Y / 2} x2={divX} y2={CANVAS_H - PAD_Y / 2}
-              stroke="#333322" strokeWidth={1} strokeDasharray="6 4"
-            />
-
-            {/* Section labels */}
-            <text x={PAD_X + 3.5 * CELL_W} y={PAD_Y / 2 - 4}
-              textAnchor="middle" fill="#6a5a30" fontSize={9}
-              fontFamily="monospace" letterSpacing="3">
-              TRADING MASTERY
-            </text>
-            <text x={PAD_X + 10 * CELL_W + CELL_W / 2} y={PAD_Y / 2 - 4}
-              textAnchor="middle" fill="#6a5a30" fontSize={9}
-              fontFamily="monospace" letterSpacing="3">
-              COMPETITION
-            </text>
-
-            {/* Edges */}
-            {edges.map(e => (
-              <path
-                key={e.key}
-                d={e.path}
-                stroke={e.color}
-                strokeWidth={e.dashed ? 1 : 1.5}
-                strokeDasharray={e.dashed ? "5 4" : undefined}
-                fill="none"
-                strokeLinecap="square"
-              />
-            ))}
-
-            {/* Gold dot on unlocked node centers */}
-            {ACH.map(ach => {
-              const st = getStatus(ach.id, unlockedSet);
-              if (st !== "unlocked") return null;
-              const { x, y } = nodeCenter(ach.col, ach.row);
-              return (
-                <circle key={`dot-${ach.id}`} cx={x} cy={y - NODE_H / 2 - 2} r={2.5}
-                  fill={RARITY_CFG[ach.rarity].border} />
-              );
-            })}
-          </svg>
-
-          {/* Achievement nodes */}
-          {ACH.map(ach => (
-            <AchNode
-              key={ach.id}
-              ach={ach}
-              status={getStatus(ach.id, unlockedSet)}
-              onEnter={setHoveredId}
-              onLeave={() => setHoveredId(null)}
+          {/* Edges */}
+          {edges.map(e => (
+            <path
+              key={e.key}
+              d={e.path}
+              stroke={e.color}
+              strokeWidth={e.dashed ? 1 : 1.5}
+              strokeDasharray={e.dashed ? "5 4" : undefined}
+              fill="none"
+              strokeLinecap="square"
             />
           ))}
-        </div>
-      </div>
 
-      {/* ── Detail panel ─────────────────────────────────────── */}
-      <div
-        className="max-w-3xl mx-auto mt-4 rounded-2xl overflow-hidden transition-all duration-200"
-        style={{
-          background: "var(--surface)",
-          border: hoveredAch
-            ? `1px solid ${detailRarity!.border}55`
-            : "1px solid var(--border)",
-          minHeight: 90,
-        }}
-      >
-        {hoveredAch && detailStatus ? (
-          <div className="flex items-center gap-5 px-6 py-5">
-            {/* Large icon */}
-            <div
-              className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
-              style={{
-                background: detailStatus === "unlocked" ? `${detailRarity!.border}18` : "var(--elevated)",
-                border: `1px solid ${detailStatus === "unlocked" ? detailRarity!.border : "var(--border-mid)"}55`,
-              }}
-            >
-              {detailStatus === "locked"
-                ? <Lock size={22} style={{ color: "var(--text-3)" }} strokeWidth={1.5} />
-                : <hoveredAch.Icon size={24} color={detailStatus === "unlocked" ? detailRarity!.text : "var(--text-3)"} strokeWidth={1.5} />
-              }
-            </div>
+          {/* Accent dot on unlocked node tops */}
+          {ACH.map(ach => {
+            const st = getStatus(ach.id, unlockedSet);
+            if (st !== "unlocked") return null;
+            const { x, y } = nodeCenter(ach.col, ach.row);
+            return (
+              <circle key={`dot-${ach.id}`} cx={x} cy={y - NODE_H / 2 - 2} r={2.5}
+                fill={getRarity(ach.rarity, isLight).border} />
+            );
+          })}
+        </svg>
 
-            {/* Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className="font-mono font-bold text-sm" style={{ color: detailStatus === "unlocked" ? detailRarity!.text : "var(--text-2)" }}>
-                  {hoveredAch.title}
-                </span>
-                {detailStatus === "unlocked" && (
-                  <span
-                    className="font-mono text-[9px] tracking-[0.18em] uppercase px-1.5 py-0.5 rounded"
-                    style={{
-                      background: `${detailRarity!.border}18`,
-                      border: `1px solid ${detailRarity!.border}44`,
-                      color: detailRarity!.text,
-                    }}
-                  >
-                    {detailRarity!.label}
-                  </span>
-                )}
-                {detailStatus === "accessible" && (
-                  <span className="font-mono text-[9px] tracking-[0.18em] uppercase px-1.5 py-0.5 rounded"
-                    style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-3)" }}>
-                    Available
-                  </span>
-                )}
-                {detailStatus === "locked" && (
-                  <span className="font-mono text-[9px] tracking-[0.18em] uppercase px-1.5 py-0.5 rounded"
-                    style={{ background: "var(--elevated)", border: "1px solid var(--border)", color: "var(--text-3)" }}>
-                    Locked
-                  </span>
-                )}
-              </div>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
-                {detailStatus === "unlocked" ? hoveredAch.desc : hoveredAch.hint}
-              </p>
-              {detailStatus === "unlocked" && detailUnlockedAt && (
-                <p className="font-mono text-[10px] mt-1.5" style={{ color: "var(--text-3)", opacity: 0.6 }}>
-                  Unlocked {new Date(detailUnlockedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                </p>
-              )}
-              {detailStatus !== "unlocked" && hoveredAch.parents.length > 0 && (
-                <p className="font-mono text-[10px] mt-1.5" style={{ color: "var(--text-3)", opacity: 0.6 }}>
-                  Requires: {hoveredAch.parents.map(pid => ACH_MAP.get(pid)?.title).filter(Boolean).join(", ")}
-                </p>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="px-6 py-7 text-center">
-            <p className="font-mono text-xs" style={{ color: "var(--text-3)", opacity: 0.5 }}>
-              Hover an achievement to see its details
-            </p>
-          </div>
-        )}
+        {/* Achievement nodes */}
+        {ACH.map(ach => (
+          <AchNode
+            key={ach.id}
+            ach={ach}
+            status={getStatus(ach.id, unlockedSet)}
+            onEnter={setHoveredId}
+            onLeave={() => setHoveredId(null)}
+            isLight={isLight}
+            isHovered={hoveredId === ach.id}
+          />
+        ))}
       </div>
     </div>
   );

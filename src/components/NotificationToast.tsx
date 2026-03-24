@@ -206,7 +206,7 @@ export default function NotificationToast({ userId }: { userId: string | null })
   }, [userId]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-[200] flex flex-col gap-2.5 items-end pointer-events-none">
+    <div className="fixed top-20 right-6 z-[200] flex flex-col gap-2.5 items-end pointer-events-none">
       <AnimatePresence mode="popLayout">
         {toasts.map((t) => (
           <div key={t.id} className="pointer-events-auto">

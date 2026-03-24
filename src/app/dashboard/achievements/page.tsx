@@ -25,6 +25,7 @@ export default async function AchievementsPage() {
     <AchievementsClient
       unlockedAchievements={unlockedData ?? []}
       tradeCount={tradeCount ?? 0}
+      userId={user.id}
     />
   );
 }
