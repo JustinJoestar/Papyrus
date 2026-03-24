@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 function Logo() {
   return (
@@ -192,18 +193,17 @@ export default function LoginPage() {
                 />
               </div>
 
-              <button
+              <ShimmerButton
                 type="submit"
                 disabled={loading}
-                className="w-full mt-1 font-bold font-mono text-sm tracking-[0.1em] py-2.5 rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{
-                  background:
-                    "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-                  color: "#0a0800",
-                }}
+                shimmerColor="rgba(255,255,255,0.45)"
+                shimmerDuration="2.8s"
+                background="linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)"
+                borderRadius="12px"
+                className="w-full mt-1 font-bold font-mono text-sm tracking-[0.1em] py-2.5 text-[#0a0800] disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading ? "AUTHENTICATING..." : "SIGN IN →"}
-              </button>
+              </ShimmerButton>
             </form>
 
             <div

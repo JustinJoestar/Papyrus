@@ -5,6 +5,7 @@ import NavThemeToggle from "@/components/NavThemeToggle";
 import PulseSection from "@/components/PulseSection";
 import { createClient } from "@/lib/supabase/server";
 import { HeroGlobePanel, HeroTerminalPanel } from "@/components/HeroSidePanels";
+import { GoldShimmerCta } from "@/components/GoldShimmerCta";
 
 
 const FEATURES = [
@@ -53,16 +54,9 @@ export default async function LandingPage() {
         <div className="ml-auto flex items-center gap-3">
           <NavThemeToggle />
           {isLoggedIn ? (
-            <Link
-              href="/dashboard"
-              className="font-mono text-xs font-semibold px-4 py-2 rounded-lg transition-all"
-              style={{
-                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 60%, var(--gold-bright) 100%)",
-                color: "#0a0800",
-              }}
-            >
+            <GoldShimmerCta href="/dashboard" className="px-4 py-2 text-xs">
               Dashboard →
-            </Link>
+            </GoldShimmerCta>
           ) : (
             <>
               <Link
@@ -72,16 +66,9 @@ export default async function LandingPage() {
               >
                 Sign in
               </Link>
-              <Link
-                href="/auth/signup"
-                className="font-mono text-xs font-semibold px-4 py-2 rounded-lg transition-all"
-                style={{
-                  background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 60%, var(--gold-bright) 100%)",
-                  color: "#0a0800",
-                }}
-              >
+              <GoldShimmerCta href="/auth/signup" className="px-4 py-2 text-xs">
                 Get Started
-              </Link>
+              </GoldShimmerCta>
             </>
           )}
         </div>
@@ -128,17 +115,9 @@ export default async function LandingPage() {
               commodities at live prices — compete weekly, reset every Monday.
             </p>
 
-            <Link
-              href={ctaHref}
-              className="inline-block font-mono font-semibold text-sm tracking-wide px-7 py-3 rounded-lg transition-all duration-200"
-              style={{
-                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 60%, var(--gold-bright) 100%)",
-                color: "#0a0800",
-                boxShadow: "var(--primary-glow)",
-              }}
-            >
+            <GoldShimmerCta href={ctaHref}>
               {isLoggedIn ? "Open Dashboard" : "Start for free"}
-            </Link>
+            </GoldShimmerCta>
 
             {/* Inline stats */}
             <div className="flex items-center justify-center gap-6 mt-8">
@@ -229,17 +208,9 @@ export default async function LandingPage() {
             <p className="text-base mb-10" style={{ color: "var(--text-3)" }}>
               No card required. Your $10,000 is waiting.
             </p>
-            <Link
-              href={ctaHref}
-              className="inline-block font-mono font-semibold text-sm tracking-wide px-9 py-3 rounded-lg transition-all duration-200"
-              style={{
-                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 60%, var(--gold-bright) 100%)",
-                color: "#0a0800",
-                boxShadow: "var(--primary-glow)",
-              }}
-            >
+            <GoldShimmerCta href={ctaHref} className="px-9">
               {isLoggedIn ? "Open Dashboard" : "Create free account"}
-            </Link>
+            </GoldShimmerCta>
           </div>
         </div>
       </section>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 export type TradeCoin = { symbol: string; name: string; price: number };
 
@@ -299,29 +300,32 @@ export default function TradeModal({
             >
               Cancel
             </button>
-            <button
-              onClick={handleTrade}
-              disabled={loading || quantity <= 0}
-              className="flex-1 font-bold font-mono text-sm tracking-wide py-2.5 rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={
-                isBuy
-                  ? {
-                      background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-                      color: "#0a0800",
-                    }
-                  : {
-                      background: "var(--loss-bg)",
-                      border: "1px solid var(--loss-border)",
-                      color: "var(--loss)",
-                    }
-              }
-            >
-              {loading
-                ? "Processing..."
-                : isBuy
-                ? "CONFIRM BUY"
-                : "CONFIRM SELL"}
-            </button>
+            {isBuy ? (
+              <ShimmerButton
+                onClick={handleTrade}
+                disabled={loading || quantity <= 0}
+                shimmerColor="rgba(255,255,255,0.45)"
+                shimmerDuration="2.8s"
+                background="linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)"
+                borderRadius="12px"
+                className="flex-1 font-bold font-mono text-sm tracking-wide py-2.5 text-[#0a0800] disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {loading ? "Processing..." : "CONFIRM BUY"}
+              </ShimmerButton>
+            ) : (
+              <button
+                onClick={handleTrade}
+                disabled={loading || quantity <= 0}
+                className="flex-1 font-bold font-mono text-sm tracking-wide py-2.5 rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{
+                  background: "var(--loss-bg)",
+                  border: "1px solid var(--loss-border)",
+                  color: "var(--loss)",
+                }}
+              >
+                {loading ? "Processing..." : "CONFIRM SELL"}
+              </button>
+            )}
           </div>
         </div>
       </div>
