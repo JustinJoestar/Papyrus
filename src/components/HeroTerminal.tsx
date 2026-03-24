@@ -179,17 +179,21 @@ export default function HeroTerminal() {
 
   const idxRef = useRef(0); // mirrors idx, safe to read in intervals
 
-  // ── 3D parallax (carousel-style mouse tracking) ─────────────
-  const cardRef  = useRef<HTMLDivElement>(null);
-  const mouseX   = useRef(0);
-  const mouseY   = useRef(0);
-  const rafTilt  = useRef<number>();
+  // ── 3D tilt (carousel-style: rotateX/rotateY from mouse, lerped) ─
+  const cardRef   = useRef<HTMLDivElement>(null);
+  const targetRY  = useRef(0);   // mouse-driven rotateY target
+  const targetRX  = useRef(0);   // mouse-driven rotateX target (also used for switch tilt)
+  const curRY     = useRef(0);
+  const curRX     = useRef(0);
+  const rafTilt   = useRef<number>();
 
   useEffect(() => {
     const tick = () => {
+      curRY.current += (targetRY.current - curRY.current) * 0.09;
+      curRX.current += (targetRX.current - curRX.current) * 0.09;
       if (cardRef.current) {
-        cardRef.current.style.setProperty("--mx", `${mouseX.current}px`);
-        cardRef.current.style.setProperty("--my", `${mouseY.current}px`);
+        cardRef.current.style.transform =
+          `perspective(900px) rotateY(${curRY.current.toFixed(3)}deg) rotateX(${curRX.current.toFixed(3)}deg)`;
       }
       rafTilt.current = requestAnimationFrame(tick);
     };
@@ -200,15 +204,22 @@ export default function HeroTerminal() {
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const el = cardRef.current;
     if (!el) return;
-    const r = el.getBoundingClientRect();
-    mouseX.current = e.clientX - (r.left + r.width  / 2);
-    mouseY.current = e.clientY - (r.top  + r.height / 2);
+    const r  = el.getBoundingClientRect();
+    const nx = (e.clientX - (r.left + r.width  / 2)) / (r.width  / 2); // –1 → 1
+    const ny = (e.clientY - (r.top  + r.height / 2)) / (r.height / 2); // –1 → 1
+    targetRY.current =  nx * 16;  // left↔right tilt, max ±16°
+    targetRX.current = -ny * 11;  // top↕bottom tilt, max ±11° (inverted)
   };
 
-  const handleMouseLeave = () => { mouseX.current = 0; mouseY.current = 0; };
+  const handleMouseLeave = () => {
+    targetRY.current = 0;
+    targetRX.current = 0;
+  };
 
   const goTo = useCallback((next: number) => {
     idxRef.current = next;
+    targetRX.current = 14;   // tilt back on exit
+    targetRY.current = 0;
     setVisible(false);
     setTimeout(() => {
       const a = ASSETS[next];
@@ -219,8 +230,9 @@ export default function HeroTerminal() {
       setLastPrice(a.midPrice);
       setLastSide("buy");
       tickRef.current = 0;
+      targetRX.current = 0;  // spring back on enter
       setVisible(true);
-    }, 160);
+    }, 180);
   }, []);
 
   // Auto-advance every 5 seconds
@@ -290,10 +302,7 @@ export default function HeroTerminal() {
   );
 
   return (
-    <div
-      className="relative select-none"
-      style={{ width: 240, perspective: "1200px", transformStyle: "preserve-3d" } as CSSProperties}
-    >
+    <div className="relative select-none" style={{ width: 240 }}>
       <ArrowBtn dir={-1} />
       <ArrowBtn dir={1} />
 
@@ -307,15 +316,10 @@ export default function HeroTerminal() {
           border: "1px solid var(--border-mid)",
           boxShadow: "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
           opacity: visible ? 1 : 0,
-          transform: visible
-            ? "translate3d(calc(var(--mx,0px) / 28), calc(var(--my,0px) / 28), 0) rotateX(0deg) scale(1)"
-            : "translate3d(0,0,0) rotateX(8deg) scale(0.97)",
-          transition: visible
-            ? "opacity 0.18s ease, transform 0.5s cubic-bezier(0.4,0,0.2,1)"
-            : "opacity 0.18s ease, transform 0.28s cubic-bezier(0.4,0,0.2,1)",
-          transformOrigin: "bottom center",
+          transition: "opacity 0.18s ease",
+          transformOrigin: "center center",
           willChange: "transform",
-        } as CSSProperties}
+        }}
       >
         {/* Top accent */}
         <div className="h-px" style={{ background: "linear-gradient(90deg, transparent, var(--gold-dim) 30%, var(--gold) 50%, var(--gold-dim) 70%, transparent)" }} />
