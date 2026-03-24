@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { CSSProperties } from "react";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 // ── Asset definitions (alternating crypto / stock) ─────────────────────────
 const ASSETS = [
@@ -271,25 +272,19 @@ export default function HeroTerminal() {
   const isCrypto = asset.type === "crypto";
 
   const ArrowBtn = ({ dir }: { dir: 1 | -1 }) => (
-    <button
+    <ShimmerButton
       onClick={() => navigate(dir)}
-      className="absolute flex items-center justify-center rounded-md transition-all duration-150"
+      shimmerColor="rgba(201,168,76,0.7)"
+      shimmerDuration="2.4s"
+      background="rgba(0,0,0,0.85)"
+      borderRadius="6px"
+      className="absolute flex items-center justify-center text-[var(--text-3)] hover:text-[var(--gold)]"
       style={{
         top: "50%", transform: "translateY(-50%)",
-        [dir === -1 ? "left" : "right"]: -18,
-        width: 16, height: 28,
-        background: "rgba(0,0,0,0.7)",
-        border: "1px solid var(--border-mid)",
-        color: "var(--text-3)",
+        [dir === -1 ? "left" : "right"]: -20,
+        width: 18, height: 32,
+        padding: 0,
         zIndex: 10,
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.color = "var(--gold)";
-        e.currentTarget.style.borderColor = "var(--gold-border)";
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.color = "var(--text-3)";
-        e.currentTarget.style.borderColor = "var(--border-mid)";
       }}
     >
       <svg width="7" height="10" viewBox="0 0 7 10" fill="none">
@@ -298,7 +293,7 @@ export default function HeroTerminal() {
           : <path d="M2 1l3.5 4L2 9"  stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         }
       </svg>
-    </button>
+    </ShimmerButton>
   );
 
   return (
