@@ -3,14 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 export default function SignupPage() {
   const router   = useRouter();
   const supabase = createClient();
-  const { resolvedTheme } = useTheme();
 
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
@@ -90,14 +88,7 @@ export default function SignupPage() {
   return (
     <div
       className="auth-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{
-        backgroundColor: "var(--void)",
-        backgroundImage: "radial-gradient(rgba(201,168,76,0.18) 1.5px, transparent 1.5px)",
-        backgroundSize: "28px 28px",
-      }}
     >
-
-      {resolvedTheme === "light" && <div className="auth-wave-bg" />}
 
       <div
         className="absolute pointer-events-none"

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 
 export default function VerifyPage() {
@@ -10,7 +9,6 @@ export default function VerifyPage() {
   const email = searchParams.get("email") ?? "";
   const supabase = createClient();
   const [resent, setResent] = useState(false);
-  const { resolvedTheme } = useTheme();
 
   async function handleResend() {
     setResent(false);
@@ -21,14 +19,7 @@ export default function VerifyPage() {
   return (
     <div
       className="auth-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-      style={{
-        backgroundColor: "var(--void)",
-        backgroundImage: "radial-gradient(rgba(201,168,76,0.18) 1.5px, transparent 1.5px)",
-        backgroundSize: "28px 28px",
-      }}
     >
-
-      {resolvedTheme === "light" && <div className="auth-wave-bg" />}
 
       {/* Ambient gold crown glow */}
       <div
