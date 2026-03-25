@@ -47,6 +47,16 @@ export default async function LandingPage() {
           <span className="font-mono font-bold text-sm tracking-[0.15em]" style={{ color: "var(--text-1)" }}>
             PAPYRUS
           </span>
+          <span
+            className="font-mono text-[9px] tracking-[0.18em] px-1.5 py-0.5 rounded"
+            style={{
+              background: "var(--gold-glow)",
+              border: "1px solid var(--gold-border)",
+              color: "var(--gold)",
+            }}
+          >
+            BETA
+          </span>
         </Link>
 
         <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
