@@ -35,7 +35,7 @@ begin
     select
       p.id,
       rank() over (
-        order by (p.cash_balance + coalesce(sum(h.quantity * h.avg_price), 0)) desc
+        order by (p.cash_balance + coalesce(sum(h.quantity * h.avg_buy_price), 0)) desc
       ) as rank_val,
       count(*) over () as total_count
     from public.profiles p

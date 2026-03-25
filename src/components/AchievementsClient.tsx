@@ -305,6 +305,12 @@ export default function AchievementsClient({
   const [isLight, setIsLight] = useState(false);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 0.85 });
 
+  // Check leaderboard achievements on load
+  useEffect(() => {
+    const supabase = createClient();
+    void supabase.rpc("check_leaderboard_notification");
+  }, []);
+
   // Theme detection
   useEffect(() => {
     const check = () => setIsLight(document.documentElement.getAttribute("data-theme") === "light");
