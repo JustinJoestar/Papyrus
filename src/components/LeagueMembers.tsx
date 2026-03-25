@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 type Member = {
@@ -101,9 +102,19 @@ export default function LeagueMembers({ leagueId, members, isOwner, currentUserI
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>
-                    {member.username}
-                  </span>
+                  {isMe ? (
+                    <span className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>
+                      {member.username}
+                    </span>
+                  ) : (
+                    <Link
+                      href={`/dashboard/profile/${encodeURIComponent(member.username)}`}
+                      className="text-sm font-medium truncate hover:underline"
+                      style={{ color: "var(--text-1)" }}
+                    >
+                      {member.username}
+                    </Link>
+                  )}
                   {member.is_owner && (
                     <span
                       className="text-[10px] font-mono px-1.5 py-0.5 rounded tracking-wider shrink-0"

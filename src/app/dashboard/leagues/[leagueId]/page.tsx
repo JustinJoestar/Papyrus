@@ -212,7 +212,17 @@ export default async function LeagueLeaderboardPage({
                 <div className="flex-1 min-w-0 flex items-center gap-3">
                   <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={9} />
                   <div className="flex items-center gap-2 flex-wrap min-w-0">
-                    <p className="font-semibold truncate" style={{ color: "var(--text-1)" }}>{entry.username}</p>
+                    {isMe ? (
+                      <p className="font-semibold truncate" style={{ color: "var(--text-1)" }}>{entry.username}</p>
+                    ) : (
+                      <Link
+                        href={`/dashboard/profile/${encodeURIComponent(entry.username)}`}
+                        className="font-semibold truncate hover:underline"
+                        style={{ color: "var(--text-1)" }}
+                      >
+                        {entry.username}
+                      </Link>
+                    )}
                     {isMe && (
                       <span className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0" style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "var(--gold)" }}>
                         YOU
@@ -247,7 +257,17 @@ export default async function LeagueLeaderboardPage({
               </span>
               <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={7} />
               <div className="flex-1 min-w-0 flex items-center gap-2">
-                <p className="text-sm truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
+                {entry.isCurrentUser ? (
+                  <p className="text-sm truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
+                ) : (
+                  <Link
+                    href={`/dashboard/profile/${encodeURIComponent(entry.username)}`}
+                    className="text-sm truncate hover:underline"
+                    style={{ color: "var(--text-2)" }}
+                  >
+                    {entry.username}
+                  </Link>
+                )}
                 {entry.isCurrentUser && <span className="text-[10px] font-mono shrink-0" style={{ color: "var(--gold-dim)" }}>you</span>}
               </div>
               <p className="font-mono font-semibold text-sm" style={{ color: entry.isCurrentUser ? "var(--gold)" : "var(--text-2)" }}>
