@@ -73,13 +73,15 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+      className="auth-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
       style={{
         backgroundColor: "var(--void)",
         backgroundImage: "radial-gradient(rgba(201,168,76,0.18) 1.5px, transparent 1.5px)",
         backgroundSize: "28px 28px",
       }}
     >
+
+      <div className="auth-wave-bg" />
 
       {/* Ambient gold crown glow */}
       <div
@@ -94,8 +96,6 @@ export default function LoginPage() {
             "radial-gradient(ellipse, rgba(201,168,76,0.10) 0%, transparent 65%)",
         }}
       />
-
-      <div className="auth-scan-line" />
 
       {/* Card */}
       <div className="w-full max-w-[380px] relative" style={{ zIndex: 10 }}>

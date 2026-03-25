@@ -159,14 +159,34 @@
   50%        { box-shadow: 0 0 0 1px rgba(37,99,235,0.45), 0 0 48px rgba(37,99,235,0.14); }
 }
 
-/* Light mode auth scan line → blue */
-[data-theme="light"] .auth-scan-line {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(37,99,235,0.3) 50%,
-    transparent 100%
-  );
+
+/* Auth page — Great Wave off Kanagawa background (light mode only) */
+/* Public domain: Hokusai, 1831. Source: Wikimedia Commons */
+.auth-wave-bg {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/b3/Katsushika_Hokusai_-_Thirty-Six_Views_of_Mount_Fuji-_The_Great_Wave_Off_the_Coast_of_Kanagawa_-_Google_Art_Project.jpg');
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.auth-wave-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.38);
+}
+
+[data-theme="light"] .auth-wave-bg {
+  display: block;
+}
+
+/* In light mode, hide the dot pattern overlay on auth pages */
+[data-theme="light"] .auth-bg {
+  background-image: none !important;
 }
 
 /* Light mode iMac gradient background → white with blue hints */
@@ -316,11 +336,6 @@ body {
   50%       { opacity: 0.2; }
 }
 
-/* Auth horizontal scan line */
-@keyframes scan {
-  from { top: -1px;  }
-  to   { top: 100%;  }
-}
 
 /* ═══════════════════════════════════════════════════════════════
    ANIMATION UTILITY CLASSES
@@ -365,21 +380,6 @@ body {
   background-clip: text;
 }
 
-/* Auth page animated scan line — auth pages only */
-.auth-scan-line {
-  position: fixed;
-  inset-inline: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(201,168,76,0.3) 50%,
-    transparent 100%
-  );
-  animation: scan 14s linear infinite;
-  pointer-events: none;
-  z-index: 9999;
-}
 
 /* Gold glow — landing page headlines */
 .text-gold-glow {
