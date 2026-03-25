@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useTheme } from "next-themes";
 import { PulseBeams } from "@/components/ui/pulse-beams";
 
 // Each beam connects an outer asset node → the central hub
@@ -73,8 +72,6 @@ const BEAMS = [
   },
 ];
 
-const GRADIENT_COLORS_DARK  = { start: "#c9a84c", middle: "#e8c66a", end: "#8a6f35" };
-const GRADIENT_COLORS_LIGHT = { start: "#2563eb", middle: "#60a5fa", end: "#1d4ed8" };
 
 // Labels mapped to approximate SVG endpoint positions (as % of 858×434 viewbox)
 const NODE_LABELS = [
@@ -86,9 +83,6 @@ const NODE_LABELS = [
 ];
 
 export default function PulseSection() {
-  const { resolvedTheme } = useTheme();
-  const gradientColors = resolvedTheme === "light" ? GRADIENT_COLORS_LIGHT : GRADIENT_COLORS_DARK;
-
   return (
     <section className="relative z-10 w-full max-w-5xl mx-auto px-8 pb-24">
       {/* Section header */}
@@ -115,7 +109,6 @@ export default function PulseSection() {
       <div className="relative mt-16">
         <PulseBeams
           beams={BEAMS}
-          gradientColors={gradientColors}
           width={858}
           height={434}
           baseColor="var(--border-mid)"

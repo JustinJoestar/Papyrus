@@ -23,6 +23,11 @@
 ═══════════════════════════════════════════════════════════════ */
 
 :root {
+  /* ── Pulse beam gradient colors ─────────────────────────── */
+  --beam-start:  #c9a84c;
+  --beam-middle: #e8c66a;
+  --beam-end:    #8a6f35;
+
   /* ── Backgrounds (pure black, zero navy) ────────────────── */
   --void:     #000000;
   --base:     #030303;
@@ -77,6 +82,11 @@
    Applied when <html data-theme="light">
 ═══════════════════════════════════════════════════════════════ */
 [data-theme="light"] {
+  /* Pulse beam gradient colors */
+  --beam-start:  #2563eb;
+  --beam-middle: #60a5fa;
+  --beam-end:    #1d4ed8;
+
   /* Backgrounds */
   --void:     #f0f4f8;
   --base:     #f8fafc;

@@ -151,15 +151,13 @@ const SVGs = ({ beams, width, height, baseColor, accentColor, gradientColors }: 
   );
 };
 
-const GradientColors = ({
-  colors = { start: "#c9a84c", middle: "#e8c66a", end: "#8a6f35" },
-}: GradientColorsProps) => {
+const GradientColors = () => {
   return (
     <>
-      <stop offset="0%" stopColor={colors.start} stopOpacity="0" />
-      <stop offset="20%" stopColor={colors.start} stopOpacity="1" />
-      <stop offset="50%" stopColor={colors.middle} stopOpacity="1" />
-      <stop offset="100%" stopColor={colors.end} stopOpacity="0" />
+      <stop offset="0%"   stopColor="var(--beam-start)"  stopOpacity="0" />
+      <stop offset="20%"  stopColor="var(--beam-start)"  stopOpacity="1" />
+      <stop offset="50%"  stopColor="var(--beam-middle)" stopOpacity="1" />
+      <stop offset="100%" stopColor="var(--beam-end)"    stopOpacity="0" />
     </>
   );
 };
