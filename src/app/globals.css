@@ -237,10 +237,16 @@
 *::-webkit-scrollbar-thumb   { background: #2a2a2a; border-radius: 2px; }
 
 body {
-  background: var(--base);
+  background-color: var(--base);
+  background-image: radial-gradient(rgba(201,168,76,0.15) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
   color: var(--text-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="light"] body {
+  background-image: radial-gradient(rgba(37,99,235,0.14) 1.5px, transparent 1.5px);
 }
 
 /* ═══════════════════════════════════════════════════════════════

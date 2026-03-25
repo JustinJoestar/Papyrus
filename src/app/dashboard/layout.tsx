@@ -25,12 +25,7 @@ export default async function DashboardLayout({
   return (
     <div
       className="min-h-screen relative"
-      style={{
-        backgroundColor: "var(--base)",
-        backgroundImage: "radial-gradient(rgba(201,168,76,0.15) 1.5px, transparent 1.5px)",
-        backgroundSize: "28px 28px",
-        color: "var(--text-1)",
-      }}
+      style={{ color: "var(--text-1)" }}
     >
 
       <nav
