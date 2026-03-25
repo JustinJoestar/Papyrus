@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { PulseBeams } from "@/components/ui/pulse-beams";
 
 // Each beam connects an outer asset node → the central hub
@@ -72,22 +73,22 @@ const BEAMS = [
   },
 ];
 
-const GRADIENT_COLORS = {
-  start:  "#c9a84c",
-  middle: "#e8c66a",
-  end:    "#8a6f35",
-};
+const GRADIENT_COLORS_DARK  = { start: "#c9a84c", middle: "#e8c66a", end: "#8a6f35" };
+const GRADIENT_COLORS_LIGHT = { start: "#2563eb", middle: "#60a5fa", end: "#1d4ed8" };
 
 // Labels mapped to approximate SVG endpoint positions (as % of 858×434 viewbox)
 const NODE_LABELS = [
-  { label: "CRYPTO",      sub: "250+ coins",     top: "88%",  left: "0%",   align: "left"   },
-  { label: "STOCKS",      sub: "35+ symbols",    top: "3%",   left: "93%",  align: "right"  },
-  { label: "PORTFOLIO",   sub: "Real-time P&L",  top: "96%",  left: "12%",  align: "left"   },
-  { label: "COMMODITIES", sub: "10 markets",     top: "96%",  left: "82%",  align: "right"  },
-  { label: "LEAGUES",     sub: "Weekly resets",  top: "-2%",  left: "45%",  align: "center" },
+  { label: "CRYPTO",      sub: "250+ coins",     top: "76%",  left: "-2%",  align: "left"   },
+  { label: "STOCKS",      sub: "35+ symbols",    top: "-4%",  left: "91%",  align: "right"  },
+  { label: "PORTFOLIO",   sub: "Real-time P&L",  top: "104%", left: "10%",  align: "left"   },
+  { label: "COMMODITIES", sub: "10 markets",     top: "104%", left: "80%",  align: "right"  },
+  { label: "LEAGUES",     sub: "Weekly resets",  top: "-12%", left: "45%",  align: "center" },
 ];
 
 export default function PulseSection() {
+  const { resolvedTheme } = useTheme();
+  const gradientColors = resolvedTheme === "light" ? GRADIENT_COLORS_LIGHT : GRADIENT_COLORS_DARK;
+
   return (
     <section className="relative z-10 w-full max-w-5xl mx-auto px-8 pb-24">
       {/* Section header */}
@@ -114,7 +115,7 @@ export default function PulseSection() {
       <div className="relative mt-6">
         <PulseBeams
           beams={BEAMS}
-          gradientColors={GRADIENT_COLORS}
+          gradientColors={gradientColors}
           width={858}
           height={434}
           baseColor="var(--border-mid)"
