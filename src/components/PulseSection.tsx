@@ -112,7 +112,7 @@ export default function PulseSection() {
       </div>
 
       {/* Pulse beams canvas */}
-      <div className="relative mt-6">
+      <div className="relative mt-16">
         <PulseBeams
           beams={BEAMS}
           gradientColors={gradientColors}
