@@ -29,6 +29,7 @@ export default function LeagueCard({ league, currentUserId }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   async function handleLeave() {
     setLoading(true);
@@ -41,6 +42,23 @@ export default function LeagueCard({ league, currentUserId }: Props) {
     setLoading(false);
     if (dbError) {
       setError(dbError.message);
+    } else {
+      router.refresh();
+    }
+  }
+
+  async function handleDelete() {
+    if (!confirmDelete) { setConfirmDelete(true); return; }
+    setLoading(true);
+    setError(null);
+    const { error: dbError } = await supabase
+      .from("leagues")
+      .delete()
+      .eq("id", league.id);
+    setLoading(false);
+    if (dbError) {
+      setError(dbError.message);
+      setConfirmDelete(false);
     } else {
       router.refresh();
     }
@@ -164,7 +182,29 @@ export default function LeagueCard({ league, currentUserId }: Props) {
         </div>
       )}
 
-      {!league.is_owner && (
+      {league.is_owner ? (
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleDelete}
+            disabled={loading}
+            className="text-xs font-mono transition-colors disabled:opacity-40"
+            style={{ color: confirmDelete ? "var(--loss)" : "var(--text-3)" }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--loss)")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = confirmDelete ? "var(--loss)" : "var(--text-3)")}
+          >
+            {loading ? "Deleting..." : confirmDelete ? "Tap again to confirm" : "Delete league"}
+          </button>
+          {confirmDelete && (
+            <button
+              onClick={() => setConfirmDelete(false)}
+              className="text-xs font-mono transition-colors"
+              style={{ color: "var(--text-3)" }}
+            >
+              Cancel
+            </button>
+          )}
+        </div>
+      ) : (
         <button
           onClick={handleLeave}
           disabled={loading}
