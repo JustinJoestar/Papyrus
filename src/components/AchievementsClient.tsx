@@ -6,17 +6,20 @@ import { createClient } from "@/lib/supabase/client";
 import {
   Rocket, TrendingUp, Globe, Gem, Zap, Shield,
   Trophy, Crown, Lock, Flame, Sparkles, Medal,
+  Plus, Minus, Maximize2,
 } from "lucide-react";
 
 // ─── Layout constants ────────────────────────────────────────────────────────
-const CELL_W  = 214;   // horizontal spacing per column
-const CELL_H  = 134;   // vertical spacing per row
-const NODE_W  = 178;   // node card width
-const NODE_H  = 86;    // node card height
-const ICON_SZ = 54;    // icon box width
+const CELL_W  = 214;
+const CELL_H  = 134;
+const NODE_W  = 178;
+const NODE_H  = 86;
+const ICON_SZ = 54;
 const PAD_X   = 80;
 const PAD_Y   = 62;
-const VP_H    = 560;   // viewport height
+
+const MIN_SCALE = 0.25;
+const MAX_SCALE = 2.5;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type Rarity  = "common" | "uncommon" | "rare" | "epic";
@@ -25,8 +28,8 @@ type Status  = "unlocked" | "accessible" | "locked";
 interface AchDef {
   id:       string;
   title:    string;
-  desc:     string;   // shown when unlocked
-  hint:     string;   // shown when locked
+  desc:     string;
+  hint:     string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Icon:     any;
   col:      number;
@@ -38,12 +41,11 @@ interface AchDef {
 
 // ─── Achievement definitions ─────────────────────────────────────────────────
 const ACH: AchDef[] = [
-  // ── Trading tree ──────────────────────────────────────────────────────────
   {
     id: "first_trade", title: "The First Move",
     desc: "Executed your first trade. The market is now your battleground.",
     hint: "Make any trade to begin your journey.",
-    Icon: Rocket,  col: 4, row: 0, parents: [], rarity: "common", section: "trading",
+    Icon: Rocket, col: 4, row: 0, parents: [], rarity: "common", section: "trading",
   },
   {
     id: "ten_trades", title: "Momentum",
@@ -87,7 +89,6 @@ const ACH: AchDef[] = [
     hint: "Survive 4 weekly resets.",
     Icon: Shield, col: 7, row: 4, parents: ["diamond_hands"], rarity: "rare", section: "trading",
   },
-  // ── Competition tree ──────────────────────────────────────────────────────
   {
     id: "top_10", title: "The Elite Ten",
     desc: "Reached the global top 10. You are in rarified air.",
@@ -163,6 +164,10 @@ function edgePath(parent: AchDef, child: AchDef): string {
   return `M ${p.x} ${py} L ${p.x} ${mid} L ${c.x} ${mid} L ${c.x} ${cy}`;
 }
 
+function clamp(v: number, min: number, max: number) {
+  return Math.min(Math.max(v, min), max);
+}
+
 // ─── Achievement node ─────────────────────────────────────────────────────────
 function AchNode({
   ach, status, onEnter, onLeave, isLight, isHovered,
@@ -185,7 +190,7 @@ function AchNode({
     ? status === "unlocked" ? "#dbeafe" : status === "accessible" ? "#f8fbff" : "#f1f5f9"
     : status === "unlocked" ? "#2a1f06" : status === "accessible" ? "#161410" : "#0f0e0c";
   const opacity = status === "locked" ? 0.78 : 1;
-  const glow    = isHovered
+  const glow = isHovered
     ? `0 0 32px ${r.glow}, 0 0 0 1.5px ${r.border}`
     : status === "unlocked"
       ? `0 0 24px ${r.glow}, 0 0 0 1px ${r.border}50`
@@ -211,12 +216,11 @@ function AchNode({
         overflow: "hidden",
         cursor: "default",
         userSelect: "none",
-        transform: isHovered ? "scale(1.10)" : "scale(1)",
+        transform: isHovered ? "scale(1.08)" : "scale(1)",
         transition: "transform 0.15s ease, box-shadow 0.15s ease",
         zIndex: isHovered ? 10 : 1,
       }}
     >
-      {/* Top shimmer line */}
       {(status === "unlocked" || status === "accessible") && (
         <div style={{
           position: "absolute", top: 0, left: 0, right: 0, height: 1,
@@ -227,7 +231,6 @@ function AchNode({
       )}
 
       <div style={{ display: "flex", height: "100%", alignItems: "center" }}>
-        {/* Icon */}
         <div style={{
           width: ICON_SZ, height: "100%",
           display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
@@ -240,8 +243,7 @@ function AchNode({
           }
         </div>
 
-        {/* Text */}
-        <div style={{ flex: 1, padding: "8px 10px 8px 10px", overflow: "hidden" }}>
+        <div style={{ flex: 1, padding: "8px 10px", overflow: "hidden" }}>
           <div style={{
             fontFamily: "var(--font-geist-mono)",
             fontWeight: 700,
@@ -271,7 +273,6 @@ function AchNode({
         </div>
       </div>
 
-      {/* Tiny lock in bottom-right for incomplete */}
       {status !== "unlocked" && (
         <div style={{
           position: "absolute", bottom: 4, right: 5,
@@ -298,12 +299,13 @@ export default function AchievementsClient({
 }) {
   const router = useRouter();
   const unlockedSet = new Set(unlockedAchievements.map(r => r.achievement_id));
-  const unlockedMap = new Map(unlockedAchievements.map(r => [r.achievement_id, r.unlocked_at]));
   const totalUnlocked = unlockedAchievements.length;
 
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isLight, setIsLight] = useState(false);
+  const [transform, setTransform] = useState({ x: 0, y: 0, scale: 0.85 });
 
+  // Theme detection
   useEffect(() => {
     const check = () => setIsLight(document.documentElement.getAttribute("data-theme") === "light");
     check();
@@ -312,50 +314,118 @@ export default function AchievementsClient({
     return () => observer.disconnect();
   }, []);
 
-  // Refresh when a new achievement is awarded
+  // Real-time achievement refresh
   useEffect(() => {
     const supabase = createClient();
     const channel = supabase
       .channel(`ach:${userId}`)
       .on("postgres_changes", {
-        event: "INSERT",
-        schema: "public",
-        table: "user_achievements",
+        event: "INSERT", schema: "public", table: "user_achievements",
         filter: `user_id=eq.${userId}`,
       }, () => { router.refresh(); })
       .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, [userId, router]);
 
-  // Drag-to-pan
-  const vpRef    = useRef<HTMLDivElement>(null);
-  const panning  = useRef(false);
-  const panStart = useRef({ mx: 0, my: 0, sl: 0, st: 0 });
+  // ── Refs ────────────────────────────────────────────────────────────────────
+  const vpRef          = useRef<HTMLDivElement>(null);
+  const panning        = useRef(false);
+  const panStart       = useRef({ mx: 0, my: 0, tx: 0, ty: 0 });
+  const activePointers = useRef(new Map<number, { x: number; y: number }>());
+  const lastPinchDist  = useRef<number | null>(null);
 
-  const onPointerDown = useCallback((e: React.PointerEvent) => {
-    panning.current = true;
-    panStart.current = { mx: e.clientX, my: e.clientY, sl: vpRef.current!.scrollLeft, st: vpRef.current!.scrollTop };
-    vpRef.current!.setPointerCapture(e.pointerId);
+  // ── Zoom helper ─────────────────────────────────────────────────────────────
+  const applyZoom = useCallback((factor: number, cx: number, cy: number) => {
+    setTransform(t => {
+      const newScale = clamp(t.scale * factor, MIN_SCALE, MAX_SCALE);
+      const ratio = newScale / t.scale;
+      return { scale: newScale, x: cx - ratio * (cx - t.x), y: cy - ratio * (cy - t.y) };
+    });
   }, []);
 
-  const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!panning.current || !vpRef.current) return;
-    vpRef.current.scrollLeft = panStart.current.sl - (e.clientX - panStart.current.mx);
-    vpRef.current.scrollTop  = panStart.current.st - (e.clientY - panStart.current.my);
+  // ── Reset / center view ─────────────────────────────────────────────────────
+  const resetView = useCallback(() => {
+    const vp = vpRef.current;
+    if (!vp) return;
+    const { x: fx, y: fy } = nodeCenter(4, 0);
+    const scale = 0.85;
+    setTransform({
+      scale,
+      x: vp.clientWidth  / 2 - fx * scale,
+      y: vp.clientHeight / 3 - fy * scale,
+    });
   }, []);
 
-  const onPointerUp = useCallback(() => { panning.current = false; }, []);
+  // Center on mount
+  useEffect(() => { resetView(); }, [resetView]);
 
-  // Center on first_trade on mount
+  // ── Scroll-to-zoom (non-passive so we can preventDefault) ───────────────────
   useEffect(() => {
     const vp = vpRef.current;
     if (!vp) return;
-    const { x, y } = nodeCenter(4, 0);
-    vp.scrollLeft = x - vp.clientWidth / 2;
-    vp.scrollTop  = Math.max(0, y - VP_H / 3);
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = vp.getBoundingClientRect();
+      applyZoom(e.deltaY < 0 ? 1.1 : 1 / 1.1, e.clientX - rect.left, e.clientY - rect.top);
+    };
+    vp.addEventListener("wheel", onWheel, { passive: false });
+    return () => vp.removeEventListener("wheel", onWheel);
+  }, [applyZoom]);
+
+  // ── Pointer events (drag + pinch) ───────────────────────────────────────────
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    vpRef.current!.setPointerCapture(e.pointerId);
+    activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointers.current.size === 1) {
+      panning.current = true;
+      setTransform(t => {
+        panStart.current = { mx: e.clientX, my: e.clientY, tx: t.x, ty: t.y };
+        return t;
+      });
+      vpRef.current!.style.cursor = "grabbing";
+    } else {
+      panning.current = false;
+      const pts = [...activePointers.current.values()];
+      lastPinchDist.current = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+    }
   }, []);
 
-  // Build edges
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!activePointers.current.has(e.pointerId)) return;
+    activePointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (activePointers.current.size >= 2) {
+      // Pinch zoom
+      const pts = [...activePointers.current.values()];
+      const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
+      if (lastPinchDist.current !== null && dist > 0) {
+        const rect = vpRef.current!.getBoundingClientRect();
+        const cx = (pts[0].x + pts[1].x) / 2 - rect.left;
+        const cy = (pts[0].y + pts[1].y) / 2 - rect.top;
+        applyZoom(dist / lastPinchDist.current, cx, cy);
+      }
+      lastPinchDist.current = dist;
+    } else if (panning.current) {
+      // Drag pan
+      setTransform(t => ({
+        ...t,
+        x: panStart.current.tx + (e.clientX - panStart.current.mx),
+        y: panStart.current.ty + (e.clientY - panStart.current.my),
+      }));
+    }
+  }, [applyZoom]);
+
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    activePointers.current.delete(e.pointerId);
+    if (activePointers.current.size < 2) lastPinchDist.current = null;
+    if (activePointers.current.size === 0) {
+      panning.current = false;
+      if (vpRef.current) vpRef.current.style.cursor = "grab";
+    }
+  }, []);
+
+  // ── Build edges ─────────────────────────────────────────────────────────────
   const edges = ACH.flatMap(ach =>
     ach.parents.map(pid => {
       const parent = ACH_MAP.get(pid);
@@ -369,93 +439,143 @@ export default function AchievementsClient({
     }).filter(Boolean)
   ) as Array<{ key: string; path: string; color: string; dashed: boolean }>;
 
-  // Divider x between trading (max col 7) and competition (col 10)
   const divX = PAD_X + 8.5 * CELL_W;
 
+  const btnStyle: React.CSSProperties = {
+    width: 32, height: 32,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    borderRadius: 8,
+    background: isLight ? "rgba(255,255,255,0.85)" : "rgba(20,18,12,0.85)",
+    border: `1px solid ${isLight ? "#cbd5e1" : "#333"}`,
+    color: isLight ? "#475569" : "#999",
+    cursor: "pointer",
+    backdropFilter: "blur(8px)",
+    transition: "border-color 0.15s",
+  };
+
   return (
-    <div
-      ref={vpRef}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      style={{
-        width: "100%",
-        height: "calc(100vh - 56px)",
-        overflow: "hidden",
-        cursor: panning.current ? "grabbing" : "grab",
-        background: isLight ? "#eef4fb" : "#0e0d0a",
-        backgroundImage: isLight
-          ? "radial-gradient(rgba(37,99,235,0.12) 1px, transparent 1px)"
-          : "radial-gradient(rgba(201,168,76,0.09) 1px, transparent 1px)",
-        backgroundSize: "22px 22px",
-        position: "relative",
-      }}
-    >
-      <div style={{ position: "relative", width: CANVAS_W, height: CANVAS_H }}>
+    <div style={{ position: "relative", width: "100%", height: "calc(100vh - 56px)" }}>
 
-        {/* SVG: edges + labels + divider */}
-        <svg
-          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-          width={CANVAS_W}
-          height={CANVAS_H}
-        >
-          {/* Divider line */}
-          <line
-            x1={divX} y1={PAD_Y / 2} x2={divX} y2={CANVAS_H - PAD_Y / 2}
-            stroke={isLight ? "#bfdbfe" : "#333322"} strokeWidth={1} strokeDasharray="6 4"
-          />
+      {/* Viewport */}
+      <div
+        ref={vpRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        style={{
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          cursor: "grab",
+          background: isLight ? "#eef4fb" : "#0e0d0a",
+          backgroundImage: isLight
+            ? "radial-gradient(rgba(37,99,235,0.12) 1px, transparent 1px)"
+            : "radial-gradient(rgba(201,168,76,0.09) 1px, transparent 1px)",
+          backgroundSize: `${22 * transform.scale}px ${22 * transform.scale}px`,
+          backgroundPosition: `${transform.x}px ${transform.y}px`,
+          touchAction: "none",
+          userSelect: "none",
+        }}
+      >
+        {/* Canvas — moved via CSS transform */}
+        <div style={{
+          position: "absolute",
+          width: CANVAS_W,
+          height: CANVAS_H,
+          transformOrigin: "0 0",
+          transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`,
+          willChange: "transform",
+        }}>
+          <svg
+            style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+            width={CANVAS_W}
+            height={CANVAS_H}
+          >
+            <line
+              x1={divX} y1={PAD_Y / 2} x2={divX} y2={CANVAS_H - PAD_Y / 2}
+              stroke={isLight ? "#bfdbfe" : "#333322"} strokeWidth={1} strokeDasharray="6 4"
+            />
+            <text x={PAD_X + 3.5 * CELL_W} y={PAD_Y / 2 - 4}
+              textAnchor="middle" fontSize={9}
+              style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
+              fontFamily="monospace" letterSpacing="3">
+              TRADING MASTERY
+            </text>
+            <text x={PAD_X + 10 * CELL_W + CELL_W / 2} y={PAD_Y / 2 - 4}
+              textAnchor="middle" fontSize={9}
+              style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
+              fontFamily="monospace" letterSpacing="3">
+              COMPETITION
+            </text>
+            {edges.map(e => (
+              <path
+                key={e.key}
+                d={e.path}
+                stroke={e.color}
+                strokeWidth={e.dashed ? 1 : 1.5}
+                strokeDasharray={e.dashed ? "5 4" : undefined}
+                fill="none"
+                strokeLinecap="square"
+              />
+            ))}
+            {ACH.map(ach => {
+              const st = getStatus(ach.id, unlockedSet);
+              if (st !== "unlocked") return null;
+              const { x, y } = nodeCenter(ach.col, ach.row);
+              return (
+                <circle key={`dot-${ach.id}`} cx={x} cy={y - NODE_H / 2 - 2} r={2.5}
+                  fill={getRarity(ach.rarity, isLight).border} />
+              );
+            })}
+          </svg>
 
-          {/* Section labels */}
-          <text x={PAD_X + 3.5 * CELL_W} y={PAD_Y / 2 - 4}
-            textAnchor="middle" fontSize={9}
-            style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
-            fontFamily="monospace" letterSpacing="3">
-            TRADING MASTERY
-          </text>
-          <text x={PAD_X + 10 * CELL_W + CELL_W / 2} y={PAD_Y / 2 - 4}
-            textAnchor="middle" fontSize={9}
-            style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
-            fontFamily="monospace" letterSpacing="3">
-            COMPETITION
-          </text>
-
-          {/* Edges */}
-          {edges.map(e => (
-            <path
-              key={e.key}
-              d={e.path}
-              stroke={e.color}
-              strokeWidth={e.dashed ? 1 : 1.5}
-              strokeDasharray={e.dashed ? "5 4" : undefined}
-              fill="none"
-              strokeLinecap="square"
+          {ACH.map(ach => (
+            <AchNode
+              key={ach.id}
+              ach={ach}
+              status={getStatus(ach.id, unlockedSet)}
+              onEnter={setHoveredId}
+              onLeave={() => setHoveredId(null)}
+              isLight={isLight}
+              isHovered={hoveredId === ach.id}
             />
           ))}
+        </div>
+      </div>
 
-          {/* Accent dot on unlocked node tops */}
-          {ACH.map(ach => {
-            const st = getStatus(ach.id, unlockedSet);
-            if (st !== "unlocked") return null;
-            const { x, y } = nodeCenter(ach.col, ach.row);
-            return (
-              <circle key={`dot-${ach.id}`} cx={x} cy={y - NODE_H / 2 - 2} r={2.5}
-                fill={getRarity(ach.rarity, isLight).border} />
-            );
-          })}
-        </svg>
+      {/* Zoom controls */}
+      <div style={{
+        position: "absolute", bottom: 20, right: 20, zIndex: 20,
+        display: "flex", flexDirection: "column", gap: 6,
+      }}>
+        <button style={btnStyle} onClick={() => {
+          const vp = vpRef.current!;
+          const rect = vp.getBoundingClientRect();
+          applyZoom(1.25, rect.width / 2, rect.height / 2);
+        }} title="Zoom in">
+          <Plus size={14} />
+        </button>
+        <button style={btnStyle} onClick={resetView} title="Reset view">
+          <Maximize2 size={13} />
+        </button>
+        <button style={btnStyle} onClick={() => {
+          const vp = vpRef.current!;
+          const rect = vp.getBoundingClientRect();
+          applyZoom(1 / 1.25, rect.width / 2, rect.height / 2);
+        }} title="Zoom out">
+          <Minus size={14} />
+        </button>
+      </div>
 
-        {/* Achievement nodes */}
-        {ACH.map(ach => (
-          <AchNode
-            key={ach.id}
-            ach={ach}
-            status={getStatus(ach.id, unlockedSet)}
-            onEnter={setHoveredId}
-            onLeave={() => setHoveredId(null)}
-            isLight={isLight}
-            isHovered={hoveredId === ach.id}
-          />
-        ))}
+      {/* Scale indicator */}
+      <div style={{
+        position: "absolute", bottom: 24, left: 20, zIndex: 20,
+        fontFamily: "monospace", fontSize: 10,
+        color: isLight ? "#94a3b8" : "#555",
+        pointerEvents: "none",
+      }}>
+        {Math.round(transform.scale * 100)}% · {totalUnlocked}/{ACH.length} unlocked
       </div>
     </div>
   );
