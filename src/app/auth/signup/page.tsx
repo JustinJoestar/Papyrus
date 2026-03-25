@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 export default function SignupPage() {
   const router   = useRouter();
   const supabase = createClient();
+  const { resolvedTheme } = useTheme();
 
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
@@ -95,7 +97,7 @@ export default function SignupPage() {
       }}
     >
 
-      <div className="auth-wave-bg" />
+      {resolvedTheme === "light" && <div className="auth-wave-bg" />}
 
       <div
         className="absolute pointer-events-none"

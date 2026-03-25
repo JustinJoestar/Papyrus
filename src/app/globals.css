@@ -163,7 +163,6 @@
 /* Auth page — Great Wave off Kanagawa background (light mode only) */
 /* Public domain: Hokusai, 1831. Source: Wikimedia Commons */
 .auth-wave-bg {
-  display: none;
   position: absolute;
   inset: 0;
   background-image: url('/great-wave.jpg');
@@ -178,15 +177,6 @@
   position: absolute;
   inset: 0;
   background: rgba(255,255,255,0.38);
-}
-
-[data-theme="light"] .auth-wave-bg {
-  display: block;
-}
-
-/* In light mode, hide the dot pattern overlay on auth pages */
-[data-theme="light"] .auth-bg {
-  background-image: none !important;
 }
 
 /* Light mode iMac gradient background → white with blue hints */

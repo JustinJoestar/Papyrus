@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTheme } from "next-themes";
 import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 
@@ -27,6 +28,7 @@ function Logo() {
 export default function LoginPage() {
   const router   = useRouter();
   const supabase = createClient();
+  const { resolvedTheme } = useTheme();
 
   const [identifier, setIdentifier] = useState("");
   const [password,   setPassword]   = useState("");
@@ -81,7 +83,7 @@ export default function LoginPage() {
       }}
     >
 
-      <div className="auth-wave-bg" />
+      {resolvedTheme === "light" && <div className="auth-wave-bg" />}
 
       {/* Ambient gold crown glow */}
       <div
