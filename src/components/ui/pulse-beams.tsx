@@ -143,7 +143,7 @@ const SVGs = ({ beams, width, height, baseColor, accentColor, gradientColors }: 
             // @ts-expect-error framer-motion transition on SVG element
             transition={beam.gradientConfig.transition}
           >
-            <GradientColors colors={gradientColors} />
+            <GradientColors />
           </motion.linearGradient>
         ))}
       </defs>
