@@ -166,7 +166,7 @@
   display: none;
   position: absolute;
   inset: 0;
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/b/b3/Katsushika_Hokusai_-_Thirty-Six_Views_of_Mount_Fuji-_The_Great_Wave_Off_the_Coast_of_Kanagawa_-_Google_Art_Project.jpg');
+  background-image: url('/great-wave.jpg');
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
