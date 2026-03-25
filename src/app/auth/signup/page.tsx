@@ -87,7 +87,7 @@ export default function SignupPage() {
 
   return (
     <div
-      className="auth-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
     >
 
       <div

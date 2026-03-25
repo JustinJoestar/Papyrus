@@ -73,7 +73,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="auth-bg min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
     >
 
       {/* Ambient gold crown glow */}

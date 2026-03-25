@@ -17,7 +17,7 @@ export function DarkBackground() {
   if (isLight) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0, background: "#09090b" }}>
+    <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
       {/* Slow drifting cool-grey depth blobs — near-midnight palette */}
       <div className="dark-blob dark-blob-1" />
       <div className="dark-blob dark-blob-2" />

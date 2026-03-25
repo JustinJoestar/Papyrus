@@ -160,16 +160,6 @@
 }
 
 
-/* Auth page background — dot grid, adapts to theme */
-.auth-bg {
-  background-color: var(--void);
-  background-image: radial-gradient(rgba(201,168,76,0.18) 1.5px, transparent 1.5px);
-  background-size: 28px 28px;
-}
-
-[data-theme="light"] .auth-bg {
-  background-image: radial-gradient(rgba(37,99,235,0.14) 1.5px, transparent 1.5px);
-}
 
 /* Light mode iMac gradient background → white with blue hints */
 [data-theme="light"] .bg-imac {
@@ -180,17 +170,9 @@
     #f8fafc;
 }
 
-/* Landing page background */
+/* Landing page — inherits body grid, no override needed */
 .landing-bg {
-  background: #000000;
-}
-[data-theme="light"] .landing-bg {
-  background:
-    radial-gradient(ellipse 130% 55% at 50% -10%, rgba(186,230,253,0.55) 0%, transparent 55%),
-    radial-gradient(ellipse 50%  35% at  2% 38%, rgba(221,214,254,0.30) 0%, transparent 55%),
-    radial-gradient(ellipse 50%  35% at 98% 38%, rgba(186,230,253,0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 60%  40% at 50% 105%, rgba(224,242,254,0.35) 0%, transparent 55%),
-    linear-gradient(180deg, #dde8f0 0%, #e8eef4 35%, #dfe6ed 100%);
+  background-color: transparent;
 }
 
 /* Scrollbar in light mode */
@@ -238,15 +220,19 @@
 
 body {
   background-color: var(--base);
-  background-image: radial-gradient(rgba(201,168,76,0.15) 1.5px, transparent 1.5px);
-  background-size: 28px 28px;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.10) 1px, transparent 1px);
+  background-size: 40px 40px;
   color: var(--text-1);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 [data-theme="light"] body {
-  background-image: radial-gradient(rgba(37,99,235,0.14) 1.5px, transparent 1.5px);
+  background-image:
+    linear-gradient(rgba(37,99,235,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37,99,235,0.10) 1px, transparent 1px);
 }
 
 /* ═══════════════════════════════════════════════════════════════
