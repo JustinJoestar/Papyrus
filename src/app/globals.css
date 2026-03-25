@@ -25,7 +25,7 @@
 :root {
   /* ── Backgrounds (pure black, zero navy) ────────────────── */
   --void:     #000000;
-  --base:     #030303;
+  --base:     #ff0000;
   --surface:  #0d0d0d;
   --elevated: #161616;
   --overlay:  rgba(0, 0, 0, 0.88);
