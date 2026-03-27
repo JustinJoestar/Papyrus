@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { isProfane } from "@/lib/profanity";
 
 export default function SignupPage() {
   const router   = useRouter();
@@ -27,6 +28,10 @@ export default function SignupPage() {
 
     if (!/^[a-zA-Z0-9_]{3,20}$/.test(trimmedUsername)) {
       setError("Username must be 3–20 characters: letters, numbers, and underscores only.");
+      return;
+    }
+    if (isProfane(trimmedUsername)) {
+      setError("That username isn't allowed. Please choose a different one.");
       return;
     }
     if (password.length < 6) {

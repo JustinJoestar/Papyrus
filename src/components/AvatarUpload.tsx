@@ -4,6 +4,24 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+// Cache the loaded NSFW model across uploads so we only load it once per session
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let nsfwModel: any = null;
+
+async function isImageNSFW(file: File): Promise<boolean> {
+  const nsfwjs = await import("nsfwjs");
+  if (!nsfwModel) {
+    nsfwModel = await nsfwjs.load();
+  }
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  await new Promise<void>((resolve) => { img.onload = () => resolve(); });
+  const predictions: { className: string; probability: number }[] = await nsfwModel.classify(img);
+  URL.revokeObjectURL(img.src);
+  const get = (name: string) => predictions.find((p) => p.className === name)?.probability ?? 0;
+  return get("Porn") + get("Hentai") > 0.5 || get("Porn") + get("Hentai") + get("Sexy") > 0.75;
+}
+
 type Props = {
   userId: string;
   username: string;
@@ -16,6 +34,7 @@ export default function AvatarUpload({ userId, username, avatarUrl }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(avatarUrl);
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -29,6 +48,23 @@ export default function AvatarUpload({ userId, username, avatarUrl }: Props) {
     }
     if (file.size > 2 * 1024 * 1024) {
       setError("Image must be under 2 MB");
+      return;
+    }
+
+    setChecking(true);
+    setError(null);
+
+    let flagged = false;
+    try {
+      flagged = await isImageNSFW(file);
+    } catch {
+      // If the model fails to load, allow upload rather than blocking the user
+    }
+    setChecking(false);
+
+    if (flagged) {
+      setError("This image was flagged as inappropriate and cannot be used.");
+      if (inputRef.current) inputRef.current.value = "";
       return;
     }
 
@@ -79,7 +115,7 @@ export default function AvatarUpload({ userId, username, avatarUrl }: Props) {
       {/* Avatar circle */}
       <button
         onClick={() => inputRef.current?.click()}
-        disabled={loading}
+        disabled={loading || checking}
         className="relative group"
         title="Change profile picture"
       >
@@ -111,7 +147,7 @@ export default function AvatarUpload({ userId, username, avatarUrl }: Props) {
           className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
           style={{ background: "rgba(0,0,0,0.6)" }}
         >
-          {loading ? (
+          {loading || checking ? (
             <span className="font-mono text-[10px] text-white">...</span>
           ) : (
             <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -131,7 +167,7 @@ export default function AvatarUpload({ userId, username, avatarUrl }: Props) {
       />
 
       <p className="font-mono text-[10px] tracking-wider" style={{ color: "var(--text-3)" }}>
-        {loading ? "Uploading..." : "Click to change photo"}
+        {checking ? "Checking image..." : loading ? "Uploading..." : "Click to change photo"}
       </p>
 
       {error && (

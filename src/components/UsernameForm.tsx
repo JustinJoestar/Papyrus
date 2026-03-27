@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { isProfane } from "@/lib/profanity";
 
 type Props = {
   currentUsername: string;
@@ -40,6 +41,16 @@ export default function UsernameForm({ currentUsername, usernameChangedAt }: Pro
 
   async function handleSave() {
     if (value === currentUsername) { setEditing(false); return; }
+
+    if (!/^[a-zA-Z0-9_]{3,20}$/.test(value)) {
+      setError("Username must be 3–20 characters: letters, numbers, and underscores only.");
+      return;
+    }
+    if (isProfane(value)) {
+      setError("That username isn't allowed. Please choose a different one.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
