@@ -16,7 +16,7 @@ security definer
 as $$
 declare
   v_user_id    uuid    := auth.uid();
-  v_total      numeric := p_quantity * p_price;
+  v_total      numeric := round(p_quantity * p_price, 2);
   v_balance    numeric;
   v_holding_qty numeric;
 begin
