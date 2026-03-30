@@ -4,17 +4,12 @@ import { useEffect, useState } from "react";
 
 function getTimeLeft() {
   const now = new Date();
-  const day = now.getUTCDay();
-  const daysUntil = (1 - day + 7) % 7;
-  const next = new Date(now);
-  next.setUTCDate(now.getUTCDate() + daysUntil);
-  next.setUTCHours(5, 0, 0, 0);
-  if (next <= now) next.setUTCDate(next.getUTCDate() + 7);
-  const ms = next.getTime() - now.getTime();
+  const msPerInterval = 5 * 60 * 1000;
+  const ms = msPerInterval - (now.getTime() % msPerInterval);
   return {
-    days:    Math.floor(ms / (1000 * 60 * 60 * 24)),
-    hours:   Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-    minutes: Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60)),
+    days:    0,
+    hours:   0,
+    minutes: Math.floor(ms / (1000 * 60)),
     seconds: Math.floor((ms % (1000 * 60)) / 1000),
   };
 }

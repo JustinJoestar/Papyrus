@@ -95,16 +95,15 @@ export async function GET(req: NextRequest) {
     .sort((a, b) => b.final_value - a.final_value)
     .map((u, i) => ({ ...u, rank: i + 1, week_end: weekEnd }));
 
-  // 5. Save leaderboard snapshot
+  // 5. Save leaderboard snapshot (non-blocking — a snapshot failure must not prevent the reset)
+  let snapshotError: string | null = null;
   if (snapshots.length > 0) {
     const { error: snapError } = await supabase
       .from("weekly_snapshots")
       .insert(snapshots);
     if (snapError) {
-      return NextResponse.json(
-        { error: `Snapshot failed: ${snapError.message}` },
-        { status: 500 }
-      );
+      snapshotError = snapError.message;
+      console.error("Weekly snapshot failed (reset will still proceed):", snapError.message);
     }
   }
 
@@ -112,10 +111,10 @@ export async function GET(req: NextRequest) {
   const { error: resetError } = await supabase.rpc("perform_weekly_reset");
   if (resetError) {
     return NextResponse.json(
-      { error: `Reset failed: ${resetError.message}` },
+      { error: `Reset failed: ${resetError.message}`, snapshotError },
       { status: 500 }
     );
   }
 
-  return NextResponse.json({ success: true, usersReset: snapshots.length });
+  return NextResponse.json({ success: true, usersReset: snapshots.length, snapshotError });
 }
