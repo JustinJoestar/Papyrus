@@ -41,6 +41,17 @@ export default function TradeModal({
   const usdValue = mode === "sell" ? parsed * coin.price : buyIn === "usd" ? parsed : parsed * coin.price;
   const sliderPct = maxQuantity && maxQuantity > 0 ? (parsed / maxQuantity) * 100 : 0;
 
+  function setMaxBuy() {
+    if (cashBalance === undefined) return;
+    if (buyIn === "usd") {
+      setAmount(String(cashBalance));
+    } else {
+      // Floor to 6 decimal places so quantity * price never exceeds balance
+      const maxCoins = Math.floor((cashBalance / coin.price) * 1e6) / 1e6;
+      setAmount(String(maxCoins));
+    }
+  }
+
   function setPercent(pct: number) {
     if (!maxQuantity) return;
     setAmount(pct === 1 ? String(maxQuantity) : (maxQuantity * pct).toFixed(6));
@@ -174,16 +185,27 @@ export default function TradeModal({
 
           {/* Amount input */}
           <div className="mb-4">
-            <label
-              className="block font-mono text-[10px] tracking-[0.2em] uppercase mb-2"
-              style={{ color: "var(--text-3)" }}
-            >
-              {mode === "sell"
-                ? `Quantity (${coin.symbol})`
-                : buyIn === "usd"
-                ? "Amount (USD)"
-                : `Amount (${coin.symbol})`}
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label
+                className="font-mono text-[10px] tracking-[0.2em] uppercase"
+                style={{ color: "var(--text-3)" }}
+              >
+                {mode === "sell"
+                  ? `Quantity (${coin.symbol})`
+                  : buyIn === "usd"
+                  ? "Amount (USD)"
+                  : `Amount (${coin.symbol})`}
+              </label>
+              {isBuy && cashBalance !== undefined && cashBalance > 0 && (
+                <button
+                  onClick={setMaxBuy}
+                  className="font-mono text-[10px] tracking-wider px-2 py-0.5 rounded transition-all"
+                  style={{ border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+                >
+                  MAX
+                </button>
+              )}
+            </div>
             <input
               type="number"
               min="0"

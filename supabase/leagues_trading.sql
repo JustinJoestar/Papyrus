@@ -45,7 +45,7 @@ as $$
 declare
   v_user_id  uuid    := auth.uid();
   v_cash_bal numeric;
-  v_total    numeric := p_quantity * p_price;
+  v_total    numeric := round(p_quantity * p_price, 2);
   v_held_qty numeric;
 begin
   if v_user_id is null then
