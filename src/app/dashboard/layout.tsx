@@ -1,5 +1,5 @@
 import Link from "next/link";
-import NavLinks from "@/components/NavLinks";
+import NavLinks from "@/components/NavLinks"; // v2
 import NavUserMenu from "@/components/NavUserMenu";
 import NavNotifications from "@/components/NavNotifications";
 import NavThemeToggle from "@/components/NavThemeToggle";
