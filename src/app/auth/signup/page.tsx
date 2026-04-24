@@ -1,11 +1,4 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { ShimmerButton } from "@/components/ui/shimmer-button";
-import { isProfane } from "@/lib/profanity";
+import { redirect } from "next/navigation";
 
 function GoogleIcon() {
   return (
