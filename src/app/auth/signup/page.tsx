@@ -1,4 +1,11 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { isProfane } from "@/lib/profanity";
 
 function GoogleIcon() {
   return (
@@ -109,9 +116,7 @@ export default function SignupPage() {
   ] as const;
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-    >
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
 
       <div
         className="absolute pointer-events-none"
@@ -121,8 +126,7 @@ export default function SignupPage() {
           transform: "translateX(-50%)",
           width: "640px",
           height: "320px",
-          background:
-            "radial-gradient(ellipse, rgba(201,168,76,0.10) 0%, transparent 65%)",
+          background: "radial-gradient(ellipse, rgba(201,168,76,0.10) 0%, transparent 65%)",
         }}
       />
 
@@ -320,8 +324,8 @@ export default function SignupPage() {
                 border: "1px solid var(--border-mid)",
                 color: "var(--text-1)",
               }}
-              onMouseEnter={(e) => ageOk && tosOk && !googleLoading && (e.currentTarget.style.borderColor = "var(--gold-border)")}
-              onMouseLeave={(e) => ageOk && tosOk && !googleLoading && (e.currentTarget.style.borderColor = "var(--border-mid)")}
+              onMouseEnter={(e) => { if (ageOk && tosOk && !googleLoading) e.currentTarget.style.borderColor = "var(--gold-border)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border-mid)"; }}
             >
               {googleLoading ? (
                 <span style={{ color: "var(--text-3)" }}>Redirecting…</span>
