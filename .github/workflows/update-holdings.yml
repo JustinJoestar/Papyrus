@@ -1,0 +1,17 @@
+name: Update Holdings Prices
+
+on:
+  schedule:
+    # Every 5 minutes — refreshes live prices for the leaderboard
+    - cron: "*/5 * * * *"
+  workflow_dispatch: # allow manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping update-holdings endpoint
+        run: |
+          curl -f -X GET "${{ secrets.APP_URL }}/api/update-holdings" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            --max-time 30

@@ -1,8 +1,12 @@
 {
   "crons": [
     {
-      "path": "/api/reset",
+      "path": "/api/update-holdings",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/reset",
+      "schedule": "0 0 * * 0"
     }
   ]
 }
