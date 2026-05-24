@@ -60,18 +60,7 @@ export default async function DashboardLayout({
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Join our Discord"
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
-            style={{ color: "var(--text-3)", border: "1px solid transparent" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = "#5865F2";
-              e.currentTarget.style.borderColor = "rgba(88,101,242,0.35)";
-              e.currentTarget.style.background = "rgba(88,101,242,0.08)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = "var(--text-3)";
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.background = "transparent";
-            }}
+            className="discord-nav-link w-8 h-8 rounded-lg flex items-center justify-center transition-all"
           >
             {/* Discord logo SVG */}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">

@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Discord nav icon hover */
+.discord-nav-link {
+  color: var(--text-3);
+  border: 1px solid transparent;
+}
+.discord-nav-link:hover {
+  color: #5865F2;
+  border-color: rgba(88, 101, 242, 0.35);
+  background: rgba(88, 101, 242, 0.08);
+}
+
 /* ── Shimmer button animations (Tailwind v4 custom animations) ── */
 @theme {
   --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
