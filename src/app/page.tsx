@@ -27,7 +27,7 @@ export default async function LandingPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const isLoggedIn = !!user;
-  const ctaHref = isLoggedIn ? "/dashboard" : "/auth/signup";
+  const ctaHref = isLoggedIn ? "/dashboard" : "/auth/login";
 
   return (
     <div className="min-h-screen relative overflow-hidden landing-bg" style={{ color: "var(--text-1)" }}>
@@ -76,7 +76,7 @@ export default async function LandingPage() {
               >
                 Sign in
               </Link>
-              <GoldShimmerCta href="/auth/signup" className="px-4 py-2 text-xs">
+              <GoldShimmerCta href="/auth/login" className="px-4 py-2 text-xs">
                 Get Started
               </GoldShimmerCta>
             </>

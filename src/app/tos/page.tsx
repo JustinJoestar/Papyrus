@@ -118,14 +118,14 @@ export default function TosPage() {
           style={{ borderTop: "1px solid var(--border)" }}
         >
           <Link
-            href="/auth/signup"
+            href="/auth/login"
             className="inline-block font-mono font-bold text-sm tracking-[0.1em] px-6 py-2.5 rounded-xl transition-all duration-200"
             style={{
               background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
               color: "#0a0800",
             }}
           >
-            Back to Sign Up
+            Back to Sign In
           </Link>
           <p className="font-mono text-[10px] tracking-widest mt-4 uppercase" style={{ color: "var(--text-3)" }}>
             Virtual funds only · No real money at risk
