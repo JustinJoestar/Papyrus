@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { CONTEST } from "@/lib/challenge";
 import NavThemeToggle from "@/components/NavThemeToggle";
+import { GoldShimmerCta } from "@/components/GoldShimmerCta";
+import { Home } from "lucide-react";
 
 // The challenge is a self-contained experience — its own chrome, no
 // weekly-game dashboard nav. Shares the app's auth, DB, and trade engine
@@ -33,6 +35,7 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
         </Link>
 
         <div className="ml-auto flex items-center gap-4 sm:gap-5">
+          <NavThemeToggle />
           <Link href="/challenge/leaderboard" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
             Leaderboard
           </Link>
@@ -42,10 +45,9 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
           <Link href="/challenge/parents" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
             For Parents
           </Link>
-          <Link href="/" className="font-mono text-[10px] tracking-wider transition-colors" style={{ color: "var(--text-3)" }}>
-            ← Papyrus
-          </Link>
-          <NavThemeToggle />
+          <GoldShimmerCta href="/dashboard" className="px-4 py-2 text-xs gap-1.5">
+            Home <Home size={12} strokeWidth={2.5} />
+          </GoldShimmerCta>
         </div>
       </header>
 
