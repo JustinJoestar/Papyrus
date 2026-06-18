@@ -15,9 +15,9 @@ export const CONTEST = {
   year: 2026,
 
   // ISO timestamps (UTC). Summer is US Eastern Daylight Time = UTC-4.
-  enrollOpensAt: "2026-06-22T00:00:00Z",
-  startsAt:      "2026-07-06T13:30:00Z", // first trading day, 9:30 AM ET
-  endsAt:        "2026-08-17T20:00:00Z", // final close, 4:00 PM ET
+  enrollOpensAt: "2026-06-18T00:00:00Z", // enrollment open now (waitlist until trading starts)
+  startsAt:      "2026-06-29T13:30:00Z", // first trading day, 9:30 AM ET
+  endsAt:        "2026-08-07T20:00:00Z", // final close, 4:00 PM ET
   // Midpoint divides the contest for the Comeback award (final 2 weeks).
   comebackWindowDays: 14,
 

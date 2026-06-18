@@ -23,7 +23,7 @@ are what make it matter.
 ## Locked decisions
 | Topic | Decision |
 |---|---|
-| Window | ~6 weeks, **Jul 6 – Aug 17, 2026** (configurable) |
+| Window | ~6 weeks, **Jun 29 – Aug 7, 2026** (configurable). **Enrollment open now** — entrants join a waitlist and appear on the board; trading unlocks Jun 29 |
 | Eligibility | **13+** (grades 9–12). Age-gated at signup → keeps COPPA out, parent email can stay optional |
 | Starting balance | **$100,000** virtual, equal for all, no resets/deposits |
 | Universe | **US stocks + ETFs only** (S&P 500 + major ETFs). Hard whitelist. No crypto/options/penny |
