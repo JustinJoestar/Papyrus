@@ -6,15 +6,15 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
 const links = [
-  { href: "/dashboard",               label: "Portfolio"    },
-  { href: "/dashboard/market",        label: "Market"       },
-  { href: "/dashboard/leaderboard",   label: "Leaderboard"  },
-  { href: "/dashboard/news",          label: "News"         },
-  { href: "/dashboard/leagues",       label: "Leagues"      },
-  { href: "/dashboard/achievements",  label: "Achievements" },
+  { href: "/dashboard",               label: "Portfolio",    challengeHide: false },
+  { href: "/dashboard/market",        label: "Market",       challengeHide: false },
+  { href: "/dashboard/leaderboard",   label: "Leaderboard",  challengeHide: false },
+  { href: "/dashboard/news",          label: "News",         challengeHide: false },
+  { href: "/dashboard/leagues",       label: "Leagues",      challengeHide: true  },
+  { href: "/dashboard/achievements",  label: "Achievements", challengeHide: true  },
 ];
 
-export default function NavLinks() {
+export default function NavLinks({ challengeMode = false }: { challengeMode?: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -35,18 +35,30 @@ export default function NavLinks() {
     <>
       {/* Desktop: horizontal links */}
       <div className="hidden md:flex items-center gap-0.5">
-        {links.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150"
-            style={linkStyle(isActive(href))}
-            onMouseEnter={(e) => { if (!isActive(href)) e.currentTarget.style.color = "var(--text-1)"; }}
-            onMouseLeave={(e) => { if (!isActive(href)) e.currentTarget.style.color = "var(--text-2)"; }}
-          >
-            {label}
-          </Link>
-        ))}
+        {links.map(({ href, label, challengeHide }) => {
+          const hidden = challengeMode && challengeHide;
+          return (
+            <div
+              key={href}
+              className="overflow-hidden"
+              style={{
+                maxWidth: hidden ? "0px" : "160px",
+                opacity: hidden ? 0 : 1,
+                transition: "max-width 0.35s ease, opacity 0.25s ease",
+              }}
+            >
+              <Link
+                href={href}
+                className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap block"
+                style={linkStyle(isActive(href))}
+                onMouseEnter={(e) => { if (!isActive(href)) e.currentTarget.style.color = "var(--text-1)"; }}
+                onMouseLeave={(e) => { if (!isActive(href)) e.currentTarget.style.color = "var(--text-2)"; }}
+              >
+                {label}
+              </Link>
+            </div>
+          );
+        })}
       </div>
 
       {/* Mobile: hamburger button */}
