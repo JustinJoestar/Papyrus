@@ -62,6 +62,13 @@ export default async function LandingPage() {
         <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
 
         <div className="ml-auto flex items-center gap-3">
+          <Link
+            href="/challenge"
+            className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] tracking-wider px-3 py-1.5 rounded-lg transition-colors"
+            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+          >
+            ☀ Summer Challenge
+          </Link>
           <NavThemeToggle />
           {isLoggedIn ? (
             <GoldShimmerCta href="/dashboard" className="px-4 py-2 text-xs">
