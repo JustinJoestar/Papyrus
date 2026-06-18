@@ -5,9 +5,22 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
 
+  // Optional internal-only redirect target (e.g. the contest enroll flow).
+  const nextParam = searchParams.get("next");
+  const next =
+    nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? nextParam
+      : null;
+
   if (code) {
     const supabase = await createClient();
     await supabase.auth.exchangeCodeForSession(code);
+
+    // A flow that specifies its own destination (e.g. /challenge/enroll)
+    // owns the rest of onboarding, so skip the username gate.
+    if (next) {
+      return NextResponse.redirect(`${origin}${next}`);
+    }
 
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
@@ -24,5 +37,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/dashboard`);
+  return NextResponse.redirect(`${origin}${next ?? "/dashboard"}`);
 }

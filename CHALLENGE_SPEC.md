@@ -81,13 +81,15 @@ start gate + universe + trading + live return-% leaderboard + welcome email + **
 email, admin override UI.
 
 ## Status
-- [x] `/challenge` landing + layout, countdown, main-page entry point
+- [x] `/challenge` landing + layout, countdown, light/dark toggle, main-page entry point
+- [x] Pixel-canvas hero (themed, theme-aware)
 - [x] `src/lib/challenge.ts` config (dates, awards, status helpers)
 - [x] `supabase/challenge.sql` schema (config, admin, enrollments, universe, snapshots, RPCs)
-- [ ] Enroll page + wire `enroll_in_contest`
+- [x] Rules page
+- [x] Parents page
+- [x] Enroll page + wire `enroll_in_contest` (Google → form); `/auth/callback` honors `?next=`
 - [ ] Contest trading: `/api/trade` universe + window gating; restricted market UI
 - [ ] Leaderboard (return %)
-- [ ] Rules + Parents pages
 - [ ] Daily snapshot cron
 - [ ] Resend welcome email
 - [ ] Admin page
