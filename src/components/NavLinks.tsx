@@ -6,12 +6,12 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 
 const links = [
-  { href: "/dashboard",               label: "Portfolio",    challengeHide: false },
-  { href: "/dashboard/market",        label: "Market",       challengeHide: false },
-  { href: "/dashboard/leaderboard",   label: "Leaderboard",  challengeHide: false },
-  { href: "/dashboard/news",          label: "News",         challengeHide: false },
-  { href: "/dashboard/leagues",       label: "Leagues",      challengeHide: true  },
-  { href: "/dashboard/achievements",  label: "Achievements", challengeHide: true  },
+  { href: "/dashboard",              challengeHref: "/challenge/play",        label: "Portfolio",    challengeHide: false },
+  { href: "/dashboard/market",       challengeHref: "/dashboard/market",      label: "Market",       challengeHide: false },
+  { href: "/dashboard/leaderboard",  challengeHref: "/challenge/leaderboard", label: "Leaderboard",  challengeHide: false },
+  { href: "/dashboard/news",         challengeHref: "/dashboard/news",        label: "News",         challengeHide: false },
+  { href: "/dashboard/leagues",      challengeHref: "/dashboard/leagues",     label: "Leagues",      challengeHide: true  },
+  { href: "/dashboard/achievements", challengeHref: "/dashboard/achievements",label: "Achievements", challengeHide: true  },
 ];
 
 export default function NavLinks({ challengeMode = false }: { challengeMode?: boolean }) {
@@ -35,8 +35,9 @@ export default function NavLinks({ challengeMode = false }: { challengeMode?: bo
     <>
       {/* Desktop: horizontal links */}
       <div className="hidden md:flex items-center gap-0.5">
-        {links.map(({ href, label, challengeHide }) => {
+        {links.map(({ href, challengeHref, label, challengeHide }) => {
           const hidden = challengeMode && challengeHide;
+          const resolvedHref = challengeMode ? challengeHref : href;
           return (
             <div
               key={href}
@@ -48,7 +49,7 @@ export default function NavLinks({ challengeMode = false }: { challengeMode?: bo
               }}
             >
               <Link
-                href={href}
+                href={resolvedHref}
                 className="px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap block"
                 style={linkStyle(isActive(href))}
                 onMouseEnter={(e) => { if (!isActive(href)) e.currentTarget.style.color = "var(--text-1)"; }}
