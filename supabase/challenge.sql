@@ -193,3 +193,41 @@ begin
   return json_build_object('success', true, 'league_id', v_id);
 end;
 $$;
+
+-- ============================================================
+-- RPC: update_contest — admin edits the pilot contest config
+-- ============================================================
+create or replace function public.update_contest(
+  p_league_id        uuid,
+  p_name             text,
+  p_starts_at        timestamptz,
+  p_ends_at          timestamptz,
+  p_starting_balance numeric,
+  p_prize            text
+)
+returns json
+language plpgsql
+security definer
+as $$
+begin
+  if not public.is_admin() then
+    return json_build_object('success', false, 'error', 'Not authorized');
+  end if;
+
+  update public.leagues
+  set name             = trim(p_name),
+      starts_at        = p_starts_at,
+      ends_at          = p_ends_at,
+      starting_balance = p_starting_balance,
+      prize_description = p_prize
+  where id = p_league_id and is_contest = true;
+
+  if not found then
+    return json_build_object('success', false, 'error', 'Contest not found');
+  end if;
+
+  -- NB: changing starting_balance only affects participants who enroll after
+  -- this change; existing members keep the balance they were seeded with.
+  return json_build_object('success', true);
+end;
+$$;

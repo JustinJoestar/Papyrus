@@ -90,9 +90,9 @@ email, admin override UI.
 - [x] Enroll page + wire `enroll_in_contest` (Google → form); `/auth/callback` honors `?next=`
 - [x] Contest trading: `/api/trade` universe + window gating; `/challenge/play` market + portfolio (reuses TradeModal)
 - [x] Leaderboard (return %, live, auto-refresh)
-- [ ] Daily snapshot cron
+- [x] Daily snapshot cron (`/api/challenge/snapshot` + GH Action at 20:30 UTC)
+- [x] Admin page (`/challenge/admin`: create/edit contest, enrollments, CSV export)
 - [ ] Resend welcome email
-- [ ] Admin page
 - [ ] Sortino + Comeback + winner computation
 - [ ] Finalize asset whitelist + prize/sponsor
 

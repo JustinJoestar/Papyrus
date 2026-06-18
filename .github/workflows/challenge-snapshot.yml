@@ -1,0 +1,18 @@
+name: Challenge Daily Snapshot
+
+on:
+  schedule:
+    # 20:30 UTC daily ≈ 4:30 PM ET (EDT), just after the US market close.
+    # Records each participant's portfolio value for the Sortino + Comeback awards.
+    - cron: "30 20 * * *"
+  workflow_dispatch: # allow manual trigger
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping challenge snapshot endpoint
+        run: |
+          curl -f -X GET "${{ secrets.APP_URL }}/api/challenge/snapshot" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            --max-time 60
