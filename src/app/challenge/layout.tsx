@@ -33,7 +33,10 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
         </Link>
 
         <div className="ml-auto flex items-center gap-4 sm:gap-5">
-          <Link href="/challenge/rules" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
+          <Link href="/challenge/leaderboard" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
+            Leaderboard
+          </Link>
+          <Link href="/challenge/rules" className="hidden sm:inline text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
             Rules
           </Link>
           <Link href="/challenge/parents" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>

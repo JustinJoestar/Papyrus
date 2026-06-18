@@ -88,8 +88,8 @@ email, admin override UI.
 - [x] Rules page
 - [x] Parents page
 - [x] Enroll page + wire `enroll_in_contest` (Google → form); `/auth/callback` honors `?next=`
-- [ ] Contest trading: `/api/trade` universe + window gating; restricted market UI
-- [ ] Leaderboard (return %)
+- [x] Contest trading: `/api/trade` universe + window gating; `/challenge/play` market + portfolio (reuses TradeModal)
+- [x] Leaderboard (return %, live, auto-refresh)
 - [ ] Daily snapshot cron
 - [ ] Resend welcome email
 - [ ] Admin page

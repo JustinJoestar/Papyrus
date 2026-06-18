@@ -90,6 +90,18 @@ export function isEnrollmentOpen(now: Date = new Date()): boolean {
   return s === "enrolling" || s === "live";
 }
 
+/** Trading-window state for a specific contest's start/end timestamps. */
+export function tradingWindow(
+  startsAt: string | null,
+  endsAt: string | null,
+  now: Date = new Date()
+): { started: boolean; ended: boolean; open: boolean } {
+  const t = now.getTime();
+  const started = !startsAt || t >= new Date(startsAt).getTime();
+  const ended = !!endsAt && t > new Date(endsAt).getTime();
+  return { started, ended, open: started && !ended };
+}
+
 const DATE_FMT: Intl.DateTimeFormatOptions = {
   month: "long",
   day: "numeric",
