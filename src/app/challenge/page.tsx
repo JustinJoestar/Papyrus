@@ -67,7 +67,7 @@ export default function ChallengeLanding() {
         >
           <span className="text-xl">🎁</span>
           <p className="text-sm" style={{ color: "var(--text-2)" }}>
-            Winners take home a <span className="font-semibold" style={{ color: "var(--gold-bright)" }}>{CONTEST.prize}</span>
+            Prizes for the top finishers — <span className="font-semibold" style={{ color: "var(--gold-bright)" }}>{CONTEST.prize}</span>
           </p>
         </div>
       </section>

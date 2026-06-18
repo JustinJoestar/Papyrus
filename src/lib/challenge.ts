@@ -24,7 +24,7 @@ export const CONTEST = {
   startingBalance: 100_000,
   minAge: 13,
 
-  prize: "Gift card — sponsor to be announced",
+  prize: "To be announced",
   universeSummary: "S&P 500 stocks + major ETFs",
 
   // Eligibility gate for the risk-adjusted (Sortino) award.
