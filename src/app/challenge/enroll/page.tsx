@@ -162,7 +162,7 @@ export default function EnrollPage() {
         <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>
           {closed
             ? "This contest has ended. Thanks for your interest — keep an eye out for the next one."
-            : `Enrollment opens ${formatContestDate(CONTEST.enrollOpensAt)}. Check back then to claim your spot.`}
+            : "Sign-ups aren't quite ready yet — check back very soon to claim your spot."}
         </p>
         <Link href="/challenge" className="inline-block font-mono text-xs tracking-wider px-5 py-2.5 rounded-xl" style={fieldStyle}>
           ← Back to Challenge
