@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CONTEST } from "@/lib/challenge";
+import NavThemeToggle from "@/components/NavThemeToggle";
 
 // The challenge is a self-contained experience — its own chrome, no
 // weekly-game dashboard nav. Shares the app's auth, DB, and trade engine
@@ -41,6 +42,7 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
           <Link href="/" className="font-mono text-[10px] tracking-wider transition-colors" style={{ color: "var(--text-3)" }}>
             ← Papyrus
           </Link>
+          <NavThemeToggle />
         </div>
       </header>
 

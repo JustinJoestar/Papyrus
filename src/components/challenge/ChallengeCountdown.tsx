@@ -28,9 +28,14 @@ export default function ChallengeCountdown({
   const [units, setUnits] = useState<Unit[] | null>(null);
 
   useEffect(() => {
-    setUnits(diff(targetIso));
-    const id = setInterval(() => setUnits(diff(targetIso)), 1000);
-    return () => clearInterval(id);
+    // Deferred to the client (after paint) so server/client time can't mismatch.
+    const update = () => setUnits(diff(targetIso));
+    const frame = requestAnimationFrame(update);
+    const id = setInterval(update, 1000);
+    return () => {
+      cancelAnimationFrame(frame);
+      clearInterval(id);
+    };
   }, [targetIso]);
 
   return (

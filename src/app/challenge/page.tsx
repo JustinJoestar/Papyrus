@@ -8,6 +8,7 @@ import {
   formatContestDate,
 } from "@/lib/challenge";
 import ChallengeCountdown from "@/components/challenge/ChallengeCountdown";
+import { PixelHero } from "@/components/ui/pixel-perfect-hero";
 
 const fmtMoney = (n: number) => "$" + n.toLocaleString("en-US");
 
@@ -28,87 +29,35 @@ export default function ChallengeLanding() {
     status === "live"      ? "● LIVE NOW" :
     "CONTEST ENDED";
 
+  // Enrollment-aware CTAs + footnote
+  let primary: { label: string; href: string } | null;
+  let secondary: { label: string; href: string } | null = { label: "Read the Rules", href: "/challenge/rules" };
+  let footnote = `${formatContestDate(CONTEST.startsAt)} – ${formatContestDate(CONTEST.endsAt)} · Ages ${CONTEST.minAge}+ · Free to enter`;
+
+  if (enrollOpen) {
+    primary = { label: "Enter the Challenge", href: "/challenge/enroll" };
+  } else if (status === "upcoming") {
+    primary = { label: "View Rules", href: "/challenge/rules" };
+    secondary = { label: "For Parents", href: "/challenge/parents" };
+    footnote = `Enrollment opens ${formatContestDate(CONTEST.enrollOpensAt)} · Ages ${CONTEST.minAge}+ · Free`;
+  } else {
+    primary = { label: "Final Standings", href: "/challenge/leaderboard" };
+  }
+
   return (
     <div>
-      {/* Gold top accent */}
-      <div
-        className="h-px w-full"
-        style={{ background: "linear-gradient(90deg, transparent, var(--gold) 35%, var(--gold-bright) 50%, var(--gold) 65%, transparent)" }}
-      />
-
       {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden px-5 sm:px-8 pt-16 sm:pt-24 pb-16">
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            top: "-140px", left: "50%", transform: "translateX(-50%)",
-            width: "760px", height: "380px",
-            background: "radial-gradient(ellipse, rgba(201,168,76,0.12) 0%, transparent 65%)",
-          }}
-        />
-
-        <div className="relative max-w-3xl mx-auto text-center" style={{ zIndex: 10 }}>
-          <span
-            className="inline-block font-mono text-[10px] tracking-[0.28em] px-3 py-1 rounded-full mb-6"
-            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
-          >
-            {statusChip}
-          </span>
-
-          <h1 className="font-bold text-4xl sm:text-6xl tracking-tight leading-[1.05] mb-5">
-            <span style={{ color: "var(--text-1)" }}>The </span>
-            <span className="text-gold-shimmer">Summer Trading Challenge</span>
-          </h1>
-
-          <p className="text-base sm:text-lg max-w-xl mx-auto mb-8" style={{ color: "var(--text-2)" }}>
-            A free {CONTEST.comebackWindowDays && ""}six-week paper-trading competition for high schoolers.
-            Start with {fmtMoney(CONTEST.startingBalance)} in virtual cash, trade real markets, and
-            prove you've got what it takes — no money, no risk, all skill.
-          </p>
-
-          {/* Countdown */}
-          {target && (
-            <div className="mb-9">
-              <ChallengeCountdown label={target.label} targetIso={target.iso} />
-            </div>
-          )}
-
-          {/* CTA */}
-          <div className="flex flex-col items-center gap-3">
-            {enrollOpen ? (
-              <Link
-                href="/challenge/enroll"
-                className="inline-flex items-center gap-2 font-bold font-mono text-sm tracking-[0.1em] px-8 py-3.5 rounded-xl transition-transform hover:scale-[1.03]"
-                style={{
-                  background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-                  color: "#0a0800",
-                  boxShadow: "var(--primary-glow)",
-                }}
-              >
-                ENTER THE CHALLENGE →
-              </Link>
-            ) : status === "upcoming" ? (
-              <div
-                className="inline-flex items-center gap-2 font-mono text-sm px-8 py-3.5 rounded-xl"
-                style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-3)" }}
-              >
-                Enrollment opens {formatContestDate(CONTEST.enrollOpensAt)}
-              </div>
-            ) : (
-              <Link
-                href="/challenge/leaderboard"
-                className="inline-flex items-center gap-2 font-bold font-mono text-sm tracking-[0.1em] px-8 py-3.5 rounded-xl"
-                style={{ background: "var(--elevated)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
-              >
-                VIEW FINAL STANDINGS →
-              </Link>
-            )}
-            <p className="font-mono text-[10px] tracking-wider" style={{ color: "var(--text-3)" }}>
-              {formatContestDate(CONTEST.startsAt)} – {formatContestDate(CONTEST.endsAt)} · Ages {CONTEST.minAge}+ · Free to enter
-            </p>
-          </div>
-        </div>
-      </section>
+      <PixelHero
+        chipLabel={statusChip}
+        word1="Summer"
+        word2="Challenge."
+        description={`A free six-week paper-trading competition for high schoolers. Start with ${fmtMoney(CONTEST.startingBalance)} in virtual cash, trade real markets, and prove you've got what it takes — no money, no risk, all skill.`}
+        primary={primary}
+        secondary={secondary}
+        footnote={footnote}
+      >
+        {target && <ChallengeCountdown label={target.label} targetIso={target.iso} />}
+      </PixelHero>
 
       {/* ── Prize callout ────────────────────────────────────── */}
       <section className="px-5 sm:px-8 pb-16">
@@ -196,7 +145,7 @@ export default function ChallengeLanding() {
             </h2>
             <p className="text-sm mb-7 max-w-md mx-auto" style={{ color: "var(--text-2)" }}>
               Bragging rights, real market experience, and a prize on the line. Bring your friends —
-              it's more fun when you're beating someone you know.
+              beating someone you know is half the fun.
             </p>
             {enrollOpen ? (
               <Link
