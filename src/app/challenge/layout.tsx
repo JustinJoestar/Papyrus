@@ -45,7 +45,7 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
           <Link href="/challenge/parents" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
             For Parents
           </Link>
-          <GoldShimmerCta href="/dashboard" className="px-4 py-2 text-xs gap-1.5">
+          <GoldShimmerCta href="/" className="px-4 py-2 text-xs gap-1.5">
             Home <Home size={12} strokeWidth={2.5} />
           </GoldShimmerCta>
         </div>
