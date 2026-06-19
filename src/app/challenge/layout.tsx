@@ -63,6 +63,7 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
         <div className="flex items-center justify-center gap-4 mt-3 font-mono text-[10px]" style={{ color: "var(--text-3)" }}>
           <Link href="/challenge/rules" className="underline">Rules</Link>
           <Link href="/challenge/parents" className="underline">For Parents</Link>
+          <Link href="/privacy" className="underline">Privacy</Link>
           <Link href="/tos" className="underline">Terms</Link>
         </div>
       </footer>
