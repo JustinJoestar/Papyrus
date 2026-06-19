@@ -61,13 +61,6 @@ export default function NavLinks({ challengeMode = false }: { challengeMode?: bo
             </div>
           );
         })}
-        <Link
-          href="/challenge"
-          className="ml-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 whitespace-nowrap"
-          style={{ color: "var(--gold)", background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
-        >
-          ☀ Challenge
-        </Link>
       </div>
 
       {/* Mobile: hamburger button */}
@@ -105,13 +98,6 @@ export default function NavLinks({ challengeMode = false }: { challengeMode?: bo
               </Link>
             );
           })}
-          <Link
-            href="/challenge"
-            className="px-4 py-3 rounded-xl text-sm font-medium transition-all"
-            style={{ color: "var(--gold)", background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
-          >
-            ☀ Challenge
-          </Link>
         </div>
       )}
     </>

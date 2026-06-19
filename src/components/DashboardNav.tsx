@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import NavLinks from "@/components/NavLinks";
 import NavThemeToggle from "@/components/NavThemeToggle";
 import NavNotifications from "@/components/NavNotifications";
@@ -13,13 +14,29 @@ interface Props {
 }
 
 export default function DashboardNav({ userId, username, avatarUrl }: Props) {
+  const [challengeMode, setChallengeMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setChallengeMode(localStorage.getItem("challenge-mode") === "true");
+  }, []);
+
+  function toggle() {
+    const next = !challengeMode;
+    setChallengeMode(next);
+    localStorage.setItem("challenge-mode", String(next));
+  }
+
+  const active = mounted && challengeMode;
+
   return (
     <nav
       className="sticky top-0 z-50 h-14 flex items-center px-6 gap-4 backdrop-blur-md"
       style={{ background: "var(--nav-bg)", borderBottom: "1px solid var(--border)" }}
     >
       {/* Logo */}
-      <Link href="/" className="flex items-center gap-2.5 shrink-0">
+      <Link href={active ? "/challenge" : "/"} className="flex items-center gap-2.5 shrink-0">
         <div className="flex items-end gap-[3px]">
           <div className="w-[3px] h-3      rounded-sm" style={{ background: "var(--gold)" }} />
           <div className="w-[3px] h-[16px] rounded-sm" style={{ background: "var(--gold)" }} />
@@ -28,14 +45,53 @@ export default function DashboardNav({ userId, username, avatarUrl }: Props) {
         <span className="font-mono font-bold text-sm tracking-[0.15em]" style={{ color: "var(--text-1)" }}>
           PAPYRUS
         </span>
+        {/* CHALLENGE badge — animates in/out */}
+        <div
+          className="overflow-hidden"
+          style={{
+            maxWidth: active ? "120px" : "0px",
+            opacity: active ? 1 : 0,
+            transition: "max-width 0.35s ease, opacity 0.25s ease",
+          }}
+        >
+          <span
+            className="font-mono text-[9px] tracking-[0.18em] px-1.5 py-0.5 rounded whitespace-nowrap"
+            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+          >
+            CHALLENGE
+          </span>
+        </div>
       </Link>
 
       <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
 
-      <NavLinks />
+      <NavLinks challengeMode={active} />
 
       {/* Right side */}
       <div className="ml-auto flex items-center gap-2">
+        {/* Challenge toggle */}
+        <button
+          onClick={toggle}
+          className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition-all duration-200 select-none"
+          style={{ color: active ? "var(--gold)" : "var(--text-3)" }}
+          aria-label="Toggle challenge mode"
+        >
+          <span className="font-mono text-[10px] tracking-wider hidden sm:inline">Challenge</span>
+          {/* Pill */}
+          <div
+            className="relative w-8 h-[18px] rounded-full transition-all duration-300 shrink-0"
+            style={{ background: active ? "var(--gold)" : "var(--border-mid)" }}
+          >
+            <div
+              className="absolute top-[3px] w-3 h-3 rounded-full transition-all duration-300"
+              style={{
+                background: active ? "#0a0800" : "var(--text-3)",
+                left: active ? "17px" : "3px",
+              }}
+            />
+          </div>
+        </button>
+
         <a
           href="https://discord.gg/4tmwxCET2H"
           target="_blank"
