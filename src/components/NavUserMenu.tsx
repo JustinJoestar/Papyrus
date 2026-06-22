@@ -9,6 +9,7 @@ type Props = {
   username: string | null;
   avatarUrl: string | null;
   profileHref?: string;
+  settingsHref?: string;
   showChallengeBadge?: boolean;
   signOutRedirect?: string;
 };
@@ -17,6 +18,7 @@ export default function NavUserMenu({
   username,
   avatarUrl,
   profileHref = "/dashboard/profile",
+  settingsHref = "/dashboard/settings",
   showChallengeBadge = false,
   signOutRedirect = "/auth/login",
 }: Props) {
@@ -26,18 +28,14 @@ export default function NavUserMenu({
   const ref = useRef<HTMLDivElement>(null);
   const initials = (username ?? "?").slice(0, 2).toUpperCase();
 
-  // Close on outside click
   useEffect(() => {
     function handler(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close on route change
   useEffect(() => { setOpen(false); }, [pathname]);
 
   async function handleSignOut() {
@@ -57,45 +55,24 @@ export default function NavUserMenu({
           background: open ? "var(--gold-glow)" : "transparent",
           border: open ? "1px solid var(--gold-border)" : "1px solid transparent",
         }}
-        onMouseEnter={(e) => {
-          if (!open) e.currentTarget.style.border = "1px solid var(--border-mid)";
-        }}
-        onMouseLeave={(e) => {
-          if (!open) e.currentTarget.style.border = "1px solid transparent";
-        }}
+        onMouseEnter={(e) => { if (!open) e.currentTarget.style.border = "1px solid var(--border-mid)"; }}
+        onMouseLeave={(e) => { if (!open) e.currentTarget.style.border = "1px solid transparent"; }}
       >
         <div
           className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center shrink-0"
-          style={{
-            background: avatarUrl ? "transparent" : "var(--gold-glow)",
-            border: "1px solid var(--gold-border)",
-          }}
+          style={{ background: avatarUrl ? "transparent" : "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
         >
           {avatarUrl ? (
             <img src={avatarUrl} alt={username ?? "avatar"} className="w-full h-full object-cover" />
           ) : (
-            <span className="font-mono font-bold text-[10px]" style={{ color: "var(--gold)" }}>
-              {initials}
-            </span>
+            <span className="font-mono font-bold text-[10px]" style={{ color: "var(--gold)" }}>{initials}</span>
           )}
         </div>
-        <span
-          className="font-mono text-xs transition-colors"
-          style={{ color: open ? "var(--gold)" : "var(--text-3)" }}
-        >
+        <span className="font-mono text-xs transition-colors" style={{ color: open ? "var(--gold)" : "var(--text-3)" }}>
           {username ?? "Profile"}
         </span>
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          fill="none"
-          className="shrink-0 transition-transform duration-200"
-          style={{
-            color: open ? "var(--gold)" : "var(--text-3)",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-          }}
-        >
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="shrink-0 transition-transform duration-200"
+          style={{ color: open ? "var(--gold)" : "var(--text-3)", transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>
           <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
@@ -104,11 +81,7 @@ export default function NavUserMenu({
       {open && (
         <div
           className="absolute right-0 top-full mt-2 w-52 rounded-xl overflow-hidden z-50 flex flex-col"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
-          }}
+          style={{ background: "var(--surface)", border: "1px solid var(--border)", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}
         >
           {/* Profile */}
           <Link
@@ -120,17 +93,12 @@ export default function NavUserMenu({
           >
             <div
               className="w-8 h-8 rounded-full overflow-hidden flex items-center justify-center shrink-0"
-              style={{
-                background: avatarUrl ? "transparent" : "var(--gold-glow)",
-                border: "1px solid var(--gold-border)",
-              }}
+              style={{ background: avatarUrl ? "transparent" : "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
             >
               {avatarUrl ? (
                 <img src={avatarUrl} alt={username ?? "avatar"} className="w-full h-full object-cover" />
               ) : (
-                <span className="font-mono font-bold text-[10px]" style={{ color: "var(--gold)" }}>
-                  {initials}
-                </span>
+                <span className="font-mono font-bold text-[10px]" style={{ color: "var(--gold)" }}>{initials}</span>
               )}
             </div>
             <div className="flex flex-col gap-0.5">
@@ -138,9 +106,7 @@ export default function NavUserMenu({
                 {username ?? "Profile"}
               </span>
               <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[10px]" style={{ color: "var(--text-3)" }}>
-                  View profile
-                </span>
+                <span className="font-mono text-[10px]" style={{ color: "var(--text-3)" }}>View profile</span>
                 {showChallengeBadge && (
                   <span
                     className="font-mono text-[8px] tracking-[0.15em] px-1 py-px rounded"
@@ -153,41 +119,24 @@ export default function NavUserMenu({
             </div>
           </Link>
 
-          {/* Settings — only show for regular dashboard */}
-          {!showChallengeBadge && (
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center gap-3 px-4 py-2.5 font-mono text-xs transition-colors"
-              style={{ color: "var(--text-2)" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "var(--gold-glow)";
-                e.currentTarget.style.color = "var(--gold)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "var(--text-2)";
-              }}
-            >
-              Settings
-            </Link>
-          )}
+          {/* Settings */}
+          <Link
+            href={settingsHref}
+            className="flex items-center gap-3 px-4 py-2.5 font-mono text-xs transition-colors"
+            style={{ color: "var(--text-2)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "var(--gold-glow)"; e.currentTarget.style.color = "var(--gold)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-2)"; }}
+          >
+            Settings
+          </Link>
 
           {/* Sign out */}
           <button
             onClick={handleSignOut}
             className="flex items-center gap-3 px-4 py-2.5 font-mono text-xs transition-colors w-full text-left"
-            style={{
-              color: "var(--text-3)",
-              borderTop: "1px solid var(--border)",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(201,168,76,0.08)";
-              e.currentTarget.style.color = "var(--gold)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = "var(--text-3)";
-            }}
+            style={{ color: "var(--text-3)", borderTop: "1px solid var(--border)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(201,168,76,0.08)"; e.currentTarget.style.color = "var(--gold)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-3)"; }}
           >
             Sign out
           </button>

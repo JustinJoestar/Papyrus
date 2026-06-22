@@ -65,6 +65,7 @@ export default async function ChallengeLayout({ children }: { children: React.Re
                 username={profile?.username ?? null}
                 avatarUrl={profile?.avatar_url ?? null}
                 profileHref="/challenge/profile"
+                settingsHref="/challenge/settings"
                 showChallengeBadge
                 signOutRedirect="/challenge"
               />

@@ -12,6 +12,12 @@ type Contest = {
   ends_at: string | null;
 };
 
+type UserInfo = {
+  email: string;
+  avatarUrl: string | null;
+  initials: string;
+};
+
 const GRADES = ["9th grade", "10th grade", "11th grade", "12th grade", "Other"];
 const HEARD_OPTIONS = ["A friend", "School or teacher", "Social media", "News", "Other"];
 
@@ -53,6 +59,7 @@ export default function EnrollPage() {
 
   const [phase, setPhase] = useState<"loading" | "signedOut" | "form" | "noContest" | "closed" | "done">("loading");
   const [contest, setContest] = useState<Contest | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
 
   // email sign-in fields
@@ -62,7 +69,6 @@ export default function EnrollPage() {
 
   // enrollment form fields
   const [fullName, setFullName] = useState("");
-  const [parentEmail, setParentEmail] = useState("");
   const [school, setSchool] = useState("");
   const [grade, setGrade] = useState("");
   const [heardFrom, setHeardFrom] = useState("");
@@ -73,9 +79,15 @@ export default function EnrollPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setPhase("signedOut"); return; }
 
-    // Prefill name from metadata if available
+    // Prefill name from metadata
     const meta = user.user_metadata ?? {};
     setFullName((meta.full_name as string) ?? (meta.name as string) ?? "");
+
+    // Build user info for the account visual
+    const avatarUrl = (meta.avatar_url as string) ?? (meta.picture as string) ?? null;
+    const emailStr  = user.email ?? "";
+    const initials  = emailStr.slice(0, 2).toUpperCase();
+    setUserInfo({ email: emailStr, avatarUrl, initials });
 
     const { data: c } = await supabase
       .from("leagues")
@@ -125,12 +137,12 @@ export default function EnrollPage() {
     setSubmitting(true);
     setError(null);
     const { data, error: rpcError } = await supabase.rpc("enroll_in_contest", {
-      p_league_id: contest.id,
-      p_full_name: fullName.trim(),
-      p_parent_email: parentEmail.trim() || null,
-      p_school: school.trim() || null,
-      p_grade: grade || null,
-      p_heard_from: heardFrom || null,
+      p_league_id:    contest.id,
+      p_full_name:    fullName.trim(),
+      p_parent_email: null,
+      p_school:       school.trim() || null,
+      p_grade:        grade || null,
+      p_heard_from:   heardFrom || null,
     });
 
     if (rpcError || data?.success === false) {
@@ -159,7 +171,6 @@ export default function EnrollPage() {
           </div>
         )}
 
-        {/* Google */}
         <button
           type="button"
           disabled={googleLoading}
@@ -170,39 +181,26 @@ export default function EnrollPage() {
           {googleLoading ? <span style={{ color: "var(--text-3)" }}>Redirecting…</span> : <><GoogleIcon /> Continue with Google</>}
         </button>
 
-        {/* Divider */}
         <div className="flex items-center gap-3 my-5">
           <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
           <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>or</span>
           <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
         </div>
 
-        {/* Papyrus account sign-in */}
         <p className="font-mono text-[10px] tracking-[0.2em] uppercase mb-3" style={{ color: "var(--text-3)" }}>
           Sign in with your Papyrus account
         </p>
         <form onSubmit={handleEmailSignIn} className="space-y-3">
           <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
-            style={fieldStyle}
+            type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email" className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none" style={fieldStyle}
           />
           <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
-            style={fieldStyle}
+            type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password" className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none" style={fieldStyle}
           />
           <button
-            type="submit"
-            disabled={emailLoading}
+            type="submit" disabled={emailLoading}
             className="w-full rounded-xl px-4 py-2.5 text-sm font-mono font-medium tracking-wider transition-all disabled:opacity-40"
             style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
           >
@@ -265,7 +263,38 @@ export default function EnrollPage() {
   return (
     <Card>
       <h1 className="font-bold text-xl mb-1" style={{ color: "var(--text-1)" }}>Almost in</h1>
-      <p className="text-xs font-mono mb-6" style={{ color: "var(--text-3)" }}>A few quick details and you&apos;re competing</p>
+      <p className="text-xs font-mono mb-5" style={{ color: "var(--text-3)" }}>A few quick details and you&apos;re competing</p>
+
+      {/* Account visual */}
+      {userInfo && (
+        <div
+          className="flex items-center gap-3 rounded-xl px-4 py-3 mb-6"
+          style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
+        >
+          <div
+            className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center shrink-0"
+            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
+          >
+            {userInfo.avatarUrl ? (
+              <img src={userInfo.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+            ) : (
+              <span className="font-mono font-bold text-[10px]" style={{ color: "var(--gold)" }}>
+                {userInfo.initials}
+              </span>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium truncate" style={{ color: "var(--text-1)" }}>{userInfo.email}</p>
+            <p className="font-mono text-[10px] mt-0.5" style={{ color: "var(--text-3)" }}>Papyrus account</p>
+          </div>
+          <span
+            className="font-mono text-[9px] tracking-[0.15em] px-1.5 py-0.5 rounded shrink-0"
+            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+          >
+            ✓ CONNECTED
+          </span>
+        </div>
+      )}
 
       {error && (
         <div className="mb-5 flex items-start gap-2.5 rounded-xl px-4 py-3 text-sm" style={{ background: "var(--loss-bg)", border: "1px solid var(--loss-border)" }}>
@@ -283,20 +312,6 @@ export default function EnrollPage() {
             type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)}
             className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none" style={fieldStyle} placeholder="Alex Rivera"
           />
-        </div>
-
-        <div>
-          <label className="block font-mono text-[10px] tracking-[0.22em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
-            Parent / guardian email
-          </label>
-          <input
-            type="email" value={parentEmail} onChange={(e) => setParentEmail(e.target.value)}
-            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none" style={fieldStyle} placeholder="optional"
-          />
-          <p className="mt-1.5 text-[11px] leading-relaxed" style={{ color: "var(--text-3)" }}>
-            Optional — participants are under 18, so if you add one we&apos;ll send a parent or guardian
-            occasional updates and the final standings.
-          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
