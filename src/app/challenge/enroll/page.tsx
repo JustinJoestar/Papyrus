@@ -13,6 +13,7 @@ type Contest = {
 };
 
 type UserInfo = {
+  username: string | null;
   email: string;
   avatarUrl: string | null;
   initials: string;
@@ -84,10 +85,16 @@ export default function EnrollPage() {
     setFullName((meta.full_name as string) ?? (meta.name as string) ?? "");
 
     // Build user info for the account visual
-    const avatarUrl = (meta.avatar_url as string) ?? (meta.picture as string) ?? null;
     const emailStr  = user.email ?? "";
-    const initials  = emailStr.slice(0, 2).toUpperCase();
-    setUserInfo({ email: emailStr, avatarUrl, initials });
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username, avatar_url")
+      .eq("id", user.id)
+      .maybeSingle();
+    const avatarUrl = profile?.avatar_url ?? (meta.avatar_url as string) ?? (meta.picture as string) ?? null;
+    const username  = profile?.username ?? null;
+    const initials  = (username ?? emailStr).slice(0, 2).toUpperCase();
+    setUserInfo({ username, email: emailStr, avatarUrl, initials });
 
     const { data: c } = await supabase
       .from("leagues")
@@ -268,31 +275,40 @@ export default function EnrollPage() {
       {/* Account visual */}
       {userInfo && (
         <div
-          className="flex items-center gap-3 rounded-xl px-4 py-3 mb-6"
+          className="rounded-xl px-4 py-4 mb-7"
           style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
         >
-          <div
-            className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center shrink-0"
-            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
-          >
-            {userInfo.avatarUrl ? (
-              <img src={userInfo.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
-            ) : (
-              <span className="font-mono font-bold text-[10px]" style={{ color: "var(--gold)" }}>
-                {userInfo.initials}
-              </span>
-            )}
+          <div className="flex items-center gap-3.5">
+            <div
+              className="w-11 h-11 rounded-full overflow-hidden flex items-center justify-center shrink-0"
+              style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
+            >
+              {userInfo.avatarUrl ? (
+                <img src={userInfo.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+              ) : (
+                <span className="font-mono font-bold text-sm" style={{ color: "var(--gold)" }}>
+                  {userInfo.initials}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              {userInfo.username && (
+                <p className="font-mono text-sm font-bold truncate" style={{ color: "var(--text-1)" }}>
+                  {userInfo.username}
+                </p>
+              )}
+              <p className="text-xs truncate mt-0.5" style={{ color: "var(--text-3)" }}>{userInfo.email}</p>
+            </div>
+            <span
+              className="font-mono text-[9px] tracking-[0.15em] px-1.5 py-0.5 rounded shrink-0"
+              style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+            >
+              ✓ CONNECTED
+            </span>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium truncate" style={{ color: "var(--text-1)" }}>{userInfo.email}</p>
-            <p className="font-mono text-[10px] mt-0.5" style={{ color: "var(--text-3)" }}>Papyrus account</p>
-          </div>
-          <span
-            className="font-mono text-[9px] tracking-[0.15em] px-1.5 py-0.5 rounded shrink-0"
-            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
-          >
-            ✓ CONNECTED
-          </span>
+          <p className="font-mono text-[10px] mt-3 pt-3" style={{ color: "var(--text-3)", borderTop: "1px solid var(--border)" }}>
+            Your Papyrus account will be used for this challenge entry.
+          </p>
         </div>
       )}
 
