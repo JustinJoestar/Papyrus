@@ -31,9 +31,6 @@ export default function CoinBuyButton({
         }}
       >
         Buy {coin.symbol}
-        {activeLeague && (
-          <span className="ml-2 font-mono text-[10px] opacity-70">({activeLeague.name})</span>
-        )}
       </button>
 
       {open && (
