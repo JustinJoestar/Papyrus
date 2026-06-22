@@ -7,9 +7,21 @@ import StockLogo from "./StockLogo";
 import { useMarketLeague } from "@/app/dashboard/market/MarketLeagueProvider";
 import type { StockData } from "@/lib/stocks";
 
-type Props = { stocks: StockData[]; cashBalance: number; isAuthenticated?: boolean };
+type Props = {
+  stocks: StockData[];
+  cashBalance: number;
+  isAuthenticated?: boolean;
+  detailBasePath?: string;
+  loginHref?: string;
+};
 
-export default function StockList({ stocks, cashBalance, isAuthenticated = true }: Props) {
+export default function StockList({
+  stocks,
+  cashBalance,
+  isAuthenticated = true,
+  detailBasePath = "/dashboard/market/stocks",
+  loginHref = "/auth/login",
+}: Props) {
   const router = useRouter();
   const { activeLeague, refreshBalances } = useMarketLeague();
   const [buyTarget, setBuyTarget] = useState<StockData | null>(null);
@@ -54,7 +66,7 @@ export default function StockList({ stocks, cashBalance, isAuthenticated = true 
             return (
               <div
                 key={stock.symbol}
-                onClick={() => router.push(`/dashboard/market/stocks/${stock.symbol}`)}
+                onClick={() => router.push(`${detailBasePath}/${stock.symbol}`)}
                 className="rounded-2xl px-5 py-4 flex items-center gap-4 cursor-pointer transition-all duration-150"
                 style={{
                   background: "var(--surface)",
@@ -95,7 +107,7 @@ export default function StockList({ stocks, cashBalance, isAuthenticated = true 
                 </div>
 
                 <button
-                  onClick={(e) => { e.stopPropagation(); isAuthenticated ? setBuyTarget(stock) : router.push("/auth/login"); }}
+                  onClick={(e) => { e.stopPropagation(); isAuthenticated ? setBuyTarget(stock) : router.push(loginHref); }}
                   disabled={stock.price === 0}
                   className="px-4 py-1.5 rounded-lg text-xs font-mono font-semibold tracking-wide transition-all duration-150 shrink-0 disabled:opacity-30 disabled:cursor-not-allowed"
                   style={{

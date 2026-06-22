@@ -20,10 +20,12 @@ export default function HoldingsList({
   holdings,
   leagueId,
   leagueName,
+  marketHref = "/dashboard/market",
 }: {
   holdings: HoldingWithPrice[];
   leagueId?: string | null;
   leagueName?: string | null;
+  marketHref?: string;
 }) {
   const router = useRouter();
   const [sellTarget, setSellTarget] = useState<HoldingWithPrice | null>(null);
@@ -45,7 +47,7 @@ export default function HoldingsList({
           No open positions
         </p>
         <a
-          href="/dashboard/market"
+          href={marketHref}
           className="text-sm font-medium transition-colors"
           style={{ color: "var(--gold)" }}
         >

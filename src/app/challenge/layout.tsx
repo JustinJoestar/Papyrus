@@ -3,12 +3,10 @@ import { CONTEST } from "@/lib/challenge";
 import NavThemeToggle from "@/components/NavThemeToggle";
 import { GoldShimmerCta } from "@/components/GoldShimmerCta";
 import NavUserMenu from "@/components/NavUserMenu";
+import ChallengeNavLinks from "@/components/challenge/ChallengeNavLinks";
 import { Home } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
-// The challenge is a self-contained experience — its own chrome, no
-// weekly-game dashboard nav. Shares the app's auth, DB, and trade engine
-// underneath but presents as a distinct event.
 export const dynamic = "force-dynamic";
 
 export default async function ChallengeLayout({ children }: { children: React.ReactNode }) {
@@ -30,6 +28,7 @@ export default async function ChallengeLayout({ children }: { children: React.Re
         className="sticky top-0 z-50 h-14 flex items-center px-5 sm:px-8 gap-4 backdrop-blur-md"
         style={{ background: "var(--nav-bg)", borderBottom: "1px solid var(--border)" }}
       >
+        {/* Logo */}
         <Link href="/challenge" className="flex items-center gap-2.5 shrink-0">
           <div className="flex items-end gap-[3px]">
             <div className="w-[3px] h-3      rounded-sm" style={{ background: "var(--gold)" }} />
@@ -47,17 +46,14 @@ export default async function ChallengeLayout({ children }: { children: React.Re
           </span>
         </Link>
 
+        <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
+
+        {/* Nav links — only show when logged in */}
+        {user && <ChallengeNavLinks />}
+
+        {/* Right side */}
         <div className="ml-auto flex items-center gap-3 sm:gap-4">
           <NavThemeToggle />
-          <Link href="/challenge/leaderboard" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
-            Leaderboard
-          </Link>
-          <Link href="/challenge/rules" className="hidden sm:inline text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
-            Rules
-          </Link>
-          <Link href="/challenge/parents" className="hidden md:inline text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
-            For Parents
-          </Link>
           <GoldShimmerCta href="/" className="px-3 py-2 text-xs gap-1.5">
             Home <Home size={12} strokeWidth={2.5} />
           </GoldShimmerCta>

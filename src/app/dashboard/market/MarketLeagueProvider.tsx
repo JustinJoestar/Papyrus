@@ -16,7 +16,7 @@ type ContextValue = {
   refreshBalances: () => Promise<void>;
 };
 
-const MarketLeagueContext = createContext<ContextValue>({
+export const MarketLeagueContext = createContext<ContextValue>({
   leagues: [],
   activeLeague: null,
   setActiveLeague: () => {},
