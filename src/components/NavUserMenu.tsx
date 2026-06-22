@@ -8,9 +8,18 @@ import { createClient } from "@/lib/supabase/client";
 type Props = {
   username: string | null;
   avatarUrl: string | null;
+  profileHref?: string;
+  showChallengeBadge?: boolean;
+  signOutRedirect?: string;
 };
 
-export default function NavUserMenu({ username, avatarUrl }: Props) {
+export default function NavUserMenu({
+  username,
+  avatarUrl,
+  profileHref = "/dashboard/profile",
+  showChallengeBadge = false,
+  signOutRedirect = "/auth/login",
+}: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -34,7 +43,7 @@ export default function NavUserMenu({ username, avatarUrl }: Props) {
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/auth/login");
+    router.push(signOutRedirect);
     router.refresh();
   }
 
@@ -94,7 +103,7 @@ export default function NavUserMenu({ username, avatarUrl }: Props) {
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute right-0 top-full mt-2 w-48 rounded-xl overflow-hidden z-50 flex flex-col"
+          className="absolute right-0 top-full mt-2 w-52 rounded-xl overflow-hidden z-50 flex flex-col"
           style={{
             background: "var(--surface)",
             border: "1px solid var(--border)",
@@ -103,7 +112,7 @@ export default function NavUserMenu({ username, avatarUrl }: Props) {
         >
           {/* Profile */}
           <Link
-            href="/dashboard/profile"
+            href={profileHref}
             className="flex items-center gap-3 px-4 py-3 transition-colors"
             style={{ borderBottom: "1px solid var(--border)" }}
             onMouseEnter={(e) => (e.currentTarget.style.background = "var(--gold-glow)")}
@@ -124,32 +133,44 @@ export default function NavUserMenu({ username, avatarUrl }: Props) {
                 </span>
               )}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-0.5">
               <span className="font-mono text-xs font-bold" style={{ color: "var(--text-1)" }}>
                 {username ?? "Profile"}
               </span>
-              <span className="font-mono text-[10px]" style={{ color: "var(--text-3)" }}>
-                View profile
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono text-[10px]" style={{ color: "var(--text-3)" }}>
+                  View profile
+                </span>
+                {showChallengeBadge && (
+                  <span
+                    className="font-mono text-[8px] tracking-[0.15em] px-1 py-px rounded"
+                    style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+                  >
+                    CHALLENGE
+                  </span>
+                )}
+              </div>
             </div>
           </Link>
 
-          {/* Settings */}
-          <Link
-            href="/dashboard/settings"
-            className="flex items-center gap-3 px-4 py-2.5 font-mono text-xs transition-colors"
-            style={{ color: "var(--text-2)" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "var(--gold-glow)";
-              e.currentTarget.style.color = "var(--gold)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = "var(--text-2)";
-            }}
-          >
-            Settings
-          </Link>
+          {/* Settings — only show for regular dashboard */}
+          {!showChallengeBadge && (
+            <Link
+              href="/dashboard/settings"
+              className="flex items-center gap-3 px-4 py-2.5 font-mono text-xs transition-colors"
+              style={{ color: "var(--text-2)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "var(--gold-glow)";
+                e.currentTarget.style.color = "var(--gold)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "var(--text-2)";
+              }}
+            >
+              Settings
+            </Link>
+          )}
 
           {/* Sign out */}
           <button

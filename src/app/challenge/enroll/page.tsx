@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
@@ -55,7 +55,12 @@ export default function EnrollPage() {
   const [contest, setContest] = useState<Contest | null>(null);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  // form fields
+  // email sign-in fields
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+
+  // enrollment form fields
   const [fullName, setFullName] = useState("");
   const [parentEmail, setParentEmail] = useState("");
   const [school, setSchool] = useState("");
@@ -64,31 +69,31 @@ export default function EnrollPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { setPhase("signedOut"); return; }
+  const initPage = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setPhase("signedOut"); return; }
 
-      // Prefill name from Google metadata if available
-      const meta = user.user_metadata ?? {};
-      setFullName((meta.full_name as string) ?? (meta.name as string) ?? "");
+    // Prefill name from metadata if available
+    const meta = user.user_metadata ?? {};
+    setFullName((meta.full_name as string) ?? (meta.name as string) ?? "");
 
-      const { data: c } = await supabase
-        .from("leagues")
-        .select("id, name, ends_at")
-        .eq("is_contest", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
+    const { data: c } = await supabase
+      .from("leagues")
+      .select("id, name, ends_at")
+      .eq("is_contest", true)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
-      if (!c) { setPhase("noContest"); return; }
-      if (c.ends_at && new Date(c.ends_at).getTime() < Date.now()) { setPhase("closed"); return; }
+    if (!c) { setPhase("noContest"); return; }
+    if (c.ends_at && new Date(c.ends_at).getTime() < Date.now()) { setPhase("closed"); return; }
 
-      setContest(c as Contest);
-      setPhase("form");
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    setContest(c as Contest);
+    setPhase("form");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => { initPage(); }, [initPage]);
 
   async function handleGoogle() {
     setGoogleLoading(true);
@@ -97,6 +102,19 @@ export default function EnrollPage() {
       options: { redirectTo: `${window.location.origin}/auth/callback?next=/challenge/enroll` },
     });
     if (error) { setError(error.message); setGoogleLoading(false); }
+  }
+
+  async function handleEmailSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setEmailLoading(true);
+    setError(null);
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+    if (signInError) {
+      setError(signInError.message);
+      setEmailLoading(false);
+    } else {
+      await initPage();
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -133,7 +151,15 @@ export default function EnrollPage() {
       <Card>
         <h1 className="font-bold text-xl mb-1" style={{ color: "var(--text-1)" }}>Enter the Challenge</h1>
         <p className="text-xs font-mono mb-6" style={{ color: "var(--text-3)" }}>Sign in to claim your spot — free, 30 seconds</p>
-        {error && <p className="text-sm mb-4" style={{ color: "var(--loss)" }}>{error}</p>}
+
+        {error && (
+          <div className="mb-5 flex items-start gap-2.5 rounded-xl px-4 py-3 text-sm" style={{ background: "var(--loss-bg)", border: "1px solid var(--loss-border)" }}>
+            <span className="font-mono text-[10px] pt-0.5 shrink-0 tracking-wider" style={{ color: "var(--loss)" }}>ERR</span>
+            <span style={{ color: "var(--loss)" }}>{error}</span>
+          </div>
+        )}
+
+        {/* Google */}
         <button
           type="button"
           disabled={googleLoading}
@@ -143,6 +169,47 @@ export default function EnrollPage() {
         >
           {googleLoading ? <span style={{ color: "var(--text-3)" }}>Redirecting…</span> : <><GoogleIcon /> Continue with Google</>}
         </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+          <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>or</span>
+          <div className="flex-1 h-px" style={{ background: "var(--border)" }} />
+        </div>
+
+        {/* Papyrus account sign-in */}
+        <p className="font-mono text-[10px] tracking-[0.2em] uppercase mb-3" style={{ color: "var(--text-3)" }}>
+          Sign in with your Papyrus account
+        </p>
+        <form onSubmit={handleEmailSignIn} className="space-y-3">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+            style={fieldStyle}
+          />
+          <input
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+            style={fieldStyle}
+          />
+          <button
+            type="submit"
+            disabled={emailLoading}
+            className="w-full rounded-xl px-4 py-2.5 text-sm font-mono font-medium tracking-wider transition-all disabled:opacity-40"
+            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+          >
+            {emailLoading ? "Signing in…" : "Sign in →"}
+          </button>
+        </form>
+
         <p className="mt-5 text-center text-[11px] leading-relaxed" style={{ color: "var(--text-3)" }}>
           By entering you agree to the{" "}
           <Link href="/challenge/rules" target="_blank" className="underline" style={{ color: "var(--text-2)" }}>rules</Link>.

@@ -2,14 +2,27 @@ import Link from "next/link";
 import { CONTEST } from "@/lib/challenge";
 import NavThemeToggle from "@/components/NavThemeToggle";
 import { GoldShimmerCta } from "@/components/GoldShimmerCta";
+import NavUserMenu from "@/components/NavUserMenu";
 import { Home } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
 
 // The challenge is a self-contained experience — its own chrome, no
 // weekly-game dashboard nav. Shares the app's auth, DB, and trade engine
 // underneath but presents as a distinct event.
 export const dynamic = "force-dynamic";
 
-export default function ChallengeLayout({ children }: { children: React.ReactNode }) {
+export default async function ChallengeLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: profile } = user
+    ? await supabase
+        .from("profiles")
+        .select("username, avatar_url")
+        .eq("id", user.id)
+        .single()
+    : { data: null };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ color: "var(--text-1)" }}>
       {/* Header */}
@@ -34,7 +47,7 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
           </span>
         </Link>
 
-        <div className="ml-auto flex items-center gap-4 sm:gap-5">
+        <div className="ml-auto flex items-center gap-3 sm:gap-4">
           <NavThemeToggle />
           <Link href="/challenge/leaderboard" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
             Leaderboard
@@ -42,12 +55,33 @@ export default function ChallengeLayout({ children }: { children: React.ReactNod
           <Link href="/challenge/rules" className="hidden sm:inline text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
             Rules
           </Link>
-          <Link href="/challenge/parents" className="text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
+          <Link href="/challenge/parents" className="hidden md:inline text-xs sm:text-sm transition-colors" style={{ color: "var(--text-2)" }}>
             For Parents
           </Link>
-          <GoldShimmerCta href="/" className="px-4 py-2 text-xs gap-1.5">
+          <GoldShimmerCta href="/" className="px-3 py-2 text-xs gap-1.5">
             Home <Home size={12} strokeWidth={2.5} />
           </GoldShimmerCta>
+
+          {user ? (
+            <>
+              <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
+              <NavUserMenu
+                username={profile?.username ?? null}
+                avatarUrl={profile?.avatar_url ?? null}
+                profileHref="/challenge/profile"
+                showChallengeBadge
+                signOutRedirect="/challenge"
+              />
+            </>
+          ) : (
+            <Link
+              href="/challenge/enroll"
+              className="font-mono text-xs tracking-wider px-3 py-1.5 rounded-xl transition-colors"
+              style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+            >
+              Sign in
+            </Link>
+          )}
         </div>
       </header>
 
