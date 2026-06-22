@@ -107,6 +107,15 @@ export default function EnrollPage() {
     if (!c) { setPhase("noContest"); return; }
     if (c.ends_at && new Date(c.ends_at).getTime() < Date.now()) { setPhase("closed"); return; }
 
+    // Already enrolled — send them straight to their portfolio
+    const { data: existing } = await supabase
+      .from("league_members")
+      .select("user_id")
+      .eq("league_id", c.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (existing) { window.location.replace("/challenge/play"); return; }
+
     setContest(c as Contest);
     setPhase("form");
   // eslint-disable-next-line react-hooks/exhaustive-deps

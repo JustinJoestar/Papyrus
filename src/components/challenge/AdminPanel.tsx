@@ -16,6 +16,8 @@ export type ContestRow = {
 };
 
 export type EnrollmentRow = {
+  user_id: string;
+  username: string | null;
   full_name: string;
   parent_email: string | null;
   school: string | null;
@@ -30,7 +32,6 @@ type Props = {
   memberCount: number;
 };
 
-// ISO → value for <input type="datetime-local"> in the admin's local tz
 function toInput(iso: string | null): string {
   if (!iso) return "";
   const d = new Date(iso);
@@ -40,7 +41,7 @@ function toInput(iso: string | null): string {
 
 const fieldStyle = { background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-1)" };
 
-export default function AdminPanel({ contest, enrollments, memberCount }: Props) {
+export default function AdminPanel({ contest, enrollments: initialEnrollments, memberCount: initialCount }: Props) {
   const supabase = createClient();
   const router = useRouter();
 
@@ -49,9 +50,11 @@ export default function AdminPanel({ contest, enrollments, memberCount }: Props)
   const [endsAt, setEndsAt] = useState(toInput(contest?.ends_at ?? CONTEST.endsAt));
   const [startingBalance, setStartingBalance] = useState(String(contest?.starting_balance ?? CONTEST.startingBalance));
   const [prize, setPrize] = useState(contest?.prize_description ?? CONTEST.prize);
-
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+
+  const [enrollments, setEnrollments] = useState(initialEnrollments);
+  const [removing, setRemoving] = useState<string | null>(null);
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
@@ -79,11 +82,31 @@ export default function AdminPanel({ contest, enrollments, memberCount }: Props)
     }
   }
 
+  async function removeParticipant(userId: string) {
+    if (!contest) return;
+    if (!confirm("Remove this participant? This deletes their enrollment, balance, and all holdings.")) return;
+
+    setRemoving(userId);
+    const res = await fetch("/api/challenge/admin/unenroll", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, leagueId: contest.id }),
+    });
+
+    if (res.ok) {
+      setEnrollments((prev) => prev.filter((e) => e.user_id !== userId));
+    } else {
+      const { error } = await res.json();
+      alert("Failed to remove: " + error);
+    }
+    setRemoving(null);
+  }
+
   function exportCsv() {
-    const header = ["full_name", "parent_email", "school", "grade", "heard_from", "enrolled_at"];
+    const header = ["username", "full_name", "parent_email", "school", "grade", "heard_from", "enrolled_at"];
     const escape = (v: string | null) => `"${(v ?? "").replace(/"/g, '""')}"`;
     const rows = enrollments.map((e) =>
-      [e.full_name, e.parent_email, e.school, e.grade, e.heard_from, e.enrolled_at].map(escape).join(",")
+      [e.username, e.full_name, e.parent_email, e.school, e.grade, e.heard_from, e.enrolled_at].map(escape).join(",")
     );
     const csv = [header.join(","), ...rows].join("\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
@@ -108,9 +131,7 @@ export default function AdminPanel({ contest, enrollments, memberCount }: Props)
           {contest && <span className="font-mono text-[10px] tracking-wider px-2 py-0.5 rounded" style={{ background: "var(--gold-glow)", color: "var(--gold)" }}>LIVE ROW</span>}
         </div>
 
-        {msg && (
-          <p className="text-sm" style={{ color: msg.kind === "ok" ? "var(--gain)" : "var(--loss)" }}>{msg.text}</p>
-        )}
+        {msg && <p className="text-sm" style={{ color: msg.kind === "ok" ? "var(--gain)" : "var(--loss)" }}>{msg.text}</p>}
 
         <div>
           <label className="block font-mono text-[10px] tracking-[0.22em] uppercase mb-2" style={{ color: "var(--text-3)" }}>Name</label>
@@ -150,7 +171,7 @@ export default function AdminPanel({ contest, enrollments, memberCount }: Props)
           <div>
             <h2 className="font-semibold" style={{ color: "var(--text-1)" }}>Enrollments</h2>
             <p className="font-mono text-[11px] mt-0.5" style={{ color: "var(--text-3)" }}>
-              {memberCount} participant{memberCount !== 1 ? "s" : ""} · {withParent} with parent email
+              {enrollments.length} participant{enrollments.length !== 1 ? "s" : ""} · {withParent} with parent email
             </p>
           </div>
           <div className="flex gap-2">
@@ -166,21 +187,39 @@ export default function AdminPanel({ contest, enrollments, memberCount }: Props)
             <table className="w-full text-sm">
               <thead>
                 <tr className="font-mono text-[10px] tracking-wider uppercase" style={{ color: "var(--text-3)" }}>
-                  <th className="text-left py-2 pr-4">Name</th>
+                  <th className="text-left py-2 pr-4">Account</th>
                   <th className="text-left py-2 pr-4">Grade</th>
                   <th className="text-left py-2 pr-4">School</th>
                   <th className="text-left py-2 pr-4">Parent email</th>
                   <th className="text-left py-2 pr-4">Heard from</th>
+                  <th className="py-2"></th>
                 </tr>
               </thead>
               <tbody>
-                {enrollments.map((e, i) => (
-                  <tr key={i} style={{ borderTop: "1px solid var(--border)" }}>
-                    <td className="py-2 pr-4" style={{ color: "var(--text-1)" }}>{e.full_name}</td>
+                {enrollments.map((e) => (
+                  <tr key={e.user_id} style={{ borderTop: "1px solid var(--border)" }}>
+                    <td className="py-2 pr-4">
+                      <p style={{ color: "var(--text-1)" }}>{e.full_name}</p>
+                      {e.username && (
+                        <p className="font-mono text-[10px] mt-0.5" style={{ color: "var(--text-3)" }}>@{e.username}</p>
+                      )}
+                    </td>
                     <td className="py-2 pr-4" style={{ color: "var(--text-2)" }}>{e.grade ?? "—"}</td>
                     <td className="py-2 pr-4" style={{ color: "var(--text-2)" }}>{e.school ?? "—"}</td>
                     <td className="py-2 pr-4" style={{ color: "var(--text-2)" }}>{e.parent_email ?? "—"}</td>
                     <td className="py-2 pr-4" style={{ color: "var(--text-2)" }}>{e.heard_from ?? "—"}</td>
+                    <td className="py-2">
+                      <button
+                        onClick={() => removeParticipant(e.user_id)}
+                        disabled={removing === e.user_id}
+                        className="font-mono text-[10px] tracking-wider px-2.5 py-1 rounded-lg transition-all disabled:opacity-40"
+                        style={{ color: "var(--loss)", border: "1px solid var(--loss-border)" }}
+                        onMouseEnter={(el) => { el.currentTarget.style.background = "var(--loss-bg)"; }}
+                        onMouseLeave={(el) => { el.currentTarget.style.background = "transparent"; }}
+                      >
+                        {removing === e.user_id ? "…" : "Remove"}
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -44,10 +44,28 @@ export default async function AdminPage() {
   if (contest) {
     const { data: e } = await admin
       .from("contest_enrollments")
-      .select("full_name, parent_email, school, grade, heard_from, enrolled_at")
+      .select("user_id, full_name, parent_email, school, grade, heard_from, enrolled_at")
       .eq("league_id", contest.id)
       .order("enrolled_at", { ascending: false });
-    enrollments = (e ?? []) as EnrollmentRow[];
+
+    // fetch usernames for each enrolled user
+    const userIds = (e ?? []).map((r: any) => r.user_id);
+    const { data: profiles } = userIds.length > 0
+      ? await admin.from("profiles").select("id, username").in("id", userIds)
+      : { data: [] };
+    const usernameById = Object.fromEntries((profiles ?? []).map((p: any) => [p.id, p.username]));
+
+    enrollments = (e ?? []).map((r: any) => ({
+      user_id: r.user_id,
+      username: usernameById[r.user_id] ?? null,
+      full_name: r.full_name,
+      parent_email: r.parent_email,
+      school: r.school,
+      grade: r.grade,
+      heard_from: r.heard_from,
+      enrolled_at: r.enrolled_at,
+    })) as EnrollmentRow[];
+
     const { count } = await admin
       .from("league_members")
       .select("user_id", { count: "exact", head: true })

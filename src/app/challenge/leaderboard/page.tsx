@@ -39,16 +39,23 @@ async function loadStandings(): Promise<Standings | null> {
   const memberRows = members ?? [];
   if (memberRows.length === 0) return { contestName: contest.name, started, rows: [] };
 
-  const nameById = new Map<string, string>();
   const enrolledAtById = new Map<string, string>();
+  const fullNameById = new Map<string, string>();
   for (const e of enrollments ?? []) {
-    nameById.set(e.user_id, e.full_name);
+    fullNameById.set(e.user_id, e.full_name);
     enrolledAtById.set(e.user_id, e.enrolled_at);
   }
-  const missing = memberRows.filter((m) => !nameById.has(m.user_id)).map((m) => m.user_id);
-  if (missing.length > 0) {
-    const { data: profs } = await admin.from("profiles").select("id, username").in("id", missing);
-    for (const p of profs ?? []) nameById.set(p.id, p.username);
+  // Prefer Papyrus username from profiles; fall back to enrollment full_name
+  const nameById = new Map<string, string>();
+  const allUserIds = memberRows.map((m) => m.user_id);
+  if (allUserIds.length > 0) {
+    const { data: profs } = await admin.from("profiles").select("id, username").in("id", allUserIds);
+    for (const p of profs ?? []) {
+      if (p.username) nameById.set(p.id, p.username);
+    }
+  }
+  for (const [userId, fullName] of fullNameById) {
+    if (!nameById.has(userId)) nameById.set(userId, fullName);
   }
 
   const symbols = [...new Set((holdings ?? []).map((h) => h.symbol))];
