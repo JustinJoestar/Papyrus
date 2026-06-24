@@ -45,17 +45,15 @@ async function loadStandings(): Promise<Standings | null> {
     fullNameById.set(e.user_id, e.full_name);
     enrolledAtById.set(e.user_id, e.enrolled_at);
   }
-  // Prefer Papyrus username from profiles; fall back to enrollment full_name
-  const nameById = new Map<string, string>();
-  const allUserIds = memberRows.map((m) => m.user_id);
-  if (allUserIds.length > 0) {
-    const { data: profs } = await admin.from("profiles").select("id, username").in("id", allUserIds);
+  // Challenge leaderboard shows the enrollment FULL NAME (not Papyrus username).
+  const nameById = new Map<string, string>(fullNameById);
+  // Fall back to username only if a member somehow has no full name on file.
+  const missing = memberRows.filter((m) => !nameById.has(m.user_id)).map((m) => m.user_id);
+  if (missing.length > 0) {
+    const { data: profs } = await admin.from("profiles").select("id, username").in("id", missing);
     for (const p of profs ?? []) {
       if (p.username) nameById.set(p.id, p.username);
     }
-  }
-  for (const [userId, fullName] of fullNameById) {
-    if (!nameById.has(userId)) nameById.set(userId, fullName);
   }
 
   const symbols = [...new Set((holdings ?? []).map((h) => h.symbol))];

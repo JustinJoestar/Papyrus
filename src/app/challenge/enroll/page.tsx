@@ -70,6 +70,7 @@ export default function EnrollPage() {
 
   // enrollment form fields
   const [fullName, setFullName] = useState("");
+  const [parentEmail, setParentEmail] = useState("");
   const [school, setSchool] = useState("");
   const [grade, setGrade] = useState("");
   const [heardFrom, setHeardFrom] = useState("");
@@ -155,7 +156,7 @@ export default function EnrollPage() {
     const { data, error: rpcError } = await supabase.rpc("enroll_in_contest", {
       p_league_id:    contest.id,
       p_full_name:    fullName.trim(),
-      p_parent_email: null,
+      p_parent_email: parentEmail.trim() || null,
       p_school:       school.trim() || null,
       p_grade:        grade || null,
       p_heard_from:   heardFrom || null,
@@ -337,6 +338,19 @@ export default function EnrollPage() {
             type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)}
             className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none" style={fieldStyle} placeholder="Alex Rivera"
           />
+        </div>
+
+        <div>
+          <label className="block font-mono text-[10px] tracking-[0.22em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
+            Parent / guardian email
+          </label>
+          <input
+            type="email" value={parentEmail} onChange={(e) => setParentEmail(e.target.value)}
+            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none" style={fieldStyle} placeholder="optional"
+          />
+          <p className="mt-1.5 text-[11px] leading-relaxed" style={{ color: "var(--text-3)" }}>
+            Optional — participants are under 18, so if you add one we&apos;ll send a parent or guardian occasional updates and the final standings.
+          </p>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
