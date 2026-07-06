@@ -111,7 +111,7 @@ export default async function LeaderboardPage() {
           </span>
         ) : null}
       </div>
-      <h1 className="font-bold text-3xl sm:text-4xl mb-3" style={{ color: "var(--text-1)" }}>
+      <h1 className="font-display font-semibold text-3xl sm:text-4xl mb-3" style={{ color: "var(--text-1)" }}>
         {data?.contestName ?? CONTEST.name}
       </h1>
       <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>

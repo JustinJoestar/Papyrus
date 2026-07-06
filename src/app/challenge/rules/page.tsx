@@ -10,7 +10,7 @@ export const metadata = {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-10">
-      <h2 className="font-bold text-xl mb-4" style={{ color: "var(--text-1)" }}>{title}</h2>
+      <h2 className="font-display font-semibold text-xl mb-4" style={{ color: "var(--text-1)" }}>{title}</h2>
       <div className="space-y-3 text-sm leading-relaxed" style={{ color: "var(--text-2)" }}>{children}</div>
     </section>
   );
@@ -24,7 +24,7 @@ export default function RulesPage() {
       <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
         Official Rules
       </p>
-      <h1 className="font-bold text-3xl sm:text-4xl mb-3" style={{ color: "var(--text-1)" }}>
+      <h1 className="font-display font-semibold text-3xl sm:text-4xl mb-3" style={{ color: "var(--text-1)" }}>
         How the Challenge works
       </h1>
       <p className="text-sm mb-10" style={{ color: "var(--text-3)" }}>

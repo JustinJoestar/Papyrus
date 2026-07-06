@@ -47,7 +47,7 @@ export default async function ChallengeMarketPage() {
         <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1" style={{ color: "var(--text-3)" }}>
           Challenge
         </p>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>Market</h1>
+        <h1 className="font-display text-2xl font-semibold" style={{ color: "var(--text-1)" }}>Market</h1>
       </div>
 
       <div className="flex items-center justify-between mb-6">

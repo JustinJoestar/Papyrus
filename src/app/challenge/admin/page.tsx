@@ -16,7 +16,7 @@ export default async function AdminPage() {
   if (!isAdmin) {
     return (
       <div className="max-w-md mx-auto px-5 py-24 text-center">
-        <h1 className="font-bold text-xl mb-2" style={{ color: "var(--text-1)" }}>Not authorized</h1>
+        <h1 className="font-display font-semibold text-xl mb-2" style={{ color: "var(--text-1)" }}>Not authorized</h1>
         <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>
           This page is for contest administrators. Add your email to the <code>app_admins</code> table to gain access.
         </p>

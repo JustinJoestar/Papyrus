@@ -4,6 +4,7 @@ import NavThemeToggle from "@/components/NavThemeToggle";
 import { GoldShimmerCta } from "@/components/GoldShimmerCta";
 import NavUserMenu from "@/components/NavUserMenu";
 import ChallengeNavLinks from "@/components/challenge/ChallengeNavLinks";
+import PapyrusMark from "@/components/PapyrusMark";
 import { Home } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
@@ -28,16 +29,9 @@ export default async function ChallengeLayout({ children }: { children: React.Re
         className="sticky top-0 z-50 h-14 flex items-center px-5 sm:px-8 gap-4 backdrop-blur-md"
         style={{ background: "var(--nav-bg)", borderBottom: "1px solid var(--border)" }}
       >
-        {/* Logo */}
+        {/* Logo — the seal */}
         <Link href="/challenge" className="flex items-center gap-2.5 shrink-0">
-          <div className="flex items-end gap-[3px]">
-            <div className="w-[3px] h-3      rounded-sm" style={{ background: "var(--gold)" }} />
-            <div className="w-[3px] h-[16px] rounded-sm" style={{ background: "var(--gold)" }} />
-            <div className="w-[3px] h-2      rounded-sm" style={{ background: "var(--gold-dim)" }} />
-          </div>
-          <span className="font-mono font-bold text-sm tracking-[0.15em]" style={{ color: "var(--text-1)" }}>
-            PAPYRUS
-          </span>
+          <PapyrusMark sealSize={26} wordmarkSize={14} />
           <span
             className="font-mono text-[9px] tracking-[0.18em] px-1.5 py-0.5 rounded"
             style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}

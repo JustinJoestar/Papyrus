@@ -178,7 +178,7 @@ export default function EnrollPage() {
   if (phase === "signedOut") {
     return (
       <Card>
-        <h1 className="font-bold text-xl mb-1" style={{ color: "var(--text-1)" }}>Enter the Challenge</h1>
+        <h1 className="font-display font-semibold text-xl mb-1" style={{ color: "var(--text-1)" }}>Enter the Challenge</h1>
         <p className="text-xs font-mono mb-6" style={{ color: "var(--text-3)" }}>Sign in to claim your spot — free, 30 seconds</p>
 
         {error && (
@@ -238,7 +238,7 @@ export default function EnrollPage() {
     const closed = phase === "closed";
     return (
       <Card>
-        <h1 className="font-bold text-xl mb-2" style={{ color: "var(--text-1)" }}>
+        <h1 className="font-display font-semibold text-xl mb-2" style={{ color: "var(--text-1)" }}>
           {closed ? "Enrollment has closed" : "Enrollment isn't open yet"}
         </h1>
         <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>
@@ -258,7 +258,7 @@ export default function EnrollPage() {
       <Card>
         <div className="text-center">
           <div className="text-4xl mb-3">🎉</div>
-          <h1 className="font-bold text-xl mb-2" style={{ color: "var(--text-1)" }}>You&apos;re in, {fullName.split(" ")[0]}!</h1>
+          <h1 className="font-display font-semibold text-xl mb-2" style={{ color: "var(--text-1)" }}>You&apos;re in, {fullName.split(" ")[0]}!</h1>
           <p className="text-sm mb-6" style={{ color: "var(--text-2)" }}>
             You&apos;re enrolled in the {CONTEST.name}. Trading opens {formatContestDate(CONTEST.startsAt)} — we&apos;ll
             email you when it&apos;s go time.
@@ -279,7 +279,7 @@ export default function EnrollPage() {
   // ── Enrollment form ───────────────────────────────────────
   return (
     <Card>
-      <h1 className="font-bold text-xl mb-1" style={{ color: "var(--text-1)" }}>Almost in</h1>
+      <h1 className="font-display font-semibold text-xl mb-1" style={{ color: "var(--text-1)" }}>Almost in</h1>
       <p className="text-xs font-mono mb-5" style={{ color: "var(--text-3)" }}>A few quick details and you&apos;re competing</p>
 
       {/* Account visual */}

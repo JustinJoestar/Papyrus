@@ -100,7 +100,7 @@ export default async function ChallengeProfilePage() {
         </div>
         <div>
           <div className="flex items-center gap-2.5 mb-1">
-            <h1 className="font-bold text-2xl" style={{ color: "var(--text-1)" }}>{displayName}</h1>
+            <h1 className="font-display font-semibold text-2xl" style={{ color: "var(--text-1)" }}>{displayName}</h1>
             <span
               className="font-mono text-[9px] tracking-[0.18em] px-1.5 py-0.5 rounded"
               style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}

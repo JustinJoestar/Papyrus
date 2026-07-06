@@ -75,7 +75,7 @@ export default function ChallengeLanding() {
       {/* ── How it works ─────────────────────────────────────── */}
       <section className="px-5 sm:px-8 pb-20">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-center font-bold text-2xl sm:text-3xl mb-12" style={{ color: "var(--text-1)" }}>
+          <h2 className="text-center font-display font-semibold text-2xl sm:text-3xl mb-12" style={{ color: "var(--text-1)" }}>
             How it works
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -100,7 +100,7 @@ export default function ChallengeLanding() {
           <p className="text-center font-mono text-[10px] tracking-[0.28em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
             Three awards
           </p>
-          <h2 className="text-center font-bold text-2xl sm:text-3xl mb-3" style={{ color: "var(--text-1)" }}>
+          <h2 className="text-center font-display font-semibold text-2xl sm:text-3xl mb-3" style={{ color: "var(--text-1)" }}>
             Three ways to win
           </h2>
           <p className="text-center text-sm max-w-lg mx-auto mb-12" style={{ color: "var(--text-3)" }}>
@@ -140,7 +140,7 @@ export default function ChallengeLanding() {
             style={{ background: "radial-gradient(ellipse 60% 80% at 50% 120%, var(--cta-radial) 0%, transparent 60%)" }}
           />
           <div className="relative">
-            <h2 className="font-bold text-2xl sm:text-3xl mb-3" style={{ color: "var(--text-1)" }}>
+            <h2 className="font-display font-semibold text-2xl sm:text-3xl mb-3" style={{ color: "var(--text-1)" }}>
               Think you can top the board?
             </h2>
             <p className="text-sm mb-7 max-w-md mx-auto" style={{ color: "var(--text-2)" }}>

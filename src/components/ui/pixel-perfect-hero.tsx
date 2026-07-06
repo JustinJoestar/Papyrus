@@ -65,8 +65,8 @@ export function PixelHero({
         )}
 
         <h1 className="flex flex-row items-baseline justify-center gap-2 sm:gap-4 px-1 w-full flex-wrap text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] leading-[0.95]">
-          <span className="font-playfair italic font-medium text-gold-gradient">{word1}</span>
-          <span className="font-sans font-extrabold tracking-tighter text-gold-shimmer">{word2}</span>
+          <span className="font-display italic font-medium text-gold-gradient">{word1}</span>
+          <span className="font-display font-semibold tracking-tight text-gold-shimmer">{word2}</span>
         </h1>
 
         <p

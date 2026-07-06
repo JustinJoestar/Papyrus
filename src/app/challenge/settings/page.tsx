@@ -43,7 +43,7 @@ export default async function ChallengeSettingsPage() {
             CHALLENGE
           </span>
         </div>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>Settings</h1>
+        <h1 className="font-display text-2xl font-semibold" style={{ color: "var(--text-1)" }}>Settings</h1>
       </div>
 
       {/* Account */}

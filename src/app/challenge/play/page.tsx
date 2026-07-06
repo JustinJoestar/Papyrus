@@ -36,7 +36,7 @@ export default async function ChallengePlayPage() {
               Coming Soon
             </span>
           </div>
-          <h1 className="font-bold text-3xl mb-4" style={{ color: "var(--text-1)" }}>
+          <h1 className="font-display font-semibold text-3xl mb-4" style={{ color: "var(--text-1)" }}>
             Challenge Portfolio
           </h1>
           <p className="text-sm mb-2" style={{ color: "var(--text-2)" }}>
@@ -127,7 +127,7 @@ export default async function ChallengePlayPage() {
         <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1" style={{ color: "var(--text-3)" }}>
           Welcome back
         </p>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
+        <h1 className="font-display text-2xl font-semibold" style={{ color: "var(--text-1)" }}>
           {profile?.username}
         </h1>
       </div>

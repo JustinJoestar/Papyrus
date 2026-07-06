@@ -36,7 +36,7 @@ export default function ParentsPage() {
       <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
         For Parents &amp; Guardians
       </p>
-      <h1 className="font-bold text-3xl sm:text-4xl mb-4 leading-tight" style={{ color: "var(--text-1)" }}>
+      <h1 className="font-display font-semibold text-3xl sm:text-4xl mb-4 leading-tight" style={{ color: "var(--text-1)" }}>
         A safe, free way for your teen to learn investing
       </h1>
       <p className="text-base mb-10 leading-relaxed" style={{ color: "var(--text-2)" }}>
@@ -62,7 +62,7 @@ export default function ParentsPage() {
 
       {/* What they learn */}
       <section className="mb-12">
-        <h2 className="font-bold text-xl mb-4" style={{ color: "var(--text-1)" }}>What your teen will learn</h2>
+        <h2 className="font-display font-semibold text-xl mb-4" style={{ color: "var(--text-1)" }}>What your teen will learn</h2>
         <ul className="space-y-2.5 text-sm" style={{ color: "var(--text-2)" }}>
           {[
             "How the stock market actually works — prices, returns, and diversification.",
@@ -80,7 +80,7 @@ export default function ParentsPage() {
 
       {/* Safety & privacy */}
       <section className="mb-12">
-        <h2 className="font-bold text-xl mb-4" style={{ color: "var(--text-1)" }}>Safety &amp; privacy</h2>
+        <h2 className="font-display font-semibold text-xl mb-4" style={{ color: "var(--text-1)" }}>Safety &amp; privacy</h2>
         <div className="space-y-3 text-sm leading-relaxed" style={{ color: "var(--text-2)" }}>
           <p>
             The contest is open to participants <strong>{CONTEST.minAge} and older</strong>. We deliberately keep

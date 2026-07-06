@@ -86,7 +86,14 @@ export function WebGLShader() {
 
     const initScene = () => {
       refs.scene = new THREE.Scene();
-      refs.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      // WebGL may be unavailable (old hardware, software rendering, headless).
+      // Fail quietly and leave the static backdrop instead of crashing the page.
+      try {
+        refs.renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      } catch {
+        refs.renderer = null;
+        return;
+      }
       refs.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       refs.renderer.setClearColor(new THREE.Color(0x05060a));
       refs.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);
@@ -126,6 +133,7 @@ export function WebGLShader() {
     };
 
     initScene();
+    if (!refs.renderer) return; // no WebGL — skip animation + observers
     animate();
 
     const resizeObserver = new ResizeObserver(() => sizeToParent());
