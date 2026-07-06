@@ -21,6 +21,8 @@ export default function HeroGlobe() {
 
     if (!canvasRef.current) return;
 
+    // Vault: warm lacquer sphere with gold-leaf continents.
+    // Parchment: paper sphere with bronze-ink continents.
     const globe = createGlobe(canvasRef.current, {
       devicePixelRatio: 2,
       width: 360,
@@ -30,10 +32,10 @@ export default function HeroGlobe() {
       dark: isLight ? 0 : 1,
       diffuse: isLight ? 1.8 : 2.4,
       mapSamples: 20000,
-      mapBrightness: isLight ? 8 : 22,
-      baseColor:   isLight ? [0.78, 0.88, 0.98] : [0.12, 0.10, 0.04],
-      markerColor: isLight ? [0.10, 0.32, 0.92] : [1.0, 0.88, 0.40],
-      glowColor:   isLight ? [0.37, 0.60, 0.98] : [1.0, 0.80, 0.28],
+      mapBrightness: isLight ? 7 : 20,
+      baseColor:   isLight ? [0.96, 0.93, 0.84] : [0.13, 0.11, 0.05],
+      markerColor: isLight ? [0.56, 0.43, 0.15] : [1.0, 0.85, 0.45],
+      glowColor:   isLight ? [0.78, 0.66, 0.38] : [1.0, 0.78, 0.30],
       markers: [],
     });
 
@@ -52,6 +54,17 @@ export default function HeroGlobe() {
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: 240, height: 240 }}>
+      {/* Engraved orbit ring */}
+      <div
+        aria-hidden
+        className="absolute rounded-full"
+        style={{
+          width: 258,
+          height: 258,
+          border: "1px dashed var(--gold-border)",
+          opacity: 0.6,
+        }}
+      />
       <canvas
         ref={canvasRef}
         width={360}

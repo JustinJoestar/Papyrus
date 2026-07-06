@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
-const GOLD_BG = "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 60%, var(--gold-bright) 100%)";
+const BRONZE_BG = "linear-gradient(150deg, var(--gold-bright) 0%, var(--gold) 45%, var(--gold-dim) 130%)";
 
 interface GoldShimmerCtaProps {
   href: string;
@@ -18,17 +18,17 @@ export function GoldShimmerCta({ href, children, className }: GoldShimmerCtaProp
       href={href}
       style={{
         "--spread": "90deg",
-        "--shimmer-color": "rgba(255,255,255,0.45)",
+        "--shimmer-color": "rgba(255,255,255,0.5)",
         "--speed": "3s",
         "--cut": "0.05em",
-        color: "#0a0800",
-        background: GOLD_BG,
-        boxShadow: "var(--primary-glow)",
+        color: "var(--ink-on-gold)",
+        background: BRONZE_BG,
+        boxShadow: "var(--primary-glow), inset 0 1px 0 rgba(255,255,255,0.28)",
       } as CSSProperties}
       className={cn(
         "group relative z-0 inline-flex cursor-pointer items-center justify-center overflow-hidden whitespace-nowrap",
-        "font-mono font-semibold text-sm tracking-wide px-7 py-3 rounded-lg",
-        "border border-white/10",
+        "font-mono font-bold text-sm tracking-[0.06em] px-7 py-3 rounded-[10px]",
+        "border border-white/15",
         "transform-gpu transition-transform duration-300 ease-in-out active:translate-y-px",
         className,
       )}
@@ -42,13 +42,13 @@ export function GoldShimmerCta({ href, children, className }: GoldShimmerCtaProp
 
       {children}
 
-      {/* highlight */}
-      <div className="absolute inset-0 size-full rounded-lg shadow-[inset_0_-8px_10px_#ffffff1f] transform-gpu transition-all duration-300 ease-in-out group-hover:shadow-[inset_0_-6px_10px_#ffffff3f] group-active:shadow-[inset_0_-10px_10px_#ffffff3f]" />
+      {/* pressed-metal highlight */}
+      <div className="absolute inset-0 size-full rounded-[10px] shadow-[inset_0_-8px_10px_#ffffff1f] transform-gpu transition-all duration-300 ease-in-out group-hover:shadow-[inset_0_-6px_10px_#ffffff3f] group-active:shadow-[inset_0_-10px_10px_#ffffff3f]" />
 
-      {/* backdrop — replicates gold bg slightly inset for the border effect */}
+      {/* backdrop — replicates bronze bg slightly inset for the border effect */}
       <div
-        className="absolute -z-20 rounded-[calc(8px-0.05em)] [inset:var(--cut)]"
-        style={{ background: GOLD_BG }}
+        className="absolute -z-20 rounded-[calc(10px-0.05em)] [inset:var(--cut)]"
+        style={{ background: BRONZE_BG }}
       />
     </Link>
   );

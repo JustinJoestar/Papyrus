@@ -22,10 +22,11 @@ export default function CursorGlow() {
       current.current.y += (target.current.y - current.current.y) * 0.07;
 
       const { x, y } = current.current;
+      // Candlelight follows the cursor — warm bronze in both themes
       el.style.background = [
-        `radial-gradient(800px circle at ${x}px ${y}px,`,
-        `  rgba(201,168,76,0.07) 0%,`,
-        `  rgba(201,168,76,0.02) 30%,`,
+        `radial-gradient(760px circle at ${x}px ${y}px,`,
+        `  rgba(201,162,78,0.065) 0%,`,
+        `  rgba(201,162,78,0.02) 30%,`,
         `  transparent 70%`,
         `)`,
       ].join(" ");

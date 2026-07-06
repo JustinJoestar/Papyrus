@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { PulseBeams } from "@/components/ui/pulse-beams";
+import { Seal } from "@/components/PapyrusMark";
 
 // Each beam connects an outer asset node → the central hub
 const BEAMS = [
@@ -87,19 +88,14 @@ export default function PulseSection() {
     <section className="relative z-10 w-full max-w-5xl mx-auto px-8 pb-24">
       {/* Section header */}
       <div className="text-center mb-2">
-        <p
-          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-3"
-          style={{ color: "var(--text-2)" }}
-        >
-          One platform
-        </p>
-        <h2 className="font-playfair text-3xl font-bold mb-2" style={{ color: "var(--text-1)" }}>
+        <p className="label-ledger mb-3">One platform</p>
+        <h2 className="font-display text-4xl font-semibold mb-3" style={{ color: "var(--text-1)" }}>
           Every market.{" "}
-          <span className="text-gold-glow">All connected.</span>
+          <em className="text-gold-glow" style={{ fontWeight: 500 }}>All connected.</em>
         </h2>
         <p
-          className="font-cormorant text-xl font-medium max-w-lg mx-auto"
-          style={{ color: "var(--text-2)" }}
+          className="font-display italic text-xl max-w-lg mx-auto"
+          style={{ color: "var(--text-2)", fontVariationSettings: '"opsz" 30' }}
         >
           Live data flows from every market straight into your paper portfolio.
         </p>
@@ -121,11 +117,11 @@ export default function PulseSection() {
             className="relative group cursor-pointer inline-flex"
           >
             <div
-              className="relative z-10 flex flex-col items-center justify-center w-[160px] h-[80px] rounded-2xl transition-all duration-300 group-hover:scale-105"
+              className="relative z-10 flex flex-col items-center justify-center w-[164px] h-[86px] rounded-2xl transition-all duration-300 group-hover:scale-105"
               style={{
                 background: "linear-gradient(135deg, var(--surface) 0%, var(--elevated) 100%)",
                 border: "1px solid var(--gold-border)",
-                boxShadow: "var(--primary-glow), inset 0 1px 0 rgba(201,168,76,0.1)",
+                boxShadow: "var(--primary-glow), inset 0 1px 0 rgba(201,162,78,0.1)",
               }}
             >
               {/* Top shimmer line */}
@@ -135,14 +131,10 @@ export default function PulseSection() {
                   background: "linear-gradient(90deg, transparent, var(--gold) 40%, var(--gold-bright) 60%, transparent)",
                 }}
               />
-              <div className="flex items-end gap-[3px] mb-1.5">
-                <div className="w-[3px] h-3      rounded-sm" style={{ background: "var(--gold)" }} />
-                <div className="w-[3px] h-[16px] rounded-sm" style={{ background: "var(--gold)" }} />
-                <div className="w-[3px] h-2      rounded-sm" style={{ background: "var(--gold-dim)" }} />
-              </div>
+              <Seal size={26} />
               <span
-                className="font-mono font-bold text-[11px] tracking-[0.2em]"
-                style={{ color: "var(--gold)" }}
+                className="font-display font-semibold text-[12px] mt-1.5"
+                style={{ color: "var(--gold)", letterSpacing: "0.16em" }}
               >
                 PAPYRUS
               </span>

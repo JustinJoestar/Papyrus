@@ -28,30 +28,6 @@ type SnapshotEntry = {
   rank: number;
 };
 
-const PODIUM = {
-  1: {
-    border:     "rgba(201,168,76,0.35)",
-    badgeBg:    "rgba(201,168,76,0.12)",
-    badgeColor: "var(--gold-bright)",
-    valueColor: "var(--gold-bright)",
-    label:      "GOLD",
-  },
-  2: {
-    border:     "rgba(180,190,210,0.25)",
-    badgeBg:    "rgba(180,190,210,0.08)",
-    badgeColor: "#b0bccc",
-    valueColor: "#b0bccc",
-    label:      "SILVER",
-  },
-  3: {
-    border:     "rgba(180,110,60,0.28)",
-    badgeBg:    "rgba(180,110,60,0.08)",
-    badgeColor: "#c07040",
-    valueColor: "#c07040",
-    label:      "BRONZE",
-  },
-} as const;
-
 export default async function LeaderboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -147,43 +123,29 @@ export default async function LeaderboardPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       {/* Header */}
-      <div className="mb-8">
-        <p
-          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
-          style={{ color: "var(--text-3)" }}
-        >
-          Competition
-        </p>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
+      <div className="rise mb-8" style={{ "--i": 0 } as React.CSSProperties}>
+        <p className="label-ledger mb-1.5">№ 03 — Competition</p>
+        <h1 className="font-display text-3xl font-semibold" style={{ color: "var(--text-1)" }}>
           Global Leaderboard
         </h1>
       </div>
 
       {/* Reset countdown */}
       <div
-        className="rounded-2xl px-4 sm:px-6 py-4 sm:py-5 mb-8 flex flex-wrap items-center justify-between gap-4"
-        style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border-mid)",
-        }}
+        className="rise card-cert corner-frame rounded-2xl px-5 sm:px-7 py-4 sm:py-5 mb-8 flex flex-wrap items-center justify-between gap-4"
+        style={{ "--i": 1 } as React.CSSProperties}
       >
         <div>
-          <p
-            className="font-mono text-[10px] tracking-[0.22em] uppercase mb-1.5"
-            style={{ color: "var(--text-3)" }}
-          >
+          <p className="label-ledger mb-1.5" style={{ letterSpacing: "0.22em" }}>
             Weekly Reset
           </p>
           <ResetCountdown />
         </div>
         <div className="text-right">
-          <p
-            className="font-mono text-[10px] tracking-[0.22em] uppercase mb-1.5"
-            style={{ color: "var(--text-3)" }}
-          >
+          <p className="label-ledger mb-1.5" style={{ letterSpacing: "0.22em" }}>
             Starting Balance
           </p>
-          <p className="font-mono text-xl font-bold text-gold-gradient">$10,000</p>
+          <p className="font-mono text-xl font-bold text-gold-gradient tabular-nums">$10,000</p>
         </div>
       </div>
 

@@ -116,18 +116,19 @@ const CANVAS_W = PAD_X * 2 + (MAX_COL + 1) * CELL_W;
 const CANVAS_H = PAD_Y * 2 + (MAX_ROW + 1) * CELL_H;
 
 // ─── Rarity config ────────────────────────────────────────────────────────────
+// Literal hexes only: these feed SVG attributes + hex-alpha suffixes.
 const RARITY_CFG: Record<Rarity, { border: string; glow: string; text: string; label: string }> = {
-  common:   { border: "#6a541e", glow: "rgba(106,84,30,0.5)",   text: "#b09040", label: "Common"   },
-  uncommon: { border: "#a87c28", glow: "rgba(168,124,40,0.55)", text: "#d4aa58", label: "Uncommon" },
-  rare:     { border: "#c9a84c", glow: "rgba(201,168,76,0.65)", text: "#f0cc70", label: "Rare"     },
-  epic:     { border: "#e8c66a", glow: "rgba(232,198,106,0.8)", text: "#fff8b0", label: "Epic"     },
+  common:   { border: "#6a5420", glow: "rgba(106,84,32,0.5)",   text: "#b09040", label: "Common"   },
+  uncommon: { border: "#a87f2c", glow: "rgba(168,127,44,0.55)", text: "#d4aa58", label: "Uncommon" },
+  rare:     { border: "#c9a24e", glow: "rgba(201,162,78,0.65)", text: "#f0cc70", label: "Rare"     },
+  epic:     { border: "#ebcb7e", glow: "rgba(235,203,126,0.8)", text: "#fff4c0", label: "Epic"     },
 };
 
 const RARITY_CFG_LIGHT: Record<Rarity, { border: string; glow: string; text: string; label: string }> = {
-  common:   { border: "#60a5fa", glow: "rgba(96,165,250,0.45)",  text: "#2563eb", label: "Common"   },
-  uncommon: { border: "#3b82f6", glow: "rgba(59,130,246,0.50)",  text: "#1d4ed8", label: "Uncommon" },
-  rare:     { border: "#2563eb", glow: "rgba(37,99,235,0.60)",   text: "#1e40af", label: "Rare"     },
-  epic:     { border: "#1d4ed8", glow: "rgba(29,78,216,0.75)",   text: "#1e3a8a", label: "Epic"     },
+  common:   { border: "#b39a5e", glow: "rgba(179,154,94,0.40)", text: "#8a6f33", label: "Common"   },
+  uncommon: { border: "#a8894b", glow: "rgba(168,137,75,0.45)", text: "#7d6224", label: "Uncommon" },
+  rare:     { border: "#8e6e26", glow: "rgba(142,110,38,0.50)", text: "#6f541c", label: "Rare"     },
+  epic:     { border: "#6f541c", glow: "rgba(111,84,28,0.60)",  text: "#59421a", label: "Epic"     },
 };
 
 function getRarity(rarity: Rarity, isLight: boolean) {
@@ -150,9 +151,9 @@ function getStatus(id: string, unlocked: Set<string>): Status {
 }
 
 function edgeColor(parentId: string, childId: string, unlocked: Set<string>, isLight: boolean): string {
-  if (unlocked.has(parentId) && unlocked.has(childId)) return isLight ? "#2563eb" : "#c9a84c";
-  if (unlocked.has(parentId)) return isLight ? "#93c5fd" : "#5a4020";
-  return isLight ? "#cbd5e1" : "#2e2e2e";
+  if (unlocked.has(parentId) && unlocked.has(childId)) return isLight ? "#8e6e26" : "#c9a24e";
+  if (unlocked.has(parentId)) return isLight ? "#c9b078" : "#5a4626";
+  return isLight ? "#ccc1a5" : "#2e2a20";
 }
 
 function edgePath(parent: AchDef, child: AchDef): string {
@@ -187,8 +188,8 @@ function AchNode({
       ? `${r.border}99`
       : `${r.border}50`;
   const bg = isLight
-    ? status === "unlocked" ? "#dbeafe" : status === "accessible" ? "#f8fbff" : "#f1f5f9"
-    : status === "unlocked" ? "#2a1f06" : status === "accessible" ? "#161410" : "#0f0e0c";
+    ? status === "unlocked" ? "#f3e8c8" : status === "accessible" ? "#fbf7ec" : "#efe9da"
+    : status === "unlocked" ? "#2a2106" : status === "accessible" ? "#171410" : "#0f0e0c";
   const opacity = status === "locked" ? 0.78 : 1;
   const glow = isHovered
     ? `0 0 32px ${r.glow}, 0 0 0 1.5px ${r.border}`
@@ -245,7 +246,7 @@ function AchNode({
 
         <div style={{ flex: 1, padding: "8px 10px", overflow: "hidden" }}>
           <div style={{
-            fontFamily: "var(--font-geist-mono)",
+            fontFamily: "var(--font-data)",
             fontWeight: 700,
             fontSize: 10.5,
             letterSpacing: "0.05em",
@@ -260,13 +261,13 @@ function AchNode({
             fontSize: 9.5,
             lineHeight: 1.35,
             color: isLight
-              ? status === "unlocked" ? "#475569" : status === "accessible" ? "#64748b" : "#94a3b8"
+              ? status === "unlocked" ? "#4c4433" : status === "accessible" ? "#6b6248" : "#9a9078"
               : status === "unlocked" ? "#9a8060" : status === "accessible" ? "#6a5a45" : "#4a3e30",
             overflow: "hidden",
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical" as const,
-            fontFamily: "var(--font-geist-sans)",
+            fontFamily: "var(--font-body)",
           }}>
             {status === "unlocked" ? ach.desc : ach.hint}
           </div>
@@ -452,15 +453,15 @@ export default function AchievementsClient({
     display: "flex", alignItems: "center", justifyContent: "center",
     borderRadius: 8,
     background: isLight ? "rgba(255,255,255,0.85)" : "rgba(20,18,12,0.85)",
-    border: `1px solid ${isLight ? "#cbd5e1" : "#333"}`,
-    color: isLight ? "#475569" : "#999",
+    border: `1px solid ${isLight ? "#ccc1a5" : "#3a3325"}`,
+    color: isLight ? "#4c4433" : "#a89e88",
     cursor: "pointer",
     backdropFilter: "blur(8px)",
     transition: "border-color 0.15s",
   };
 
   return (
-    <div style={{ position: "relative", width: "100%", height: "calc(100vh - 56px)" }}>
+    <div style={{ position: "relative", width: "100%", height: "calc(100vh - 64px)" }}>
 
       {/* Viewport */}
       <div
@@ -474,10 +475,10 @@ export default function AchievementsClient({
           height: "100%",
           overflow: "hidden",
           cursor: "grab",
-          background: isLight ? "#eef4fb" : "#0e0d0a",
+          background: isLight ? "#f0ead9" : "#0e0d0a",
           backgroundImage: isLight
-            ? "radial-gradient(rgba(37,99,235,0.12) 1px, transparent 1px)"
-            : "radial-gradient(rgba(201,168,76,0.09) 1px, transparent 1px)",
+            ? "radial-gradient(rgba(142,110,38,0.14) 1px, transparent 1px)"
+            : "radial-gradient(rgba(201,162,78,0.09) 1px, transparent 1px)",
           backgroundSize: `${22 * transform.scale}px ${22 * transform.scale}px`,
           backgroundPosition: `${transform.x}px ${transform.y}px`,
           touchAction: "none",
@@ -500,17 +501,17 @@ export default function AchievementsClient({
           >
             <line
               x1={divX} y1={PAD_Y / 2} x2={divX} y2={CANVAS_H - PAD_Y / 2}
-              stroke={isLight ? "#bfdbfe" : "#333322"} strokeWidth={1} strokeDasharray="6 4"
+              stroke={isLight ? "#cfc4a6" : "#333322"} strokeWidth={1} strokeDasharray="6 4"
             />
             <text x={PAD_X + 3.5 * CELL_W} y={PAD_Y / 2 - 4}
               textAnchor="middle" fontSize={9}
-              style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
+              style={{ fill: isLight ? "#7a7057" : "#6a5a30" }}
               fontFamily="monospace" letterSpacing="3">
               TRADING MASTERY
             </text>
             <text x={PAD_X + 10 * CELL_W + CELL_W / 2} y={PAD_Y / 2 - 4}
               textAnchor="middle" fontSize={9}
-              style={{ fill: isLight ? "#64748b" : "#6a5a30" }}
+              style={{ fill: isLight ? "#7a7057" : "#6a5a30" }}
               fontFamily="monospace" letterSpacing="3">
               COMPETITION
             </text>
@@ -578,7 +579,7 @@ export default function AchievementsClient({
       <div style={{
         position: "absolute", bottom: 24, left: 20, zIndex: 20,
         fontFamily: "monospace", fontSize: 10,
-        color: isLight ? "#94a3b8" : "#555",
+        color: isLight ? "#9a9078" : "#6b6250",
         pointerEvents: "none",
       }}>
         {Math.round(transform.scale * 100)}% · {totalUnlocked}/{ACH.length} unlocked

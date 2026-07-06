@@ -1,4 +1,5 @@
 import Link from "next/link";
+import PapyrusMark from "@/components/PapyrusMark";
 
 export const metadata = {
   title: "Terms of Service — Papyrus",
@@ -49,36 +50,16 @@ const SECTIONS = [
 
 export default function TosPage() {
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        backgroundColor: "var(--void)",
-        backgroundImage: "radial-gradient(rgba(201,168,76,0.10) 1.5px, transparent 1.5px)",
-        backgroundSize: "28px 28px",
-        color: "var(--text-1)",
-      }}
-    >
+    <div className="min-h-screen" style={{ color: "var(--text-1)" }}>
       <div className="max-w-2xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="mb-12">
-          <Link
-            href="/"
-            className="flex items-center gap-2.5 mb-10 w-fit"
-          >
-            <div className="flex items-end gap-[3px]">
-              <div className="w-[3px] h-3     rounded-sm" style={{ background: "var(--gold)" }} />
-              <div className="w-[3px] h-[18px] rounded-sm" style={{ background: "var(--gold)" }} />
-              <div className="w-[3px] h-2     rounded-sm" style={{ background: "var(--gold-dim)" }} />
-            </div>
-            <span className="font-mono font-bold text-lg tracking-[0.16em]" style={{ color: "var(--text-1)" }}>
-              PAPYRUS
-            </span>
+          <Link href="/" className="inline-block mb-10 w-fit">
+            <PapyrusMark sealSize={32} wordmarkSize={17} />
           </Link>
 
-          <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
-            Legal
-          </p>
-          <h1 className="font-bold text-3xl mb-3" style={{ color: "var(--text-1)" }}>
+          <p className="label-ledger mb-2">Legal</p>
+          <h1 className="font-display font-semibold text-4xl mb-3" style={{ color: "var(--text-1)" }}>
             Terms of Service
           </h1>
           <p className="text-sm" style={{ color: "var(--text-3)" }}>
@@ -99,10 +80,10 @@ export default function TosPage() {
         </div>
 
         {/* Sections */}
-        <div className="space-y-8">
-          {SECTIONS.map((s) => (
-            <div key={s.title}>
-              <h2 className="font-semibold text-base mb-2" style={{ color: "var(--text-1)" }}>
+        <div>
+          {SECTIONS.map((s, i) => (
+            <div key={s.title} className="py-6" style={{ borderTop: i === 0 ? "1px solid var(--border-mid)" : "1px solid var(--border)" }}>
+              <h2 className="font-display font-semibold text-lg mb-2" style={{ color: "var(--text-1)" }}>
                 {s.title}
               </h2>
               <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
@@ -119,11 +100,7 @@ export default function TosPage() {
         >
           <Link
             href="/auth/signup"
-            className="inline-block font-mono font-bold text-sm tracking-[0.1em] px-6 py-2.5 rounded-xl transition-all duration-200"
-            style={{
-              background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-              color: "#0a0800",
-            }}
+            className="btn-bronze inline-flex text-sm px-6 py-2.5"
           >
             Back to Sign Up
           </Link>

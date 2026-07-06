@@ -95,36 +95,19 @@ export default function LeagueActions() {
     }
   }
 
-  const inputStyle = {
-    background: "var(--elevated)",
-    border: "1px solid var(--border-mid)",
-    color: "var(--text-1)",
-  };
-
   return (
     <div className="mb-8">
       {mode === "none" && (
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <button
             onClick={() => switchMode("create")}
-            className="text-sm font-bold font-mono tracking-[0.08em] px-5 py-2.5 rounded-xl transition-all duration-200"
-            style={{
-              background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-              color: "#0a0800",
-            }}
+            className="btn-bronze text-sm px-5 py-2.5"
           >
-            + Create League
+            + Issue a Challenge
           </button>
           <button
             onClick={() => switchMode("join")}
-            className="text-sm font-semibold px-5 py-2.5 rounded-xl transition-all"
-            style={{
-              background: "var(--elevated)",
-              border: "1px solid var(--border-mid)",
-              color: "var(--text-2)",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+            className="btn-ghost text-sm font-semibold px-5 py-2.5"
           >
             Join with Code
           </button>
@@ -133,10 +116,13 @@ export default function LeagueActions() {
 
       {mode === "create" && (
         <div
-          className="rounded-2xl p-6 max-w-sm"
-          style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
+          className="rise card-cert corner-frame rounded-2xl p-6 max-w-sm"
+          style={{ "--i": 0 } as React.CSSProperties}
         >
-          <h3 className="font-semibold mb-4" style={{ color: "var(--text-1)" }}>
+          <p className="label-ledger mb-1" style={{ letterSpacing: "0.22em", color: "var(--gold)" }}>
+            New Challenge
+          </p>
+          <h3 className="font-display font-semibold text-lg mb-4" style={{ color: "var(--text-1)" }}>
             Create a League
           </h3>
 
@@ -157,19 +143,13 @@ export default function LeagueActions() {
             placeholder="League name"
             maxLength={40}
             autoFocus
-            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all mb-4"
-            style={inputStyle}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+            className="input-ledger mb-4"
           />
 
           {/* Starting balance */}
           <div className="mb-4">
-            <p
-              className="font-mono text-[10px] tracking-[0.2em] uppercase mb-2"
-              style={{ color: "var(--text-3)" }}
-            >
-              Starting Balance
+            <p className="label-ledger mb-2" style={{ letterSpacing: "0.2em" }}>
+              The Stake — Starting Balance
             </p>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {BALANCE_PRESETS.map((val) => {
@@ -195,20 +175,14 @@ export default function LeagueActions() {
               value={customBalance}
               onChange={(e) => handleCustomBalance(e.target.value)}
               placeholder="Custom amount"
-              className="w-full rounded-xl px-4 py-2 text-sm focus:outline-none transition-all font-mono"
-              style={inputStyle}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+              className="input-ledger font-mono py-2"
             />
           </div>
 
           {/* Duration */}
           <div className="mb-4">
-            <p
-              className="font-mono text-[10px] tracking-[0.2em] uppercase mb-2"
-              style={{ color: "var(--text-3)" }}
-            >
-              Duration
+            <p className="label-ledger mb-2" style={{ letterSpacing: "0.2em" }}>
+              The Term — Duration
             </p>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {DURATION_PRESETS.map(({ label, days }) => {
@@ -234,29 +208,21 @@ export default function LeagueActions() {
               value={customDuration}
               onChange={(e) => handleCustomDuration(e.target.value)}
               placeholder="Custom days (e.g. 21)"
-              className="w-full rounded-xl px-4 py-2 text-sm focus:outline-none transition-all font-mono"
-              style={inputStyle}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+              className="input-ledger font-mono py-2"
             />
           </div>
 
           <div className="flex gap-3">
             <button
               onClick={() => switchMode("none")}
-              className="flex-1 text-sm font-medium rounded-xl py-2.5 transition-all"
-              style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-2)" }}
+              className="btn-ghost flex-1 text-sm font-medium py-2.5"
             >
               Cancel
             </button>
             <button
               onClick={handleCreate}
               disabled={loading || !createName.trim()}
-              className="flex-1 text-sm font-bold font-mono rounded-xl py-2.5 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-                color: "#0a0800",
-              }}
+              className="btn-bronze flex-1 text-sm py-2.5"
             >
               {loading ? "Creating..." : "Create"}
             </button>
@@ -266,10 +232,13 @@ export default function LeagueActions() {
 
       {mode === "join" && (
         <div
-          className="rounded-2xl p-6 max-w-sm"
-          style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
+          className="rise card-cert corner-frame rounded-2xl p-6 max-w-sm"
+          style={{ "--i": 0 } as React.CSSProperties}
         >
-          <h3 className="font-semibold mb-4" style={{ color: "var(--text-1)" }}>
+          <p className="label-ledger mb-1" style={{ letterSpacing: "0.22em", color: "var(--gold)" }}>
+            Answer a Challenge
+          </p>
+          <h3 className="font-display font-semibold text-lg mb-4" style={{ color: "var(--text-1)" }}>
             Join a League
           </h3>
 
@@ -290,28 +259,20 @@ export default function LeagueActions() {
             placeholder="Enter invite code"
             maxLength={8}
             autoFocus
-            className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all mb-4 font-mono tracking-widest uppercase"
-            style={inputStyle}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+            className="input-ledger mb-4 font-mono tracking-[0.25em] uppercase"
           />
 
           <div className="flex gap-3">
             <button
               onClick={() => switchMode("none")}
-              className="flex-1 text-sm font-medium rounded-xl py-2.5 transition-all"
-              style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-2)" }}
+              className="btn-ghost flex-1 text-sm font-medium py-2.5"
             >
               Cancel
             </button>
             <button
               onClick={handleJoin}
               disabled={loading || !joinCode.trim()}
-              className="flex-1 text-sm font-bold font-mono rounded-xl py-2.5 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-                color: "#0a0800",
-              }}
+              className="btn-bronze flex-1 text-sm py-2.5"
             >
               {loading ? "Joining..." : "Join"}
             </button>

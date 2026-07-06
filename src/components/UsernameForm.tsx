@@ -102,7 +102,7 @@ export default function UsernameForm({ currentUsername, usernameChangedAt }: Pro
             className="font-mono text-xs px-4 py-2 rounded-xl transition-all disabled:opacity-40"
             style={{
               background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%)",
-              color: "#0a0800",
+              color: "var(--ink-on-gold)",
             }}
           >
             {loading ? "Saving..." : "Save"}

@@ -32,6 +32,7 @@ function Avatar({ username, avatarUrl }: { username: string; avatarUrl: string |
       }}
     >
       {avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img src={avatarUrl} alt={username} className="w-full h-full object-cover" />
       ) : (
         <span className="font-mono font-bold text-[10px]" style={{ color: "var(--gold)" }}>
@@ -65,16 +66,13 @@ export default function LeagueMembers({ leagueId, members, isOwner, currentUserI
 
   return (
     <div>
-      <div className="mb-4">
-        <p
-          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
-          style={{ color: "var(--text-3)" }}
-        >
-          Members
-        </p>
-        <h2 className="text-base font-semibold" style={{ color: "var(--text-2)" }}>
-          {members.length} {members.length === 1 ? "member" : "members"}
+      <div className="flex items-baseline justify-between mb-4">
+        <h2 className="font-display text-lg font-semibold" style={{ color: "var(--text-1)" }}>
+          The Roster
         </h2>
+        <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>
+          {members.length} {members.length === 1 ? "member" : "members"}
+        </span>
       </div>
 
       {error && (
@@ -86,17 +84,14 @@ export default function LeagueMembers({ leagueId, members, isOwner, currentUserI
         </div>
       )}
 
-      <div className="space-y-2">
+      <div className="sheet">
         {members.map((member) => {
           const isMe = member.user_id === currentUserId;
           return (
             <div
               key={member.user_id}
-              className="rounded-xl px-4 py-3 flex items-center gap-3"
-              style={{
-                background: isMe ? "rgba(201,168,76,0.03)" : "var(--surface)",
-                border: `1px solid ${isMe ? "rgba(201,168,76,0.2)" : "var(--border)"}`,
-              }}
+              className="px-4 py-3 flex items-center gap-3"
+              style={{ background: isMe ? "var(--gold-glow)" : "transparent" }}
             >
               <Avatar username={member.username} avatarUrl={member.avatar_url} />
 

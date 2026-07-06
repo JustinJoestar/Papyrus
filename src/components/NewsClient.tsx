@@ -32,20 +32,24 @@ function HeroCard({ article, onClick }: { article: NewsItem; onClick: () => void
   return (
     <button
       onClick={onClick}
-      className="w-full text-left rounded-xl overflow-hidden mb-4 group transition-opacity duration-150 hover:opacity-90"
-      style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
+      className="rise card-cert corner-frame w-full text-left rounded-2xl overflow-hidden mb-4 group transition-all duration-300 hover:-translate-y-[2px] cursor-pointer"
+      style={{ "--i": 2 } as React.CSSProperties}
     >
+      <div className="rule-fade" />
       {img && (
         <div className="w-full aspect-[16/9] overflow-hidden">
           <img
             src={img}
             alt={article.title}
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
             referrerPolicy="no-referrer"
           />
         </div>
       )}
       <div className="p-6">
+        <p className="label-ledger mb-2" style={{ color: "var(--gold)", letterSpacing: "0.24em" }}>
+          Front Page
+        </p>
         {article.relatedTickers?.length ? (
           <div className="flex gap-1.5 mb-3 flex-wrap">
             {article.relatedTickers.slice(0, 4).map((t) => (
@@ -63,12 +67,12 @@ function HeroCard({ article, onClick }: { article: NewsItem; onClick: () => void
             ))}
           </div>
         ) : null}
-        <h2 className="text-xl font-bold leading-snug mb-3" style={{ color: "var(--text-1)" }}>
+        <h2 className="font-display text-2xl font-semibold leading-snug mb-3" style={{ color: "var(--text-1)" }}>
           {article.title}
         </h2>
-        <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-3)" }}>
+        <div className="flex items-center gap-2 text-sm font-mono" style={{ color: "var(--text-3)" }}>
           <span>{article.publisher}</span>
-          <span>·</span>
+          <span style={{ color: "var(--gold-dim)" }}>·</span>
           <span>{timeAgo(article.providerPublishTime)}</span>
         </div>
       </div>
@@ -78,13 +82,15 @@ function HeroCard({ article, onClick }: { article: NewsItem; onClick: () => void
 
 // ─── Small list card ──────────────────────────────────────────────────────────
 
-function ListCard({ article, onClick }: { article: NewsItem; onClick: () => void }) {
+function ListCard({ article, onClick, index }: { article: NewsItem; onClick: () => void; index: number }) {
   const img = getSmallThumbnail(article.thumbnail);
   return (
     <button
       onClick={onClick}
-      className="w-full text-left flex gap-4 py-5 px-4 transition-opacity duration-150 hover:opacity-75 rounded-xl mb-2"
-      style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
+      className="rise w-full text-left flex gap-4 py-5 px-5 transition-colors duration-150 cursor-pointer"
+      style={{ "--i": Math.min(index, 10), background: "transparent" } as React.CSSProperties}
+      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--gold-glow)")}
+      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
     >
       <div className="flex-1 min-w-0">
         <p className="text-xs font-mono mb-1.5" style={{ color: "var(--text-3)" }}>
@@ -157,10 +163,7 @@ function ArticleDetail({ article, onBack }: { article: NewsItem; onBack: () => v
         Back to News
       </button>
 
-      <div
-        className="rounded-xl overflow-hidden"
-        style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
-      >
+      <div className="card-cert corner-frame rounded-2xl overflow-hidden">
         {img && (
           <div className="w-full aspect-[16/9] overflow-hidden">
             <img
@@ -186,7 +189,7 @@ function ArticleDetail({ article, onBack }: { article: NewsItem; onBack: () => v
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold leading-snug mb-5" style={{ color: "var(--text-1)" }}>
+          <h1 className="font-display text-3xl font-semibold leading-snug mb-5" style={{ color: "var(--text-1)" }}>
             {article.title}
           </h1>
 
@@ -252,21 +255,17 @@ export default function NewsClient({ news }: { news: NewsItem[] }) {
   const [featured, ...rest] = news;
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-12">
-      <div className="mb-10">
-        <p
-          className="font-mono text-xs tracking-[0.28em] uppercase mb-1"
-          style={{ color: "var(--text-3)" }}
-        >
-          Markets
-        </p>
-        <h1 className="text-3xl font-bold" style={{ color: "var(--text-1)" }}>
+    <div className="max-w-4xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
+      <div className="rise mb-8" style={{ "--i": 0 } as React.CSSProperties}>
+        <p className="label-ledger mb-1.5">№ 04 — The Wire</p>
+        <h1 className="font-display text-3xl font-semibold" style={{ color: "var(--text-1)" }}>
           Market News
         </h1>
       </div>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="rise flex items-center justify-between mb-6" style={{ "--i": 1 } as React.CSSProperties}>
         <p className="font-mono text-xs" style={{ color: "var(--text-3)" }}>
+          <span className="inline-block w-1.5 h-1.5 rounded-full animate-blink-dot mr-2 align-middle" style={{ background: "var(--gold)" }} />
           {news.length} articles — updates every 5m
         </p>
       </div>
@@ -275,9 +274,9 @@ export default function NewsClient({ news }: { news: NewsItem[] }) {
         <HeroCard article={featured} onClick={() => setSelected(featured)} />
       )}
 
-      <div>
-        {rest.map((article) => (
-          <ListCard key={article.uuid} article={article} onClick={() => setSelected(article)} />
+      <div className="rise sheet" style={{ "--i": 3 } as React.CSSProperties}>
+        {rest.map((article, i) => (
+          <ListCard key={article.uuid} article={article} index={i} onClick={() => setSelected(article)} />
         ))}
       </div>
     </div>

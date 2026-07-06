@@ -20,11 +20,11 @@ const TYPE_META: Record<
   NotifType,
   { Icon: React.ElementType; color: string; bg: string; label: string }
 > = {
-  achievement: { Icon: Star,      color: "var(--gold)",  bg: "rgba(201,168,76,0.12)",  label: "Achievement" },
-  leaderboard: { Icon: Crown,     color: "#a78bfa",       bg: "rgba(167,139,250,0.12)", label: "Leaderboard" },
-  league:      { Icon: Trophy,    color: "#60a5fa",       bg: "rgba(96,165,250,0.12)",  label: "League"      },
-  reset:       { Icon: RefreshCw, color: "#34d399",       bg: "rgba(52,211,153,0.12)",  label: "Reset"       },
-  info:        { Icon: Info,      color: "var(--text-2)", bg: "rgba(180,180,180,0.08)", label: "Notice"      },
+  achievement: { Icon: Star,      color: "var(--gold)",  bg: "rgba(201,162,78,0.12)",  label: "Achievement" },
+  leaderboard: { Icon: Crown,     color: "#a98bc8",       bg: "rgba(169,139,200,0.12)", label: "Leaderboard" },
+  league:      { Icon: Trophy,    color: "#8fa3bc",       bg: "rgba(143,163,188,0.12)", label: "League"      },
+  reset:       { Icon: RefreshCw, color: "#4fa97f",       bg: "rgba(79,169,127,0.12)",  label: "Reset"       },
+  info:        { Icon: Info,      color: "var(--text-2)", bg: "rgba(160,150,130,0.08)", label: "Notice"      },
 };
 
 function getTypeMeta(type: string) {
@@ -143,7 +143,7 @@ export default function NavNotifications({ userId }: Props) {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className="absolute -top-1 -right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full font-mono font-bold text-[9px] px-1"
-            style={{ background: "var(--gold)", color: "#0a0800" }}
+            style={{ background: "var(--gold)", color: "var(--ink-on-gold)" }}
           >
             {unreadCount > 9 ? "9+" : unreadCount}
           </motion.span>

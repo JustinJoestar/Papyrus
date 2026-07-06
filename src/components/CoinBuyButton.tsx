@@ -27,7 +27,7 @@ export default function CoinBuyButton({
         className="font-bold font-mono text-sm tracking-[0.08em] px-6 py-2.5 rounded-xl transition-all duration-200"
         style={{
           background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-          color: "#0a0800",
+          color: "var(--ink-on-gold)",
         }}
       >
         Buy {coin.symbol}

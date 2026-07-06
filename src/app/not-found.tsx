@@ -1,49 +1,44 @@
 import Link from "next/link";
+import Guilloche from "@/components/Guilloche";
 
 export default function NotFound() {
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{
-        backgroundColor: "var(--void)",
-        backgroundImage: "radial-gradient(rgba(201,168,76,0.12) 1.5px, transparent 1.5px)",
-        backgroundSize: "28px 28px",
-        color: "var(--text-1)",
-      }}
+      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
+      style={{ color: "var(--text-1)" }}
     >
-      <div className="text-center max-w-sm">
-        <p
-          className="font-mono text-[10px] tracking-[0.3em] uppercase mb-4"
-          style={{ color: "var(--text-3)" }}
-        >
+      {/* Engraved rosette backdrop */}
+      <div
+        className="absolute left-1/2 top-1/2 pointer-events-none"
+        style={{ transform: "translate(-50%, -50%)" }}
+      >
+        <Guilloche size={640} />
+      </div>
+
+      <div className="relative z-10 text-center max-w-sm">
+        <p className="rise label-ledger mb-4" style={{ "--i": 0, letterSpacing: "0.3em" } as React.CSSProperties}>
           Error 404
         </p>
         <h1
-          className="font-mono font-bold text-6xl mb-3"
-          style={{
-            background: "linear-gradient(135deg, var(--gold-dim), var(--gold), var(--gold-bright))",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
+          className="rise font-display font-semibold text-7xl mb-3 text-gold-gradient"
+          style={{ "--i": 1 } as React.CSSProperties}
         >
           404
         </h1>
-        <p className="text-base mb-1" style={{ color: "var(--text-2)" }}>
-          Page not found
+        <p className="rise font-display italic text-xl mb-1" style={{ "--i": 2, color: "var(--text-2)" } as React.CSSProperties}>
+          This page is not on the ledger.
         </p>
-        <p className="text-sm mb-8" style={{ color: "var(--text-3)" }}>
-          This page doesn&apos;t exist or was moved.
+        <p className="rise text-sm mb-8" style={{ "--i": 3, color: "var(--text-3)" } as React.CSSProperties}>
+          It doesn&apos;t exist or was moved.
         </p>
-        <Link
-          href="/dashboard"
-          className="inline-block font-mono font-bold text-sm tracking-[0.1em] px-6 py-2.5 rounded-xl transition-all duration-200"
-          style={{
-            background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-            color: "#0a0800",
-          }}
-        >
-          Back to Dashboard
-        </Link>
+        <div className="rise" style={{ "--i": 4 } as React.CSSProperties}>
+          <Link
+            href="/dashboard"
+            className="btn-bronze inline-flex text-sm px-6 py-2.5"
+          >
+            Back to Dashboard
+          </Link>
+        </div>
       </div>
     </div>
   );

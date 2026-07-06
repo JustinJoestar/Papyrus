@@ -33,10 +33,10 @@ export default function ThemeToggle() {
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium" style={{ color: "var(--text-1)" }}>
-          {isLight ? "Light Mode" : "Dark Mode"}
+          {isLight ? "Parchment" : "Vault"}
         </p>
         <p className="text-xs mt-0.5" style={{ color: "var(--text-3)" }}>
-          {isLight ? "White & blue theme" : "Obsidian & gold theme"}
+          {isLight ? "Aged paper, ink & bronze" : "Lacquer black & gold leaf"}
         </p>
       </div>
 
@@ -45,8 +45,8 @@ export default function ThemeToggle() {
         onClick={toggle}
         className="relative w-12 h-6 rounded-full transition-all duration-200 shrink-0"
         style={{
-          background: isLight ? "#2563eb" : "#3f3f46",
-          border: isLight ? "1px solid #1d4ed8" : "1px solid #52525b",
+          background: isLight ? "var(--gold)" : "var(--elevated)",
+          border: `1px solid ${isLight ? "var(--gold-bright)" : "var(--border-bright)"}`,
         }}
         aria-label="Toggle theme"
       >
@@ -55,7 +55,7 @@ export default function ThemeToggle() {
           className="absolute top-0.5 w-5 h-5 rounded-full transition-all duration-200 flex items-center justify-center text-[10px]"
           style={{
             left: isLight ? "calc(100% - 22px)" : "2px",
-            background: "#ffffff",
+            background: "#fdf9ee",
             boxShadow: "0 1px 3px rgba(0,0,0,0.30)",
           }}
         >

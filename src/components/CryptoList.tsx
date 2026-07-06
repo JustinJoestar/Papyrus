@@ -31,43 +31,25 @@ export default function CryptoList({ coins, cashBalance, isAuthenticated = true 
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name or symbol..."
-          className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none transition-all"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-mid)",
-            color: "var(--text-1)",
-          }}
-          onFocus={(e)  => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-          onBlur={(e)   => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+          placeholder="Search by name or symbol…"
+          className="input-ledger py-3"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-center py-12 font-mono text-sm" style={{ color: "var(--text-3)" }}>
+        <p className="text-center py-12 font-display italic text-base" style={{ color: "var(--text-3)" }}>
           No coins match &quot;{search}&quot;
         </p>
       ) : (
-        <div className="space-y-2">
-          {filtered.map((coin) => {
+        <div className="sheet">
+          {filtered.map((coin, i) => {
             const up = coin.price_change_percentage_24h >= 0;
             return (
               <div
                 key={coin.id}
                 onClick={() => router.push(`/dashboard/market/${coin.id}`)}
-                className="rounded-2xl px-5 py-4 flex items-center gap-4 cursor-pointer transition-all duration-150"
-                style={{
-                  background: "var(--surface)",
-                  border: "1px solid var(--border)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border-mid)";
-                  e.currentTarget.style.background  = "var(--elevated)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "var(--border)";
-                  e.currentTarget.style.background  = "var(--surface)";
-                }}
+                className="row-ledger rise"
+                style={{ "--i": Math.min(i, 10) } as React.CSSProperties}
               >
                 <img
                   src={coin.image}
@@ -75,7 +57,7 @@ export default function CryptoList({ coins, cashBalance, isAuthenticated = true 
                   className="w-8 h-8 rounded-full shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+                  <p className="font-semibold text-sm truncate" style={{ color: "var(--text-1)" }}>
                     {coin.name}
                   </p>
                   <p className="text-xs font-mono mt-0.5" style={{ color: "var(--text-3)" }}>
@@ -83,18 +65,18 @@ export default function CryptoList({ coins, cashBalance, isAuthenticated = true 
                   </p>
                 </div>
                 <div className="text-right mr-3">
-                  <p className="font-mono font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+                  <p className="font-mono font-semibold text-sm tabular-nums" style={{ color: "var(--text-1)" }}>
                     ${fmt(coin.current_price)}
                   </p>
                   <p
-                    className="text-xs font-mono mt-0.5"
+                    className="text-xs font-mono mt-0.5 tabular-nums"
                     style={{ color: up ? "var(--gain)" : "var(--loss)" }}
                   >
-                    {up ? "+" : ""}{coin.price_change_percentage_24h?.toFixed(2) ?? "0.00"}%
+                    {up ? "▲ +" : "▼ "}{coin.price_change_percentage_24h?.toFixed(2) ?? "0.00"}%
                   </p>
                 </div>
                 <button
-                  onClick={(e) => { e.stopPropagation(); isAuthenticated ? setBuyTarget(coin) : router.push("/auth/login"); }}
+                  onClick={(e) => { e.stopPropagation(); if (isAuthenticated) { setBuyTarget(coin); } else { router.push("/auth/login"); } }}
                   className="px-4 py-1.5 rounded-lg text-xs font-mono font-semibold tracking-wide transition-all duration-150 shrink-0"
                   style={{
                     background: "var(--gold-glow)",
@@ -102,7 +84,7 @@ export default function CryptoList({ coins, cashBalance, isAuthenticated = true 
                     color: "var(--gold-bright)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background  = "rgba(201,168,76,0.18)";
+                    e.currentTarget.style.background  = "rgba(201,162,78,0.18)";
                     e.currentTarget.style.borderColor = "var(--gold)";
                   }}
                   onMouseLeave={(e) => {

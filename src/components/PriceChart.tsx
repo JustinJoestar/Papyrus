@@ -45,6 +45,15 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
   const [days, setDays] = useState("7");
   const [data, setData] = useState<ChartPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isLight, setIsLight] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsLight(document.documentElement.getAttribute("data-theme") === "light");
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -63,28 +72,38 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
       .finally(() => setLoading(false));
   }, [chartBaseUrl, days]);
 
-  const color = isPositive ? "#34d399" : "#f87171";
+  // SVG attributes can't resolve CSS vars — pick literal ink per theme
+  const color    = isPositive
+    ? (isLight ? "#177245" : "#34c77b")
+    : (isLight ? "#b3282d" : "#e5484d");
+  const tickInk  = isLight ? "#7a7057" : "#8d8471";
+  const tooltipBg     = isLight ? "#fcf9f0" : "#14110b";
+  const tooltipBorder = isLight ? "#ccc1a5" : "#2e2819";
+  const tooltipInk    = isLight ? "#211b10" : "#f4efe4";
 
   return (
     <div>
       {/* Range selector */}
-      <div className="flex gap-2 mb-4">
-        {RANGES.map((r) => (
+      <div
+        className="inline-flex rounded-lg overflow-hidden mb-4"
+        style={{ border: "1px solid var(--border-mid)" }}
+      >
+        {RANGES.map((r, i) => (
           <button
             key={r.days}
             onClick={() => setDays(r.days)}
-            className="px-3 py-1 rounded-lg text-sm font-mono transition-all"
+            className="px-3.5 py-1 text-sm font-mono transition-all"
             style={
               days === r.days
                 ? {
                     background: "var(--gold-glow)",
-                    border: "1px solid var(--gold-border)",
                     color: "var(--gold-bright)",
+                    borderLeft: i > 0 ? "1px solid var(--border)" : "none",
                   }
                 : {
-                    background: "var(--elevated)",
-                    border: "1px solid var(--border-mid)",
+                    background: "transparent",
                     color: "var(--text-3)",
+                    borderLeft: i > 0 ? "1px solid var(--border)" : "none",
                   }
             }
           >
@@ -95,14 +114,14 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
 
       {loading ? (
         <div
-          className="h-64 flex items-center justify-center font-mono text-sm"
+          className="h-64 flex items-center justify-center font-display italic text-base"
           style={{ color: "var(--text-3)" }}
         >
-          Loading chart...
+          Drawing the chart…
         </div>
       ) : data.length === 0 ? (
         <div
-          className="h-64 flex items-center justify-center font-mono text-sm"
+          className="h-64 flex items-center justify-center font-display italic text-base"
           style={{ color: "var(--text-3)" }}
         >
           Chart data unavailable
@@ -118,14 +137,14 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
             </defs>
             <XAxis
               dataKey="date"
-              tick={{ fill: "#6b7280", fontSize: 11 }}
+              tick={{ fill: tickInk, fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               interval="preserveStartEnd"
             />
             <YAxis
               domain={["auto", "auto"]}
-              tick={{ fill: "#6b7280", fontSize: 11 }}
+              tick={{ fill: tickInk, fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               tickFormatter={formatPrice}
@@ -135,16 +154,16 @@ export default function PriceChart({ chartBaseUrl, isPositive }: Props) {
               isAnimationActive={false}
               position={{ y: 40 }}
               contentStyle={{
-                backgroundColor: "#0d0d0d",
-                border: "1px solid #272727",
-                borderRadius: "6px",
-                color: "#ffffff",
+                backgroundColor: tooltipBg,
+                border: `1px solid ${tooltipBorder}`,
+                borderRadius: "8px",
+                color: tooltipInk,
                 fontSize: 11,
                 padding: "4px 8px",
                 lineHeight: "1.4",
               }}
               formatter={(value: number | undefined) => [formatPrice(value ?? 0), "Price"]}
-              labelStyle={{ color: "#585858", fontSize: 10, marginBottom: 1 }}
+              labelStyle={{ color: tickInk, fontSize: 10, marginBottom: 1 }}
               itemStyle={{ padding: 0 }}
             />
             <Area

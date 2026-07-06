@@ -1,9 +1,10 @@
 import Link from "next/link";
-import NavLinks from "@/components/NavLinks"; // v2
+import NavLinks from "@/components/NavLinks";
 import NavUserMenu from "@/components/NavUserMenu";
 import NavNotifications from "@/components/NavNotifications";
 import NavThemeToggle from "@/components/NavThemeToggle";
 import NotificationToast from "@/components/NotificationToast";
+import PapyrusMark from "@/components/PapyrusMark";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DashboardLayout({
@@ -29,38 +30,29 @@ export default async function DashboardLayout({
     >
 
       <nav
-        className="sticky top-0 z-50 h-14 flex items-center px-6 gap-4 backdrop-blur-md"
+        className="sticky top-0 z-50 h-16 flex items-center px-4 sm:px-6 gap-4 backdrop-blur-md"
         style={{
           background: "var(--nav-bg)",
           borderBottom: "1px solid var(--border)",
+          boxShadow: "0 1px 0 var(--gold-glow)",
         }}
       >
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <div className="flex items-end gap-[3px]">
-            <div className="w-[3px] h-3     rounded-sm" style={{ background: "var(--gold)" }} />
-            <div className="w-[3px] h-[16px] rounded-sm" style={{ background: "var(--gold)" }} />
-            <div className="w-[3px] h-2     rounded-sm" style={{ background: "var(--gold-dim)" }} />
-          </div>
-          <span
-            className="font-mono font-bold text-sm tracking-[0.15em]"
-            style={{ color: "var(--text-1)" }}
-          >
-            PAPYRUS
-          </span>
+        <Link href="/" className="shrink-0">
+          <PapyrusMark sealSize={27} wordmarkSize={14} />
         </Link>
 
-        <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
+        <div className="w-px h-5 shrink-0 hidden md:block" style={{ background: "var(--border-mid)" }} />
 
         <NavLinks />
 
         {/* Right side */}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5">
           <a
             href="https://discord.gg/4tmwxCET2H"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Join our Discord"
-            className="w-8 h-8 rounded-lg flex items-center justify-center transition-all"
+            className="w-8 h-8 rounded-lg items-center justify-center transition-all hidden sm:flex"
             style={{ color: "var(--text-3)", border: "1px solid transparent" }}
             onMouseEnter={(e) => {
               e.currentTarget.style.color = "#5865F2";
@@ -80,7 +72,7 @@ export default async function DashboardLayout({
           </a>
           <NavThemeToggle />
           <NavNotifications userId={user?.id ?? null} />
-          <div className="w-px h-4 shrink-0" style={{ background: "var(--border-mid)" }} />
+          <div className="w-px h-5 shrink-0 mx-1" style={{ background: "var(--border-mid)" }} />
           <NavUserMenu
             username={profile?.username ?? null}
             avatarUrl={profile?.avatar_url ?? null}

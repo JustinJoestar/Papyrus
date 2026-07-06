@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, RefreshCw } from "lucide-react";
 import LeaderboardHoldingModal from "./LeaderboardHoldingModal";
+import RankMedallion from "./RankMedallion";
+import Guilloche from "./Guilloche";
 
 const REFRESH_INTERVAL_MS = 60_000; // re-fetch prices every 60 s
 
@@ -38,6 +40,7 @@ function Avatar({ username, avatarUrl, size = 8 }: { username: string; avatarUrl
       }}
     >
       {avatarUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img src={avatarUrl} alt={username} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
       ) : (
         <span className="font-mono font-bold" style={{ fontSize: `${size * 1.4}px`, color: "var(--gold)" }}>
@@ -54,109 +57,127 @@ type SnapshotEntry = {
   rank: number;
 };
 
-const PODIUM = {
-  1: { border: "rgba(201,168,76,0.35)",  badgeBg: "rgba(201,168,76,0.12)",  badgeColor: "var(--gold-bright)", valueColor: "var(--gold-bright)", label: "GOLD"   },
-  2: { border: "rgba(180,190,210,0.25)", badgeBg: "rgba(180,190,210,0.08)", badgeColor: "#b0bccc",            valueColor: "#b0bccc",            label: "SILVER" },
-  3: { border: "rgba(180,110,60,0.28)",  badgeBg: "rgba(180,110,60,0.08)",  badgeColor: "#c07040",            valueColor: "#c07040",            label: "BRONZE" },
+const METAL_TEXT = {
+  1: "var(--gold-bright)",
+  2: "var(--metal-silver)",
+  3: "var(--metal-bronze)",
 } as const;
+
+/* Progress toward the leader */
+function ChaseBar({ pct, metal, index }: { pct: number; metal?: string; index: number }) {
+  return (
+    <div className="h-[3px] rounded-full overflow-hidden mt-2.5" style={{ background: "var(--border)" }}>
+      <div
+        className="bar-grow h-full rounded-full"
+        style={{
+          "--i": index,
+          width: `${Math.max(2, Math.min(100, pct))}%`,
+          background: metal ?? "var(--gold-dim)",
+          opacity: 0.85,
+        } as React.CSSProperties}
+      />
+    </div>
+  );
+}
 
 function ProfileDetail({ entry, onBack }: { entry: Entry; onBack: () => void }) {
   const fmt = (n: number) =>
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const holdingsValue = entry.totalValue - entry.cashBalance;
-  const podiumStyle = PODIUM[entry.rank as 1 | 2 | 3] ?? null;
+  const isPodium = entry.rank <= 3;
+  const metalText = isPodium ? METAL_TEXT[entry.rank as 1 | 2 | 3] : "var(--text-1)";
   const [selectedHolding, setSelectedHolding] = useState<Holding | null>(null);
 
   return (
     <div>
       <button
         onClick={onBack}
-        className="flex items-center gap-2 mb-6 text-base font-medium transition-opacity hover:opacity-70"
-        style={{ color: "var(--text-2)" }}
+        className="rise flex items-center gap-2 mb-6 text-sm font-medium transition-opacity hover:opacity-70"
+        style={{ "--i": 0, color: "var(--text-2)" } as React.CSSProperties}
       >
         <ArrowLeft size={16} />
         Back to Leaderboard
       </button>
 
-      {/* Profile card */}
+      {/* Trader certificate */}
       <div
-        className="rounded-2xl px-8 py-8 mb-6 flex items-center gap-6"
-        style={{
-          background: "var(--surface)",
-          border: `1px solid ${podiumStyle ? podiumStyle.border : "var(--border-mid)"}`,
-        }}
+        className="rise card-cert corner-frame relative rounded-2xl px-6 sm:px-8 py-7 mb-6 overflow-hidden"
+        style={{ "--i": 1 } as React.CSSProperties}
       >
-        <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={20} />
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl font-bold truncate" style={{ color: "var(--text-1)" }}>
-              {entry.username}
-            </h1>
-            {entry.isCurrentUser && (
-              <span
-                className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0"
-                style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "var(--gold)" }}
-              >
-                YOU
-              </span>
-            )}
-          </div>
-          <p className="font-mono text-sm" style={{ color: "var(--text-3)" }}>
-            Rank #{entry.rank}
-            {podiumStyle ? ` · ${podiumStyle.label}` : ""}
-          </p>
+        <div
+          className="absolute pointer-events-none hidden sm:block"
+          style={{ right: -90, top: "50%", transform: "translateY(-50%)", opacity: 0.7 }}
+        >
+          <Guilloche size={260} />
         </div>
-        <div className="text-right shrink-0">
-          <p
-            className="font-mono font-bold text-2xl"
-            style={{ color: podiumStyle ? podiumStyle.valueColor : "var(--text-1)" }}
-          >
-            ${fmt(entry.totalValue)}
-          </p>
-          <p className="font-mono text-sm mt-0.5" style={{ color: "var(--text-3)" }}>total value</p>
+        <div className="relative z-10 flex items-center gap-5 sm:gap-6">
+          <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={18} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <h1 className="font-display text-2xl font-semibold truncate" style={{ color: "var(--text-1)" }}>
+                {entry.username}
+              </h1>
+              {entry.isCurrentUser && (
+                <span
+                  className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0"
+                  style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+                >
+                  YOU
+                </span>
+              )}
+            </div>
+            <p className="font-mono text-sm" style={{ color: "var(--text-3)" }}>
+              Rank #{entry.rank}
+              {entry.rank === 1 ? " · Champion" : entry.rank === 2 ? " · Silver" : entry.rank === 3 ? " · Bronze" : ""}
+            </p>
+          </div>
+          <div className="text-right shrink-0">
+            <p className="font-mono font-bold text-2xl tabular-nums" style={{ color: metalText }}>
+              ${fmt(entry.totalValue)}
+            </p>
+            <p className="font-mono text-sm mt-0.5" style={{ color: "var(--text-3)" }}>total value</p>
+          </div>
         </div>
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-2 gap-4 mb-8">
-        <div
-          className="rounded-xl px-5 py-4"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-        >
-          <p className="font-mono text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-3)" }}>Cash</p>
-          <p className="font-mono font-semibold text-lg" style={{ color: "var(--text-1)" }}>${fmt(entry.cashBalance)}</p>
+      <div
+        className="rise sheet grid grid-cols-2 mb-8"
+        style={{ "--i": 2 } as React.CSSProperties}
+      >
+        <div className="px-5 py-4" style={{ borderTop: "none" }}>
+          <p className="label-ledger mb-1" style={{ letterSpacing: "0.2em" }}>Cash</p>
+          <p className="font-mono font-semibold text-lg tabular-nums" style={{ color: "var(--text-1)" }}>${fmt(entry.cashBalance)}</p>
         </div>
-        <div
-          className="rounded-xl px-5 py-4"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-        >
-          <p className="font-mono text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-3)" }}>Invested</p>
-          <p className="font-mono font-semibold text-lg" style={{ color: "var(--text-1)" }}>${fmt(holdingsValue)}</p>
+        <div className="px-5 py-4" style={{ borderTop: "none", borderLeft: "1px solid var(--border)" }}>
+          <p className="label-ledger mb-1" style={{ letterSpacing: "0.2em" }}>Invested</p>
+          <p className="font-mono font-semibold text-lg tabular-nums" style={{ color: "var(--text-1)" }}>${fmt(holdingsValue)}</p>
         </div>
       </div>
 
       {/* Portfolio */}
-      <div className="mb-2">
-        <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1" style={{ color: "var(--text-3)" }}>Portfolio</p>
-        <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--text-2)" }}>Holdings</h2>
+      <div className="rise mb-4 flex items-baseline justify-between" style={{ "--i": 3 } as React.CSSProperties}>
+        <h2 className="font-display text-lg font-semibold" style={{ color: "var(--text-1)" }}>Holdings</h2>
+        <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>
+          {entry.holdings.length} positions
+        </span>
       </div>
 
       {entry.holdings.length === 0 ? (
         <div
-          className="rounded-xl px-6 py-10 text-center"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          className="rise rounded-xl px-6 py-10 text-center"
+          style={{ "--i": 4, background: "var(--card-bg)", border: "1px dashed var(--border-bright)" } as React.CSSProperties}
         >
-          <p className="font-mono text-sm" style={{ color: "var(--text-3)" }}>No holdings — all cash</p>
+          <p className="font-display italic text-base" style={{ color: "var(--text-3)" }}>All cash — waiting for the moment.</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="rise sheet" style={{ "--i": 4 } as React.CSSProperties}>
           {entry.holdings.map((h) => (
             <button
               key={h.symbol}
               onClick={() => setSelectedHolding(h)}
-              className="w-full text-left rounded-xl px-5 py-4 flex items-center gap-4 transition-opacity hover:opacity-75 cursor-pointer"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+              className="row-ledger w-full text-left"
             >
               <div
                 className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
@@ -173,8 +194,8 @@ function ProfileDetail({ entry, onBack }: { entry: Entry; onBack: () => void }) 
                 </p>
               </div>
               <div className="text-right shrink-0">
-                <p className="font-mono font-semibold text-sm" style={{ color: "var(--text-2)" }}>${fmt(h.value)}</p>
-                <p className="font-mono text-xs mt-0.5" style={{ color: "var(--text-3)" }}>
+                <p className="font-mono font-semibold text-sm tabular-nums" style={{ color: "var(--text-2)" }}>${fmt(h.value)}</p>
+                <p className="font-mono text-xs mt-0.5 tabular-nums" style={{ color: "var(--text-3)" }}>
                   {entry.totalValue > 0 ? ((h.value / entry.totalValue) * 100).toFixed(1) : "0.0"}%
                 </p>
               </div>
@@ -241,6 +262,7 @@ export default function LeaderboardClient({
 
   const podium = search.trim() ? [] : filtered.slice(0, 3);
   const rest   = search.trim() ? filtered : filtered.slice(3);
+  const leaderValue = entries[0]?.totalValue || 1;
 
   return (
     <>
@@ -263,20 +285,7 @@ export default function LeaderboardClient({
         <button
           onClick={refresh}
           disabled={isRefreshing}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-all disabled:opacity-50"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-mid)",
-            color: "var(--text-2)",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "var(--gold-border)";
-            e.currentTarget.style.color = "var(--gold)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = "var(--border-mid)";
-            e.currentTarget.style.color = "var(--text-2)";
-          }}
+          className="btn-ghost flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono"
         >
           <RefreshCw
             size={11}
@@ -292,20 +301,13 @@ export default function LeaderboardClient({
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by username..."
-          className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none transition-all"
-          style={{
-            background: "var(--surface)",
-            border: "1px solid var(--border-mid)",
-            color: "var(--text-1)",
-          }}
-          onFocus={(e) => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-          onBlur={(e)  => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+          placeholder="Search by username…"
+          className="input-ledger py-3"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-center py-16 font-mono text-sm" style={{ color: "var(--text-3)" }}>
+        <p className="text-center py-16 font-display italic text-base" style={{ color: "var(--text-3)" }}>
           No traders found matching &quot;{search}&quot;
         </p>
       ) : (
@@ -313,46 +315,60 @@ export default function LeaderboardClient({
           {/* Podium — Top 3 (hidden during search) */}
           {podium.length > 0 && (
             <div className="space-y-3 mb-3">
-              {podium.map((entry) => {
-                const s    = PODIUM[entry.rank as 1 | 2 | 3] ?? PODIUM[3];
-                const isMe = entry.isCurrentUser;
+              {podium.map((entry, idx) => {
+                const isMe   = entry.isCurrentUser;
+                const first  = entry.rank === 1;
+                const metalText = METAL_TEXT[entry.rank as 1 | 2 | 3] ?? "var(--text-1)";
+                const behind = leaderValue - entry.totalValue;
                 return (
                   <button
                     key={entry.username}
                     onClick={() => setSelected(entry)}
-                    className="w-full text-left relative rounded-2xl px-8 py-7 flex items-center gap-6 transition-opacity hover:opacity-80 cursor-pointer"
+                    className={`rise w-full text-left relative rounded-2xl px-5 sm:px-7 overflow-hidden cursor-pointer transition-transform duration-200 hover:-translate-y-[2px] ${first ? "card-cert corner-frame animate-rank1-aura py-6" : "py-5"}`}
                     style={{
-                      background: "var(--surface)",
-                      border: `1px solid ${s.border}`,
-                      ...(entry.rank === 1 ? { animation: "rank1-aura 2.8s ease-in-out infinite" } : {}),
-                    }}
+                      "--i": idx,
+                      background: first ? undefined : isMe ? "var(--gold-glow)" : "var(--card-bg)",
+                      border: first ? undefined : `1px solid ${isMe ? "var(--gold-border)" : "var(--border-mid)"}`,
+                    } as React.CSSProperties}
                   >
-                    <div
-                      className="w-16 h-16 rounded-xl flex flex-col items-center justify-center shrink-0"
-                      style={{
-                        background: isMe ? "rgba(201,168,76,0.12)" : s.badgeBg,
-                        border: `1px solid ${isMe ? "rgba(201,168,76,0.3)" : s.border}`,
-                      }}
-                    >
-                      <span className="font-mono font-bold text-2xl leading-none" style={{ color: isMe ? "var(--gold-bright)" : s.badgeColor }}>
-                        {entry.rank}
-                      </span>
-                      <span className="font-mono text-[10px] tracking-wider mt-1" style={{ color: isMe ? "var(--gold-dim)" : s.badgeColor, opacity: 0.7 }}>
-                        {s.label}
-                      </span>
-                    </div>
-                    <div className="flex-1 min-w-0 flex items-center gap-3">
-                      <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={14} />
-                      <div className="flex items-center gap-2 flex-wrap min-w-0">
-                        <p className="font-semibold text-xl truncate" style={{ color: "var(--text-1)" }}>{entry.username}</p>
-                        {isMe && (
-                          <span className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0" style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.25)", color: "var(--gold)" }}>YOU</span>
+                    {first && <div className="banner-sheen" />}
+                    <div className="relative z-10 flex items-center gap-4 sm:gap-6">
+                      <RankMedallion
+                        rank={entry.rank}
+                        size={first ? 62 : 48}
+                        label={entry.rank === 1 ? "GOLD" : entry.rank === 2 ? "SILVER" : "BRONZE"}
+                      />
+                      <div className="flex-1 min-w-0">
+                        {first && (
+                          <p className="label-ledger mb-1 crown-float inline-block" style={{ color: "var(--gold)", letterSpacing: "0.24em" }}>
+                            ♛ Champion
+                          </p>
                         )}
+                        <div className="flex items-center gap-3 flex-wrap min-w-0">
+                          <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={first ? 12 : 10} />
+                          <p className={`font-display font-semibold truncate ${first ? "text-xl sm:text-2xl" : "text-lg"}`} style={{ color: "var(--text-1)" }}>
+                            {entry.username}
+                          </p>
+                          {isMe && (
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded shrink-0" style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}>YOU</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className={`font-mono font-bold tabular-nums ${first ? "text-xl sm:text-2xl text-gold-shimmer" : "text-lg"}`} style={first ? undefined : { color: metalText }}>
+                          ${fmt(entry.totalValue)}
+                        </p>
+                        <p className="font-mono text-[10px] tracking-wide mt-1 tabular-nums" style={{ color: "var(--text-3)" }}>
+                          {first ? `$${fmt(entry.cashBalance)} cash` : `−$${fmt(behind)} to №1`}
+                        </p>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="font-mono font-bold text-2xl" style={{ color: isMe ? "var(--gold-bright)" : s.valueColor }}>${fmt(entry.totalValue)}</p>
-                      <p className="font-mono text-sm tracking-wide mt-1" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
+                    <div className="relative z-10">
+                      <ChaseBar
+                        pct={(entry.totalValue / leaderValue) * 100}
+                        metal={entry.rank === 1 ? "var(--gold)" : entry.rank === 2 ? "var(--metal-silver)" : "var(--metal-bronze)"}
+                        index={idx}
+                      />
                     </div>
                   </button>
                 );
@@ -362,29 +378,33 @@ export default function LeaderboardClient({
 
           {/* Remaining */}
           {rest.length > 0 && (
-            <div className="space-y-1.5 mb-12">
-              {rest.map((entry) => (
+            <div className="sheet mb-12">
+              {rest.map((entry, idx) => (
                 <button
                   key={entry.username}
                   onClick={() => setSelected(entry)}
-                  className="w-full text-left rounded-xl px-6 py-5 flex items-center gap-5 transition-opacity hover:opacity-80 cursor-pointer"
-                  style={{
-                    background: "var(--surface)",
-                    border: "1px solid var(--border)",
-                  }}
+                  className="w-full text-left px-5 py-4 cursor-pointer transition-colors duration-150"
+                  style={{ background: entry.isCurrentUser ? "var(--gold-glow)" : "transparent" }}
+                  onMouseEnter={(e) => { if (!entry.isCurrentUser) e.currentTarget.style.background = "var(--gold-glow)"; }}
+                  onMouseLeave={(e) => { if (!entry.isCurrentUser) e.currentTarget.style.background = "transparent"; }}
                 >
-                  <span className="font-mono text-base w-10 shrink-0 tabular-nums" style={{ color: "var(--text-3)" }}>
-                    #{entry.rank}
-                  </span>
-                  <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={10} />
-                  <div className="flex-1 min-w-0 flex items-center gap-2">
-                    <p className="text-base font-medium truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
-                    {entry.isCurrentUser && <span className="text-[10px] font-mono shrink-0" style={{ color: "var(--gold-dim)" }}>you</span>}
+                  <div className="flex items-center gap-4">
+                    <span className="font-mono text-sm w-10 shrink-0 tabular-nums" style={{ color: "var(--text-3)" }}>
+                      #{entry.rank}
+                    </span>
+                    <Avatar username={entry.username} avatarUrl={entry.avatarUrl} size={9} />
+                    <div className="flex-1 min-w-0 flex items-center gap-2">
+                      <p className="text-sm font-medium truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
+                      {entry.isCurrentUser && <span className="text-[10px] font-mono shrink-0" style={{ color: "var(--gold-dim)" }}>you</span>}
+                    </div>
+                    <div className="text-right">
+                      <p className="font-mono font-semibold text-sm tabular-nums" style={{ color: entry.isCurrentUser ? "var(--gold)" : "var(--text-2)" }}>${fmt(entry.totalValue)}</p>
+                      <p className="font-mono text-xs tabular-nums" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-mono font-semibold text-base" style={{ color: entry.isCurrentUser ? "var(--gold)" : "var(--text-2)" }}>${fmt(entry.totalValue)}</p>
-                    <p className="font-mono text-xs" style={{ color: "var(--text-3)" }}>${fmt(entry.cashBalance)} cash</p>
-                  </div>
+                  {!search.trim() && (
+                    <ChaseBar pct={(entry.totalValue / leaderValue) * 100} index={Math.min(idx + 3, 10)} />
+                  )}
                 </button>
               ))}
             </div>
@@ -396,21 +416,20 @@ export default function LeaderboardClient({
       {lastWeekTop3.length > 0 && !search.trim() && (
         <div>
           <div className="mb-4">
-            <p className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1" style={{ color: "var(--text-3)" }}>Previous Week</p>
-            <h2 className="text-base font-semibold" style={{ color: "var(--text-2)" }}>Champions — {lastWeekDate}</h2>
+            <p className="label-ledger mb-1">Previous Week</p>
+            <h2 className="font-display text-lg font-semibold" style={{ color: "var(--text-1)" }}>
+              Hall of Champions — {lastWeekDate}
+            </h2>
           </div>
-          <div className="space-y-2">
+          <div className="sheet">
             {lastWeekTop3.map((entry) => (
               <div
                 key={entry.username}
-                className="rounded-xl px-5 py-3.5 flex items-center gap-4"
-                style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+                className="px-5 py-3.5 flex items-center gap-4"
               >
-                <span className="text-base w-8 text-center shrink-0">
-                  {entry.rank === 1 ? "🥇" : entry.rank === 2 ? "🥈" : "🥉"}
-                </span>
-                <p className="flex-1 text-sm truncate" style={{ color: "var(--text-3)" }}>{entry.username}</p>
-                <p className="font-mono font-semibold text-sm" style={{ color: "var(--text-3)" }}>${fmt(entry.final_value)}</p>
+                <RankMedallion rank={entry.rank} size={34} />
+                <p className="flex-1 text-sm truncate" style={{ color: "var(--text-2)" }}>{entry.username}</p>
+                <p className="font-mono font-semibold text-sm tabular-nums" style={{ color: "var(--text-3)" }}>${fmt(entry.final_value)}</p>
               </div>
             ))}
           </div>

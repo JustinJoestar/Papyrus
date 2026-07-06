@@ -45,23 +45,28 @@ export default async function CoinDetailPage({
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <Link
         href="/dashboard/market"
-        className="inline-flex items-center font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8"
-        style={{ color: "var(--text-3)" }}
+        className="rise inline-flex items-center font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8 hover:opacity-70"
+        style={{ "--i": 0, color: "var(--text-3)" } as React.CSSProperties}
       >
         ← Back to Market
       </Link>
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div className="rise flex items-center justify-between mb-8 flex-wrap gap-4" style={{ "--i": 1 } as React.CSSProperties}>
         <div className="flex items-center gap-4">
-          <img
-            src={coin.image}
-            alt={coin.name}
-            className="w-12 h-12 rounded-full"
-            style={{ background: "var(--elevated)" }}
-          />
+          <div
+            className="w-14 h-14 rounded-full flex items-center justify-center shrink-0"
+            style={{ border: "1px dashed var(--gold-border)", padding: 3 }}
+          >
+            <img
+              src={coin.image}
+              alt={coin.name}
+              className="w-full h-full rounded-full"
+              style={{ background: "var(--elevated)" }}
+            />
+          </div>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
+            <h1 className="font-display text-3xl font-semibold" style={{ color: "var(--text-1)" }}>
               {coin.name}
             </h1>
             <p
@@ -84,27 +89,31 @@ export default async function CoinDetailPage({
       </div>
 
       {/* Price */}
-      <div className="mb-8">
-        <p className="text-4xl font-bold font-mono" style={{ color: "var(--text-1)" }}>
+      <div className="rise mb-8" style={{ "--i": 2 } as React.CSSProperties}>
+        <p className="text-5xl font-bold font-mono tabular-nums tracking-tight" style={{ color: "var(--text-1)" }}>
           {fmtPrice(coin.current_price)}
         </p>
-        <div className="flex gap-4 mt-2">
+        <div className="flex gap-3 mt-3">
           <span
-            className="text-sm font-semibold font-mono"
-            style={{ color: isPositive ? "var(--gain)" : "var(--loss)" }}
+            className="text-sm font-semibold font-mono px-2.5 py-0.5 rounded-lg tabular-nums"
+            style={{
+              color: isPositive ? "var(--gain)" : "var(--loss)",
+              background: isPositive ? "var(--gain-bg)" : "var(--loss-bg)",
+              border: `1px solid ${isPositive ? "var(--gain-border)" : "var(--loss-border)"}`,
+            }}
           >
-            {isPositive ? "+" : ""}{coin.price_change_percentage_24h?.toFixed(2) ?? "0.00"}% 24h
+            {isPositive ? "▲ +" : "▼ "}{coin.price_change_percentage_24h?.toFixed(2) ?? "0.00"}% 24h
           </span>
           {coin.price_change_percentage_7d_in_currency != null && (
             <span
-              className="text-sm font-semibold font-mono"
+              className="text-sm font-semibold font-mono px-2.5 py-0.5 rounded-lg tabular-nums"
               style={{
-                color: coin.price_change_percentage_7d_in_currency >= 0
-                  ? "var(--gain)"
-                  : "var(--loss)",
+                color: coin.price_change_percentage_7d_in_currency >= 0 ? "var(--gain)" : "var(--loss)",
+                background: coin.price_change_percentage_7d_in_currency >= 0 ? "var(--gain-bg)" : "var(--loss-bg)",
+                border: `1px solid ${coin.price_change_percentage_7d_in_currency >= 0 ? "var(--gain-border)" : "var(--loss-border)"}`,
               }}
             >
-              {coin.price_change_percentage_7d_in_currency >= 0 ? "+" : ""}
+              {coin.price_change_percentage_7d_in_currency >= 0 ? "▲ +" : "▼ "}
               {coin.price_change_percentage_7d_in_currency?.toFixed(2)}% 7d
             </span>
           )}
@@ -112,18 +121,15 @@ export default async function CoinDetailPage({
       </div>
 
       {/* Chart */}
-      <div
-        className="rounded-2xl p-6 mb-6"
-        style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border-mid)",
-        }}
-      >
+      <div className="rise card-cert corner-frame rounded-2xl p-6 mb-6" style={{ "--i": 3 } as React.CSSProperties}>
         <PriceChart chartBaseUrl={`/api/crypto/chart?coinId=${coinId}`} isPositive={isPositive} />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {/* Stats — ruled ledger cells */}
+      <div
+        className="rise grid grid-cols-2 sm:grid-cols-3 rounded-2xl overflow-hidden"
+        style={{ "--i": 4, border: "1px solid var(--border-mid)", background: "var(--card-bg)" } as React.CSSProperties}
+      >
         {[
           { label: "Market Cap", value: fmtLarge(coin.market_cap) },
           { label: "24h Volume", value: fmtLarge(coin.total_volume) },
@@ -138,19 +144,13 @@ export default async function CoinDetailPage({
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl p-4"
-            style={{
-              background: "var(--surface)",
-              border: "1px solid var(--border-mid)",
-            }}
+            className="p-4"
+            style={{ border: "0.5px solid var(--border)" }}
           >
-            <p
-              className="font-mono text-[10px] tracking-[0.2em] uppercase mb-1.5"
-              style={{ color: "var(--text-3)" }}
-            >
+            <p className="label-ledger mb-1.5" style={{ letterSpacing: "0.2em" }}>
               {stat.label}
             </p>
-            <p className="font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+            <p className="font-semibold text-sm font-mono tabular-nums" style={{ color: "var(--text-1)" }}>
               {stat.value}
             </p>
           </div>

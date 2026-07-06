@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import TradeModal from "./TradeModal";
 import HoldingDetailModal from "./HoldingDetailModal";
@@ -37,28 +38,29 @@ export default function HoldingsList({
       <div
         className="rounded-2xl p-12 text-center"
         style={{
-          background: "var(--surface)",
-          border: "1px dashed var(--border-mid)",
+          background: "var(--card-bg)",
+          border: "1px dashed var(--border-bright)",
         }}
       >
-        <p className="text-sm mb-2" style={{ color: "var(--text-3)" }}>
-          No open positions
+        <p className="font-display italic text-lg mb-2" style={{ color: "var(--text-3)" }}>
+          The ledger is empty.
         </p>
-        <a
+        <Link
           href="/dashboard/market"
-          className="text-sm font-medium transition-colors"
+          className="text-sm font-medium transition-opacity hover:opacity-75"
           style={{ color: "var(--gold)" }}
         >
           Browse the market →
-        </a>
+        </Link>
       </div>
     );
   }
 
   return (
     <>
-      <div className="space-y-2">
-        {holdings.map((h) => {
+      {/* One ledger sheet, ruled rows */}
+      <div className="sheet">
+        {holdings.map((h, i) => {
           const costBasis = h.avg_buy_price * h.quantity;
           const pnl       = h.currentValue - costBasis;
           const pnlPct    = (pnl / costBasis) * 100;
@@ -67,23 +69,13 @@ export default function HoldingsList({
           return (
             <div
               key={h.id}
-              className="group rounded-2xl px-5 py-4 flex items-center gap-4 transition-all duration-150"
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                cursor: "pointer",
-              }}
+              className="row-ledger group rise"
+              style={{ "--i": i } as React.CSSProperties}
               onClick={() => setDetailTarget(h)}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.borderColor = "var(--border-mid)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.borderColor = "var(--border)")
-              }
             >
               {/* Asset icon */}
               <div
-                className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors duration-150"
                 style={{
                   background: "var(--elevated)",
                   border: "1px solid var(--border-mid)",
@@ -91,7 +83,7 @@ export default function HoldingsList({
               >
                 <span
                   className="font-mono text-[9px] font-bold"
-                  style={{ color: "var(--text-3)" }}
+                  style={{ color: "var(--gold-dim)" }}
                 >
                   {h.symbol.slice(0, 3).toUpperCase()}
                 </span>
@@ -101,38 +93,26 @@ export default function HoldingsList({
                 <p className="font-semibold text-sm" style={{ color: "var(--text-1)" }}>
                   {h.symbol}
                 </p>
-                <p className="text-xs font-mono mt-0.5" style={{ color: "var(--text-3)" }}>
+                <p className="text-xs font-mono mt-0.5 tabular-nums" style={{ color: "var(--text-3)" }}>
                   {h.quantity.toFixed(6)} · avg ${fmt(h.avg_buy_price)}
                 </p>
               </div>
 
               <div className="text-right mr-2">
-                <p className="font-mono font-semibold text-sm" style={{ color: "var(--text-1)" }}>
+                <p className="font-mono font-semibold text-sm tabular-nums" style={{ color: "var(--text-1)" }}>
                   ${fmt(h.currentValue)}
                 </p>
                 <p
-                  className="text-xs font-mono font-medium mt-0.5"
+                  className="text-xs font-mono font-medium mt-0.5 tabular-nums"
                   style={{ color: isGain ? "var(--gain)" : "var(--loss)" }}
                 >
-                  {isGain ? "+" : ""}{pnlPct.toFixed(2)}%
+                  {isGain ? "▲ +" : "▼ "}{pnlPct.toFixed(2)}%
                 </p>
               </div>
 
               <button
                 onClick={(e) => { e.stopPropagation(); setSellTarget(h); }}
-                className="shrink-0 px-3 py-1.5 text-xs font-mono font-medium rounded-lg transition-all duration-150 opacity-100 md:opacity-0 md:group-hover:opacity-100"
-                style={{
-                  color: "var(--loss)",
-                  border: "1px solid var(--loss-border)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "var(--loss-bg)";
-                  e.currentTarget.style.borderColor = "var(--loss)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.borderColor = "var(--loss-border)";
-                }}
+                className="btn-danger shrink-0 px-3 py-1.5 text-xs font-mono font-medium opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-150"
               >
                 SELL
               </button>

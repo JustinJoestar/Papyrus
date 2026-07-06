@@ -207,7 +207,7 @@ export default function LeaderboardHoldingModal({ symbol, assetType, onClose }: 
               className="w-full py-3 rounded-xl font-mono font-bold text-sm tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               style={{
                 background: "linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)",
-                color: "#0a0800",
+                color: "var(--ink-on-gold)",
               }}
             >
               BUY {symbol}

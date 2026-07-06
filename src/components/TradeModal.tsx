@@ -96,45 +96,47 @@ export default function TradeModal({
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-50 px-4"
-      style={{ background: "rgba(5,6,8,0.80)" }}
+      style={{ background: "var(--overlay)", backdropFilter: "blur(6px)" }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="w-full max-w-sm rounded-2xl overflow-hidden shadow-[0_48px_96px_rgba(0,0,0,0.8)]"
+        className="card-cert corner-frame w-full max-w-sm rounded-2xl overflow-hidden"
         style={{
-          background: "var(--surface)",
-          border: "1px solid var(--border-mid)",
+          boxShadow: "0 48px 96px rgba(0,0,0,0.5), 0 0 0 1px var(--gold-glow)",
+          animation: "rise 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         {/* Header accent */}
-        <div
-          className="h-px"
-          style={{
-            background: isBuy
-              ? "linear-gradient(90deg, transparent, var(--gold) 40%, var(--gold-bright) 50%, var(--gold) 60%, transparent)"
-              : "linear-gradient(90deg, transparent, var(--loss) 50%, transparent)",
-          }}
-        />
+        {isBuy ? (
+          <div className="rule-fade" />
+        ) : (
+          <div
+            className="h-px"
+            style={{ background: "linear-gradient(90deg, transparent, var(--loss) 50%, transparent)" }}
+          />
+        )}
 
         <div className="p-7">
-          {/* Title */}
+          {/* Title — the order ticket header */}
           <div className="flex items-start justify-between mb-5">
             <div>
-              <h2 className="font-bold text-lg" style={{ color: "var(--text-1)" }}>
-                {isBuy ? "Buy" : "Sell"} {coin.name}
+              <p className="label-ledger mb-1" style={{ letterSpacing: "0.22em", color: isBuy ? "var(--gold)" : "var(--loss)" }}>
+                {isBuy ? "Order Ticket — Buy" : "Order Ticket — Sell"}
+              </p>
+              <h2 className="font-display font-semibold text-xl" style={{ color: "var(--text-1)" }}>
+                {coin.name}
               </h2>
-              <p className="text-xs font-mono mt-0.5" style={{ color: "var(--text-3)" }}>
-                Current price:{" "}
+              <p className="text-xs font-mono mt-1 tabular-nums" style={{ color: "var(--text-3)" }}>
+                Market price:{" "}
                 <span style={{ color: "var(--gold-bright)" }}>${fmt(coin.price)}</span>
               </p>
               {leagueName && (
                 <div className="flex items-center gap-1.5 mt-1.5">
-                  <span className="text-xs">🏆</span>
                   <span
                     className="font-mono text-[10px] tracking-wide px-2 py-0.5 rounded-md"
                     style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
                   >
-                    {leagueName}
+                    🏆 {leagueName}
                   </span>
                 </div>
               )}
@@ -186,10 +188,7 @@ export default function TradeModal({
           {/* Amount input */}
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <label
-                className="font-mono text-[10px] tracking-[0.2em] uppercase"
-                style={{ color: "var(--text-3)" }}
-              >
+              <label className="label-ledger" style={{ letterSpacing: "0.2em" }}>
                 {mode === "sell"
                   ? `Quantity (${coin.symbol})`
                   : buyIn === "usd"
@@ -199,7 +198,7 @@ export default function TradeModal({
               {isBuy && cashBalance !== undefined && cashBalance > 0 && (
                 <button
                   onClick={setMaxBuy}
-                  className="font-mono text-[10px] tracking-wider px-2 py-0.5 rounded transition-all"
+                  className="font-mono text-[10px] tracking-wider px-2 py-0.5 rounded transition-all hover:opacity-80"
                   style={{ border: "1px solid var(--gold-border)", color: "var(--gold)" }}
                 >
                   MAX
@@ -212,14 +211,7 @@ export default function TradeModal({
               step={mode === "buy" && buyIn === "usd" ? "1" : "0.000001"}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none transition-all"
-              style={{
-                background: "var(--elevated)",
-                border: "1px solid var(--border-mid)",
-                color: "var(--text-1)",
-              }}
-              onFocus={(e)  => (e.currentTarget.style.borderColor = "var(--gold-border)")}
-              onBlur={(e)   => (e.currentTarget.style.borderColor = "var(--border-mid)")}
+              className="input-ledger font-mono tabular-nums"
               placeholder={mode === "sell" ? "0.001" : buyIn === "usd" ? "100" : `0.001`}
               autoFocus
             />
@@ -233,20 +225,7 @@ export default function TradeModal({
                   <button
                     key={p.label}
                     onClick={() => setPercent(p.value)}
-                    className="text-xs font-mono py-1.5 rounded-lg transition-all duration-150"
-                    style={{
-                      background: "var(--elevated)",
-                      border: "1px solid var(--border-mid)",
-                      color: "var(--text-2)",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "var(--gold-border)";
-                      e.currentTarget.style.color       = "var(--gold-bright)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border-mid)";
-                      e.currentTarget.style.color       = "var(--text-2)";
-                    }}
+                    className="btn-ghost text-xs font-mono py-1.5"
                   >
                     {p.label}
                   </button>
@@ -256,7 +235,8 @@ export default function TradeModal({
                 <input
                   type="range" min="0" max="100" step="0.01"
                   value={sliderPct} onChange={handleSlider}
-                  className="w-full cursor-pointer accent-red-500"
+                  className="w-full cursor-pointer"
+                  style={{ accentColor: "var(--loss)" }}
                 />
                 <div className="flex justify-between text-xs font-mono mt-1" style={{ color: "var(--text-3)" }}>
                   <span>0%</span>
@@ -267,40 +247,40 @@ export default function TradeModal({
             </div>
           )}
 
-          {/* Summary */}
+          {/* Summary — the ticket's ruled tally */}
           <div
-            className="rounded-xl px-4 py-3 mb-5 text-sm space-y-1.5"
+            className="rounded-xl px-4 py-3 mb-5 text-sm"
             style={{ background: "var(--elevated)", border: "1px solid var(--border)" }}
           >
             {isBuy ? (
               <>
-                <div className="flex justify-between">
+                <div className="flex justify-between py-0.5">
                   <span style={{ color: "var(--text-3)" }}>
-                    {buyIn === "usd" ? "You'll receive" : "You'll spend"}
+                    {buyIn === "usd" ? "You’ll receive" : "You’ll spend"}
                   </span>
-                  <span className="font-mono font-medium" style={{ color: "var(--text-1)" }}>
+                  <span className="font-mono font-medium tabular-nums" style={{ color: "var(--text-1)" }}>
                     {buyIn === "usd"
                       ? `${quantity.toFixed(6)} ${coin.symbol}`
                       : `$${fmt(usdValue)}`}
                   </span>
                 </div>
                 {cashBalance !== undefined && (
-                  <div className="flex justify-between">
+                  <div className="flex justify-between py-0.5 mt-1" style={{ borderTop: "1px dashed var(--border-mid)", paddingTop: 7 }}>
                     <span style={{ color: "var(--text-3)" }}>Available</span>
-                    <span className="font-mono" style={{ color: "var(--gold)" }}>${fmt(cashBalance)}</span>
+                    <span className="font-mono tabular-nums" style={{ color: "var(--gold)" }}>${fmt(cashBalance)}</span>
                   </div>
                 )}
               </>
             ) : (
               <>
-                <div className="flex justify-between">
-                  <span style={{ color: "var(--text-3)" }}>You'll receive</span>
-                  <span className="font-mono font-medium" style={{ color: "var(--gain)" }}>${fmt(usdValue)}</span>
+                <div className="flex justify-between py-0.5">
+                  <span style={{ color: "var(--text-3)" }}>You&apos;ll receive</span>
+                  <span className="font-mono font-medium tabular-nums" style={{ color: "var(--gain)" }}>${fmt(usdValue)}</span>
                 </div>
                 {maxQuantity !== undefined && (
-                  <div className="flex justify-between">
+                  <div className="flex justify-between py-0.5 mt-1" style={{ borderTop: "1px dashed var(--border-mid)", paddingTop: 7 }}>
                     <span style={{ color: "var(--text-3)" }}>You hold</span>
-                    <span className="font-mono" style={{ color: "var(--text-2)" }}>
+                    <span className="font-mono tabular-nums" style={{ color: "var(--text-2)" }}>
                       {maxQuantity.toFixed(6)} {coin.symbol}
                     </span>
                   </div>
@@ -313,12 +293,7 @@ export default function TradeModal({
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="flex-1 font-medium text-sm py-2.5 rounded-xl transition-all duration-150"
-              style={{
-                background: "var(--elevated)",
-                border: "1px solid var(--border-mid)",
-                color: "var(--text-2)",
-              }}
+              className="btn-ghost flex-1 font-medium text-sm py-2.5"
             >
               Cancel
             </button>
@@ -328,9 +303,10 @@ export default function TradeModal({
                 disabled={loading || quantity <= 0}
                 shimmerColor="rgba(255,255,255,0.45)"
                 shimmerDuration="2.8s"
-                background="linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 50%, var(--gold-bright) 100%)"
-                borderRadius="12px"
-                className="flex-1 font-bold font-mono text-sm tracking-wide py-2.5 text-[#0a0800] disabled:opacity-40 disabled:cursor-not-allowed"
+                background="linear-gradient(150deg, var(--gold-bright) 0%, var(--gold) 45%, var(--gold-dim) 130%)"
+                borderRadius="10px"
+                className="flex-1 font-bold font-mono text-sm tracking-wide py-2.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ color: "var(--ink-on-gold)" }}
               >
                 {loading ? "Processing..." : "CONFIRM BUY"}
               </ShimmerButton>
@@ -338,12 +314,7 @@ export default function TradeModal({
               <button
                 onClick={handleTrade}
                 disabled={loading || quantity <= 0}
-                className="flex-1 font-bold font-mono text-sm tracking-wide py-2.5 rounded-xl transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{
-                  background: "var(--loss-bg)",
-                  border: "1px solid var(--loss-border)",
-                  color: "var(--loss)",
-                }}
+                className="btn-danger flex-1 font-bold font-mono text-sm tracking-wide py-2.5"
               >
                 {loading ? "Processing..." : "CONFIRM SELL"}
               </button>

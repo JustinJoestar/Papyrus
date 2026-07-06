@@ -28,29 +28,45 @@ const TICKER_ASSETS = [
 // Duplicate for seamless infinite loop
 const ITEMS = [...TICKER_ASSETS, ...TICKER_ASSETS];
 
+/**
+ * Ticker tape — a strip of paper punched with sprocket holes,
+ * running the market's names across the page.
+ */
 export default function AssetTicker() {
   return (
     <div
-      className="w-full overflow-hidden py-4 border-y"
-      style={{ borderColor: "var(--border)", background: "var(--ticker-bg)" }}
+      className="relative w-full overflow-hidden border-y"
+      style={{ borderColor: "var(--border-mid)", background: "var(--ticker-bg)" }}
     >
-      <style>{`
-        @keyframes ticker-scroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .ticker-track {
-          display: flex;
-          width: max-content;
-          animation: ticker-scroll 40s linear infinite;
-        }
-      `}</style>
-      <div className="ticker-track" style={{ alignItems: "center", gap: "2rem" }}>
+      {/* Sprocket holes — top + bottom rows, like real ticker tape */}
+      <div
+        aria-hidden
+        className="absolute top-[5px] inset-x-0 h-[3px] pointer-events-none"
+        style={{
+          backgroundImage: "radial-gradient(circle, var(--border-bright) 1.1px, transparent 1.2px)",
+          backgroundSize: "22px 3px",
+          opacity: 0.7,
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute bottom-[5px] inset-x-0 h-[3px] pointer-events-none"
+        style={{
+          backgroundImage: "radial-gradient(circle, var(--border-bright) 1.1px, transparent 1.2px)",
+          backgroundSize: "22px 3px",
+          opacity: 0.7,
+        }}
+      />
+
+      {/* Edge fades */}
+      <div className="absolute inset-y-0 left-0 w-24 z-10 pointer-events-none"
+        style={{ background: "linear-gradient(90deg, var(--base), transparent)" }} />
+      <div className="absolute inset-y-0 right-0 w-24 z-10 pointer-events-none"
+        style={{ background: "linear-gradient(270deg, var(--base), transparent)" }} />
+
+      <div className="ticker-track items-center gap-8 py-4">
         {ITEMS.map((asset, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-2.5 shrink-0 px-2"
-          >
+          <div key={i} className="flex items-center gap-2.5 shrink-0 px-2">
             <div
               className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center shrink-0"
               style={{ background: "var(--elevated)", border: "1px solid var(--border-mid)" }}
@@ -70,10 +86,7 @@ export default function AssetTicker() {
             >
               {asset.symbol}
             </span>
-            <span
-              className="font-mono text-[10px] tracking-wider"
-              style={{ color: "var(--border-bright)" }}
-            >
+            <span className="font-display italic text-xs" style={{ color: "var(--gold-dim)" }}>
               ·
             </span>
           </div>

@@ -56,23 +56,23 @@ export default async function CommodityDetailPage({
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <Link
         href="/dashboard/market/commodities"
-        className="inline-flex items-center font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8"
-        style={{ color: "var(--text-3)" }}
+        className="rise inline-flex items-center font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8 hover:opacity-70"
+        style={{ "--i": 0, color: "var(--text-3)" } as React.CSSProperties}
       >
         ← Back to Commodities
       </Link>
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+      <div className="rise flex items-center justify-between mb-8 flex-wrap gap-4" style={{ "--i": 1 } as React.CSSProperties}>
         <div className="flex items-center gap-4">
           <div
-            className="w-12 h-12 rounded-full flex items-center justify-center text-2xl"
-            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
+            className="w-14 h-14 rounded-full flex items-center justify-center text-2xl"
+            style={{ background: "var(--gold-glow)", border: "1px dashed var(--gold-border)" }}
           >
             {meta.icon}
           </div>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>{meta.name}</h1>
+            <h1 className="font-display text-3xl font-semibold" style={{ color: "var(--text-1)" }}>{meta.name}</h1>
             <p className="font-mono text-sm" style={{ color: "var(--text-3)" }}>{upperSymbol} · {meta.unit}</p>
           </div>
         </div>
@@ -85,24 +85,34 @@ export default async function CommodityDetailPage({
       </div>
 
       {/* Price */}
-      <div className="mb-8">
-        <p className="text-4xl font-bold font-mono" style={{ color: "var(--text-1)" }}>{fmtPrice(price)}</p>
-        <p className="mt-2 text-sm font-semibold font-mono" style={{ color: isPositive ? "var(--gain)" : "var(--loss)" }}>
-          {isPositive ? "+" : ""}{change24h.toFixed(2)}% today
+      <div className="rise mb-8" style={{ "--i": 2 } as React.CSSProperties}>
+        <p className="text-5xl font-bold font-mono tabular-nums tracking-tight" style={{ color: "var(--text-1)" }}>{fmtPrice(price)}</p>
+        <p
+          className="inline-flex mt-3 text-sm font-semibold font-mono px-2.5 py-0.5 rounded-lg tabular-nums"
+          style={{
+            color: isPositive ? "var(--gain)" : "var(--loss)",
+            background: isPositive ? "var(--gain-bg)" : "var(--loss-bg)",
+            border: `1px solid ${isPositive ? "var(--gain-border)" : "var(--loss-border)"}`,
+          }}
+        >
+          {isPositive ? "▲ +" : "▼ "}{change24h.toFixed(2)}% today
         </p>
       </div>
 
       {/* Chart */}
-      <div className="rounded-2xl p-6 mb-6" style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
+      <div className="rise card-cert corner-frame rounded-2xl p-6 mb-6" style={{ "--i": 3 } as React.CSSProperties}>
         <PriceChart chartBaseUrl={`/api/commodities/chart?symbol=${upperSymbol}`} isPositive={isPositive} />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Stats — ruled ledger cells */}
+      <div
+        className="rise grid grid-cols-2 sm:grid-cols-4 rounded-2xl overflow-hidden"
+        style={{ "--i": 4, border: "1px solid var(--border-mid)", background: "var(--card-bg)" } as React.CSSProperties}
+      >
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
-            <p className="font-mono text-[10px] tracking-[0.2em] uppercase mb-1.5" style={{ color: "var(--text-3)" }}>{stat.label}</p>
-            <p className="font-semibold text-sm" style={{ color: "var(--text-1)" }}>{stat.value}</p>
+          <div key={stat.label} className="p-4" style={{ border: "0.5px solid var(--border)" }}>
+            <p className="label-ledger mb-1.5" style={{ letterSpacing: "0.2em" }}>{stat.label}</p>
+            <p className="font-semibold text-sm font-mono tabular-nums" style={{ color: "var(--text-1)" }}>{stat.value}</p>
           </div>
         ))}
       </div>

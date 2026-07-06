@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import Guilloche from "@/components/Guilloche";
+import PapyrusMark from "@/components/PapyrusMark";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
@@ -17,67 +19,33 @@ export default function VerifyPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
-    >
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
 
-      {/* Ambient gold crown glow */}
+      {/* Guilloché backdrop */}
       <div
-        className="absolute pointer-events-none"
-        style={{
-          top: "-120px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "640px",
-          height: "320px",
-          background:
-            "radial-gradient(ellipse, rgba(201,168,76,0.10) 0%, transparent 65%)",
-        }}
-      />
+        className="absolute left-1/2 top-1/2 pointer-events-none"
+        style={{ transform: "translate(-50%, -50%)" }}
+      >
+        <Guilloche size={760} opacity={0.8} />
+      </div>
 
-      <div className="w-full max-w-[380px] relative z-10">
+      <div className="w-full max-w-[390px] relative z-10">
         {/* Logo */}
         <div className="mb-10">
-          <div className="flex items-center gap-3">
-            <div className="flex items-end gap-[3px]">
-              <div className="w-[3px] h-3 rounded-sm"    style={{ background: "var(--gold)" }} />
-              <div className="w-[3px] h-[18px] rounded-sm" style={{ background: "var(--gold)" }} />
-              <div className="w-[3px] h-2 rounded-sm"    style={{ background: "var(--gold-dim)" }} />
-            </div>
-            <span
-              className="font-mono font-bold text-lg tracking-[0.16em]"
-              style={{ color: "var(--text-1)" }}
-            >
-              PAPYRUS
-            </span>
-          </div>
-          <p
-            className="font-mono text-[10px] tracking-[0.28em] mt-2 pl-[22px]"
-            style={{ color: "var(--text-3)" }}
-          >
-            PAPER TRADING TERMINAL
-          </p>
+          <PapyrusMark sealSize={34} wordmarkSize={18} showEst />
         </div>
 
         {/* Card */}
         <div
-          className="rounded-2xl overflow-hidden"
+          className="card-cert corner-frame rounded-2xl overflow-hidden"
           style={{
-            background: "rgba(13,13,13,0.92)",
-            border: "1px solid var(--border-mid)",
             backdropFilter: "blur(12px)",
-            boxShadow: "0 40px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.06)",
+            boxShadow: "0 40px 80px rgba(0,0,0,0.35), 0 0 0 1px var(--gold-glow)",
           }}
         >
-          <div
-            className="h-px"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent, var(--gold) 40%, var(--gold-bright) 50%, var(--gold) 60%, transparent)",
-            }}
-          />
+          <div className="rule-fade" />
 
-          <div className="px-7 pb-7 pt-6 text-center">
+          <div className="px-8 pb-8 pt-7 text-center">
             {/* Icon */}
             <div
               className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-5"
@@ -102,7 +70,7 @@ export default function VerifyPage() {
               </svg>
             </div>
 
-            <h2 className="font-semibold mb-0.5" style={{ color: "var(--text-1)" }}>
+            <h2 className="font-display text-2xl font-semibold mb-1" style={{ color: "var(--text-1)" }}>
               Check your email
             </h2>
             <p className="text-xs font-mono mb-6" style={{ color: "var(--text-3)" }}>
@@ -116,10 +84,7 @@ export default function VerifyPage() {
                 border: "1px solid var(--border-mid)",
               }}
             >
-              <p
-                className="font-mono text-[10px] tracking-[0.2em] uppercase mb-1"
-                style={{ color: "var(--text-3)" }}
-              >
+              <p className="label-ledger mb-1" style={{ letterSpacing: "0.2em" }}>
                 Sent to
               </p>
               <p className="text-sm font-mono truncate" style={{ color: "var(--text-1)" }}>

@@ -160,7 +160,7 @@ export default function NavUserMenu({ username, avatarUrl }: Props) {
               borderTop: "1px solid var(--border)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(201,168,76,0.08)";
+              e.currentTarget.style.background = "rgba(201,162,78,0.08)";
               e.currentTarget.style.color = "var(--gold)";
             }}
             onMouseLeave={(e) => {

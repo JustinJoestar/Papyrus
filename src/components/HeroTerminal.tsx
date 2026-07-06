@@ -149,7 +149,7 @@ function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
     const y = h - ((v - min) / range) * (h - 2) - 1;
     return `${x},${y}`;
   });
-  const color = positive ? "#22c55e" : "#f43f5e";
+  const color = positive ? "var(--gain)" : "var(--loss)";
   const fill = `${pts.join(" ")} ${w},${h} 0,${h}`;
   return (
     <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} fill="none">
@@ -321,11 +321,11 @@ export default function HeroTerminal() {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
-          background: isLight ? "#ffffff" : "#000000",
+          background: isLight ? "var(--surface)" : "#0a0805",
           border: "1px solid var(--border-mid)",
           boxShadow: isLight
-            ? "0 24px 48px rgba(37,99,235,0.12), 0 0 0 1px rgba(37,99,235,0.10)"
-            : "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.08)",
+            ? "0 24px 48px rgba(110,84,28,0.16), 0 0 0 1px rgba(142,110,38,0.12)"
+            : "0 24px 48px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,162,78,0.10)",
           opacity: visible ? 1 : 0,
           transition: "opacity 0.18s ease",
           transformOrigin: "center center",
@@ -343,7 +343,7 @@ export default function HeroTerminal() {
               className="font-mono text-[9px] px-1.5 py-0.5 rounded"
               style={isCrypto
                 ? { background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }
-                : { background: "rgba(37,99,235,0.10)", border: "1px solid rgba(37,99,235,0.25)", color: "#60a5fa" }
+                : { background: "transparent", border: "1px solid var(--border-bright)", color: "var(--text-2)" }
               }
             >
               {isCrypto ? "SPOT" : "STOCK"}
@@ -357,7 +357,7 @@ export default function HeroTerminal() {
           <div>
             <div
               className="font-mono font-bold text-lg leading-none transition-colors duration-150"
-              style={{ color: flash ? "#e8c66a" : lastSide === "buy" ? "#22c55e" : "#f43f5e" }}
+              style={{ color: flash ? "var(--gold-bright)" : lastSide === "buy" ? "var(--gain)" : "var(--loss)" }}
             >
               ${fmtPrice(lastPrice)}
             </div>
@@ -366,8 +366,8 @@ export default function HeroTerminal() {
             </div>
           </div>
           <div className="text-right">
-            <div className="font-mono text-xs font-semibold" style={{ color: pos ? "#22c55e" : "#f43f5e" }}>
-              {pos ? "+" : ""}{asset.change}%
+            <div className="font-mono text-xs font-semibold" style={{ color: pos ? "var(--gain)" : "var(--loss)" }}>
+              {asset.change.startsWith("+") || asset.change.startsWith("-") ? asset.change : `${pos ? "+" : ""}${asset.change}`}%
             </div>
             <div className="font-mono text-[9px]" style={{ color: "var(--text-3)" }}>24H</div>
           </div>
@@ -384,8 +384,8 @@ export default function HeroTerminal() {
           {asks.slice().reverse().map((row, i) => (
             <div key={i} className="relative flex items-center justify-between py-[2px]">
               <div className="absolute right-0 top-0 bottom-0 opacity-20 rounded-sm"
-                style={{ width: `${(row.size / maxSize) * 65}%`, background: "#f43f5e" }} />
-              <span className="font-mono text-[11px] relative z-10" style={{ color: "#f87171" }}>{fmtPrice(row.price)}</span>
+                style={{ width: `${(row.size / maxSize) * 65}%`, background: "var(--loss)" }} />
+              <span className="font-mono text-[11px] relative z-10" style={{ color: "var(--loss)" }}>{fmtPrice(row.price)}</span>
               <span className="font-mono text-[11px] relative z-10" style={{ color: "var(--text-3)" }}>{fmtSize(row.size, asset.unit)}</span>
             </div>
           ))}
@@ -407,8 +407,8 @@ export default function HeroTerminal() {
           {bids.map((row, i) => (
             <div key={i} className="relative flex items-center justify-between py-[2px]">
               <div className="absolute right-0 top-0 bottom-0 opacity-20 rounded-sm"
-                style={{ width: `${(row.size / maxSize) * 65}%`, background: "#22c55e" }} />
-              <span className="font-mono text-[11px] relative z-10" style={{ color: "#4ade80" }}>{fmtPrice(row.price)}</span>
+                style={{ width: `${(row.size / maxSize) * 65}%`, background: "var(--gain)" }} />
+              <span className="font-mono text-[11px] relative z-10" style={{ color: "var(--gain)" }}>{fmtPrice(row.price)}</span>
               <span className="font-mono text-[11px] relative z-10" style={{ color: "var(--text-3)" }}>{fmtSize(row.size, asset.unit)}</span>
             </div>
           ))}

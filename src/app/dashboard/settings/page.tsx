@@ -14,27 +14,19 @@ export default async function SettingsPage() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       {/* Header */}
-      <div className="mb-8">
-        <p
-          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
-          style={{ color: "var(--text-3)" }}
-        >
-          Preferences
-        </p>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
+      <div className="rise mb-8" style={{ "--i": 0 } as React.CSSProperties}>
+        <p className="label-ledger mb-1.5">№ 08 — Preferences</p>
+        <h1 className="font-display text-3xl font-semibold" style={{ color: "var(--text-1)" }}>
           Settings
         </h1>
       </div>
 
       {/* Account section */}
       <div
-        className="rounded-2xl p-6 mb-4"
-        style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
+        className="rise card-cert corner-frame rounded-2xl p-6 mb-4"
+        style={{ "--i": 1 } as React.CSSProperties}
       >
-        <p
-          className="font-mono text-[10px] tracking-[0.22em] uppercase mb-4"
-          style={{ color: "var(--text-3)" }}
-        >
+        <p className="label-ledger mb-4" style={{ letterSpacing: "0.22em" }}>
           Account
         </p>
 
@@ -53,13 +45,10 @@ export default async function SettingsPage() {
 
       {/* Appearance */}
       <div
-        className="rounded-2xl p-6"
-        style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
+        className="rise card-cert corner-frame rounded-2xl p-6"
+        style={{ "--i": 2 } as React.CSSProperties}
       >
-        <p
-          className="font-mono text-[10px] tracking-[0.22em] uppercase mb-4"
-          style={{ color: "var(--text-3)" }}
-        >
+        <p className="label-ledger mb-4" style={{ letterSpacing: "0.22em" }}>
           Appearance
         </p>
         <ThemeToggle />

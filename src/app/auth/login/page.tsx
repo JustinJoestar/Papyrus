@@ -1,25 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-
-function Logo() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="flex items-end gap-[3px]">
-        <div className="w-[3px] h-3     rounded-sm" style={{ background: "var(--gold)" }} />
-        <div className="w-[3px] h-[18px] rounded-sm" style={{ background: "var(--gold)" }} />
-        <div className="w-[3px] h-2     rounded-sm" style={{ background: "var(--gold-dim)" }} />
-      </div>
-      <span
-        className="font-mono font-bold text-lg tracking-[0.16em]"
-        style={{ color: "var(--text-1)" }}
-      >
-        PAPYRUS
-      </span>
-    </div>
-  );
-}
+import Guilloche from "@/components/Guilloche";
+import PapyrusMark from "@/components/PapyrusMark";
 
 export default function LoginPage() {
   const supabase = createClient();
@@ -46,7 +31,15 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
 
-      {/* Ambient gold crown glow */}
+      {/* Guilloché backdrop */}
+      <div
+        className="absolute left-1/2 top-1/2 pointer-events-none"
+        style={{ transform: "translate(-50%, -50%)" }}
+      >
+        <Guilloche size={760} opacity={0.8} />
+      </div>
+
+      {/* Ambient crown glow */}
       <div
         className="absolute pointer-events-none"
         style={{
@@ -55,46 +48,32 @@ export default function LoginPage() {
           transform: "translateX(-50%)",
           width: "640px",
           height: "320px",
-          background:
-            "radial-gradient(ellipse, rgba(201,168,76,0.10) 0%, transparent 65%)",
+          background: "radial-gradient(ellipse, var(--cta-radial) 0%, transparent 65%)",
         }}
       />
 
       {/* Card */}
-      <div className="w-full max-w-[380px] relative" style={{ zIndex: 10 }}>
-        <div className="mb-10">
-          <Logo />
-          <p
-            className="font-mono text-[10px] tracking-[0.28em] mt-2 pl-[22px]"
-            style={{ color: "var(--text-3)" }}
-          >
-            PAPER TRADING TERMINAL
-          </p>
-        </div>
+      <div className="w-full max-w-[390px] relative" style={{ zIndex: 10 }}>
+        <Link href="/" className="rise inline-block mb-10" style={{ "--i": 0 } as React.CSSProperties}>
+          <PapyrusMark sealSize={34} wordmarkSize={18} showEst />
+        </Link>
 
         <div
-          className="rounded-2xl overflow-hidden"
+          className="rise card-cert corner-frame rounded-2xl overflow-hidden"
           style={{
-            background: "rgba(13,13,13,0.92)",
-            border: "1px solid var(--border-mid)",
+            "--i": 1,
             backdropFilter: "blur(12px)",
-            boxShadow: "0 40px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(201,168,76,0.06)",
-          }}
+            boxShadow: "0 40px 80px rgba(0,0,0,0.35), 0 0 0 1px var(--gold-glow)",
+          } as React.CSSProperties}
         >
-          {/* Gold top accent */}
-          <div
-            className="h-px"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent, var(--gold) 35%, var(--gold-bright) 50%, var(--gold) 65%, transparent)",
-            }}
-          />
+          {/* Bronze top accent */}
+          <div className="rule-fade" />
 
-          <div className="px-7 pb-7 pt-6">
-            <h2 className="font-semibold mb-0.5" style={{ color: "var(--text-1)" }}>
+          <div className="px-8 pb-8 pt-7">
+            <h2 className="font-display text-2xl font-semibold mb-1" style={{ color: "var(--text-1)" }}>
               Sign in
             </h2>
-            <p className="text-xs font-mono mb-6" style={{ color: "var(--text-3)" }}>
+            <p className="text-xs font-mono mb-7" style={{ color: "var(--text-3)" }}>
               Access your trading terminal
             </p>
 
@@ -119,18 +98,7 @@ export default function LoginPage() {
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background: "var(--elevated)",
-                border: "1px solid var(--border-mid)",
-                color: "var(--text-1)",
-              }}
-              onMouseEnter={(e) => {
-                if (!loading) e.currentTarget.style.borderColor = "var(--gold-border)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-mid)";
-              }}
+              className="btn-ghost w-full gap-3 px-4 py-3 text-sm font-medium"
             >
               {/* Google logo */}
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -141,12 +109,20 @@ export default function LoginPage() {
               </svg>
               {loading ? "Redirecting..." : "Continue with Google"}
             </button>
+
+            <div className="flex items-center gap-3 mt-7">
+              <div className="rule-hair flex-1" />
+              <span className="font-mono text-[9px] tracking-[0.3em] uppercase" style={{ color: "var(--text-3)" }}>
+                № 000001
+              </span>
+              <div className="rule-hair flex-1" />
+            </div>
           </div>
         </div>
 
         <p
-          className="text-center font-mono text-[10px] tracking-widest mt-6 uppercase"
-          style={{ color: "var(--text-3)" }}
+          className="rise text-center font-mono text-[10px] tracking-widest mt-6 uppercase"
+          style={{ "--i": 2, color: "var(--text-3)" } as React.CSSProperties}
         >
           Virtual funds only · No real money at risk
         </p>

@@ -74,29 +74,24 @@ export default async function PublicProfilePage({
       {/* Back */}
       <Link
         href="/dashboard/leagues"
-        className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8"
-        style={{ color: "var(--text-3)" }}
+        className="rise inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.2em] uppercase transition-colors mb-8 hover:opacity-70"
+        style={{ "--i": 0, color: "var(--text-3)" } as React.CSSProperties}
       >
         ← Back
       </Link>
 
       {/* Header */}
-      <div className="mb-8">
-        <p
-          className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
-          style={{ color: "var(--text-3)" }}
-        >
-          Trader Profile
-        </p>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--text-1)" }}>
+      <div className="rise mb-8" style={{ "--i": 1 } as React.CSSProperties}>
+        <p className="label-ledger mb-1.5">Trader Profile</p>
+        <h1 className="font-display text-3xl font-semibold" style={{ color: "var(--text-1)" }}>
           {profile.username}
         </h1>
       </div>
 
       {/* Avatar + identity card */}
       <div
-        className="rounded-2xl p-6 sm:p-10 mb-6 flex flex-col sm:flex-row items-center gap-6 sm:gap-12"
-        style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
+        className="rise card-cert corner-frame rounded-2xl p-6 sm:p-10 mb-6 flex flex-col sm:flex-row items-center gap-6 sm:gap-12"
+        style={{ "--i": 2 } as React.CSSProperties}
       >
         {/* Avatar */}
         <div
@@ -150,23 +145,20 @@ export default async function PublicProfilePage({
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-8">
+      <div className="rise sheet grid grid-cols-2 mb-8" style={{ "--i": 3 } as React.CSSProperties}>
         {[
           { label: "Total Trades",  value: tradeCount ?? 0 },
           { label: "Achievements",  value: `${unlockedCount} / ${ACHIEVEMENTS.length}` },
-        ].map((stat) => (
+        ].map((stat, i) => (
           <div
             key={stat.label}
-            className="rounded-xl px-3 py-5 sm:px-6 sm:py-7 text-center"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            className="px-3 py-5 sm:px-6 sm:py-7 text-center"
+            style={{ borderTop: "none", borderLeft: i > 0 ? "1px solid var(--border)" : "none" }}
           >
-            <p className="font-mono font-bold text-3xl text-gold-gradient mb-2">
+            <p className="font-mono font-bold text-3xl text-gold-gradient mb-2 tabular-nums">
               {stat.value}
             </p>
-            <p
-              className="font-mono text-xs tracking-[0.18em] uppercase"
-              style={{ color: "var(--text-3)" }}
-            >
+            <p className="label-ledger" style={{ letterSpacing: "0.18em" }}>
               {stat.label}
             </p>
           </div>
@@ -174,19 +166,16 @@ export default async function PublicProfilePage({
       </div>
 
       {/* Achievements */}
-      <div>
-        <div className="mb-4">
-          <p
-            className="font-mono text-[10px] tracking-[0.28em] uppercase mb-1"
-            style={{ color: "var(--text-3)" }}
-          >
+      <div className="rise" style={{ "--i": 4 } as React.CSSProperties}>
+        <div className="mb-4 flex items-baseline justify-between">
+          <h2 className="font-display text-lg font-semibold" style={{ color: "var(--text-1)" }}>
             Achievements
-          </p>
-          <h2 className="text-base font-semibold" style={{ color: "var(--text-2)" }}>
-            {unlockedCount === 0
-              ? "No achievements unlocked yet"
-              : `${unlockedCount} of ${ACHIEVEMENTS.length} unlocked`}
           </h2>
+          <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>
+            {unlockedCount === 0
+              ? "None unlocked yet"
+              : `${unlockedCount} of ${ACHIEVEMENTS.length} unlocked`}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -195,9 +184,10 @@ export default async function PublicProfilePage({
               key={a.id}
               className="rounded-xl px-6 py-5 flex items-start gap-4 transition-all"
               style={{
-                background: "var(--surface)",
+                background: "var(--card-bg)",
                 border: a.unlocked ? "1px solid var(--gold-border)" : "1px solid var(--border)",
-                opacity: a.unlocked ? 1 : 0.4,
+                opacity: a.unlocked ? 1 : 0.45,
+                boxShadow: a.unlocked ? "0 0 24px var(--gold-glow)" : "none",
               }}
             >
               <span className="text-3xl shrink-0">{a.icon}</span>
