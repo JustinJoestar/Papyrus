@@ -34,8 +34,12 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
-  // Redirect authenticated users away from auth pages
-  if (user && request.nextUrl.pathname.startsWith("/auth")) {
+  // Redirect authenticated users away from the entry auth pages.
+  // Exclude /auth/callback (OAuth code exchange) and /auth/username
+  // (first-login username picker) — bouncing those would break the flow.
+  const path = request.nextUrl.pathname;
+  const allowedWhileAuthed = path.startsWith("/auth/callback") || path.startsWith("/auth/username");
+  if (user && path.startsWith("/auth") && !allowedWhileAuthed) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

@@ -31,7 +31,7 @@ export default async function LandingPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const isLoggedIn = !!user;
-  const ctaHref = isLoggedIn ? "/dashboard" : "/auth/signup";
+  const ctaHref = isLoggedIn ? "/dashboard" : "/auth/login";
 
   return (
     <div className="min-h-screen relative overflow-hidden landing-bg" style={{ color: "var(--text-1)" }}>
@@ -57,6 +57,13 @@ export default async function LandingPage() {
         </span>
 
         <div className="ml-auto flex items-center gap-3">
+          <Link
+            href="/challenge"
+            className="hidden sm:inline-flex items-center gap-1.5 font-mono text-[11px] tracking-wider px-3 py-1.5 rounded-lg transition-colors"
+            style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+          >
+            ☀ Summer Challenge
+          </Link>
           <NavThemeToggle />
           {isLoggedIn ? (
             <GoldShimmerCta href="/dashboard" className="px-4 py-2 text-xs">
@@ -71,7 +78,7 @@ export default async function LandingPage() {
               >
                 Sign in
               </Link>
-              <GoldShimmerCta href="/auth/signup" className="px-4 py-2 text-xs">
+              <GoldShimmerCta href="/auth/login" className="px-4 py-2 text-xs">
                 Get Started
               </GoldShimmerCta>
             </>

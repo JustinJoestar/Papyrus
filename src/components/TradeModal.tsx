@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
 
 export type TradeCoin = { symbol: string; name: string; price: number };
@@ -29,7 +28,6 @@ export default function TradeModal({
   mode, coin, assetType = "crypto", cashBalance, maxQuantity,
   leagueId, leagueName, onClose, onSuccess,
 }: Props) {
-  const supabase = createClient();
   const [amount,  setAmount]  = useState("");
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState<string | null>(null);
@@ -66,24 +64,33 @@ export default function TradeModal({
     if (quantity <= 0) return;
     setLoading(true);
     setError(null);
-    const { data, error: rpcError } = leagueId
-      ? await supabase.rpc("execute_league_trade", {
-          p_league_id: leagueId, p_symbol: coin.symbol, p_asset_type: assetType,
-          p_type: mode, p_quantity: quantity, p_price: coin.price,
-        })
-      : await supabase.rpc("execute_trade", {
-          p_symbol: coin.symbol, p_asset_type: assetType,
-          p_type: mode, p_quantity: quantity, p_price: coin.price,
-        });
-    if (rpcError || data?.success === false) {
-      setError(rpcError?.message ?? data?.error ?? "Trade failed");
+
+    // All trades go through the server route, which fetches the real price
+    // and executes it — the client never decides the trade price.
+    let data: { success?: boolean; error?: string };
+    try {
+      const res = await fetch("/api/trade", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          symbol: coin.symbol,
+          assetType,
+          type: mode,
+          quantity,
+          leagueId: leagueId ?? null,
+        }),
+      });
+      data = await res.json();
+    } catch {
+      setError("Network error. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    if (data?.success === false) {
+      setError(data.error ?? "Trade failed");
       setLoading(false);
     } else {
-      // Check achievements + leaderboard rank after every global trade
-      if (!leagueId) {
-        await supabase.rpc("check_trade_achievements");
-        void supabase.rpc("check_leaderboard_notification");
-      }
       onSuccess();
     }
   }

@@ -99,10 +99,10 @@ export default function TosPage() {
           style={{ borderTop: "1px solid var(--border)" }}
         >
           <Link
-            href="/auth/signup"
+            href="/auth/login"
             className="btn-bronze inline-flex text-sm px-6 py-2.5"
           >
-            Back to Sign Up
+            Back to Sign In
           </Link>
           <p className="font-mono text-[10px] tracking-widest mt-4 uppercase" style={{ color: "var(--text-3)" }}>
             Virtual funds only · No real money at risk

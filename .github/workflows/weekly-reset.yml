@@ -1,0 +1,17 @@
+name: Weekly Portfolio Reset
+
+on:
+  schedule:
+    # Every Sunday at 00:00 UTC — saves leaderboard snapshot and resets all portfolios
+    - cron: "0 0 * * 0"
+  workflow_dispatch: # allow manual trigger
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping weekly reset endpoint
+        run: |
+          curl -f -X GET "${{ secrets.APP_URL }}/api/reset" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            --max-time 60

@@ -21,10 +21,12 @@ export default function HoldingsList({
   holdings,
   leagueId,
   leagueName,
+  marketHref = "/dashboard/market",
 }: {
   holdings: HoldingWithPrice[];
   leagueId?: string | null;
   leagueName?: string | null;
+  marketHref?: string;
 }) {
   const router = useRouter();
   const [sellTarget, setSellTarget] = useState<HoldingWithPrice | null>(null);
@@ -46,7 +48,7 @@ export default function HoldingsList({
           The ledger is empty.
         </p>
         <Link
-          href="/dashboard/market"
+          href={marketHref}
           className="text-sm font-medium transition-opacity hover:opacity-75"
           style={{ color: "var(--gold)" }}
         >

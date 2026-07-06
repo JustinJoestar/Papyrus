@@ -113,7 +113,7 @@ export default function PulseSection() {
         >
           {/* Central hub button */}
           <Link
-            href="/auth/signup"
+            href="/auth/login"
             className="relative group cursor-pointer inline-flex"
           >
             <div
