@@ -70,8 +70,20 @@ run from the first trading day even though the code that consumes it ships later
 - Auto-computed winners with manual override.
 
 ## Enrollment data captured
-name · Google email · optional parent email · **school · grade · how-heard**
-(the last three power the narrative metrics: "reached N schools", "press drove M signups").
+name · Google email · optional parent email · **school · grade · how-heard · referral code**
+(the last four power the narrative metrics: "reached N schools", "press drove M signups").
+
+## Referral system
+Every enrollee gets a unique 6-char share code (`contest_enrollments.referral_code`,
+unambiguous alphabet, unique per contest). New entrants can enter a friend's code on
+the enroll form or arrive via `/challenge/enroll?ref=CODE` (prefilled; survives the
+Google OAuth roundtrip via `next=` + localStorage). The link is validated and locked
+server-side inside `enroll_in_contest` — code must belong to an enrolled participant,
+no self-referrals, `referred_by` set on first insert only — so counts can't be gamed.
+Surfaces: share card on the enroll success screen + `/challenge/play`
+(`get_contest_referral_stats` RPC), and a **Referrals tab on the leaderboard**
+(`?view=referrals`) ranked by recruits, ties broken by earliest enrollment.
+Schema/RPCs in `supabase/referrals.sql`.
 
 ## Build phasing
 **Launch (early July):** signup + landing/rules/parents pages + contest league with
@@ -92,6 +104,7 @@ email, admin override UI.
 - [x] Leaderboard (return %, live, auto-refresh)
 - [x] Daily snapshot cron (`/api/challenge/snapshot` + GH Action at 20:30 UTC)
 - [x] Admin page (`/challenge/admin`: create/edit contest, enrollments, CSV export)
+- [x] Referral system (codes, `?ref=` links, leaderboard Referrals tab) — run `supabase/referrals.sql`
 - [ ] Resend welcome email
 - [ ] Sortino + Comeback + winner computation
 - [ ] Finalize asset whitelist + prize/sponsor

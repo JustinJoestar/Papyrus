@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Leaderboard — Papyrus Summer Trading Challenge" };
 
 type Row = { rank: number; name: string; returnPct: number; value: number };
-type Standings = { contestName: string; started: boolean; rows: Row[] };
+type ReferralRow = { rank: number; name: string; count: number };
+type Standings = { contestName: string; started: boolean; rows: Row[]; referralRows: ReferralRow[] };
 
 const fmtMoney = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmtPct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
@@ -33,11 +34,11 @@ async function loadStandings(): Promise<Standings | null> {
   const [{ data: members }, { data: holdings }, { data: enrollments }] = await Promise.all([
     admin.from("league_members").select("user_id, league_cash_balance").eq("league_id", contest.id),
     admin.from("league_holdings").select("user_id, symbol, quantity").eq("league_id", contest.id),
-    admin.from("contest_enrollments").select("user_id, full_name, enrolled_at").eq("league_id", contest.id),
+    admin.from("contest_enrollments").select("user_id, full_name, enrolled_at, referred_by").eq("league_id", contest.id),
   ]);
 
   const memberRows = members ?? [];
-  if (memberRows.length === 0) return { contestName: contest.name, started, rows: [] };
+  if (memberRows.length === 0) return { contestName: contest.name, started, rows: [], referralRows: [] };
 
   const enrolledAtById = new Map<string, string>();
   const fullNameById = new Map<string, string>();
@@ -82,12 +83,34 @@ async function loadStandings(): Promise<Standings | null> {
   );
 
   const rows: Row[] = base.map((r, i) => ({ rank: i + 1, name: r.name, returnPct: r.returnPct, value: r.value }));
-  return { contestName: contest.name, started, rows };
+
+  // Referral standings: how many entrants each participant brought in.
+  const referralCounts = new Map<string, number>();
+  for (const e of enrollments ?? []) {
+    if (e.referred_by) referralCounts.set(e.referred_by, (referralCounts.get(e.referred_by) ?? 0) + 1);
+  }
+  const referralRows: ReferralRow[] = [...referralCounts.entries()]
+    .map(([userId, count]) => ({
+      name: nameById.get(userId) ?? "Trader",
+      count,
+      enrolledAt: enrolledAtById.get(userId) ?? "",
+    }))
+    // Ties go to whoever enrolled first.
+    .sort((a, b) => b.count - a.count || (a.enrolledAt || "").localeCompare(b.enrolledAt || ""))
+    .map((r, i) => ({ rank: i + 1, name: r.name, count: r.count }));
+
+  return { contestName: contest.name, started, rows, referralRows };
 }
 
 const RANK_ACCENT = ["var(--gold-bright)", "#c0c0c0", "#cd7f32"]; // gold / silver / bronze
 
-export default async function LeaderboardPage() {
+export default async function LeaderboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const { view } = await searchParams;
+  const referralView = view === "referrals";
   const data = await loadStandings();
   const status = contestStatus();
   const started = data?.started ?? (status === "live" || status === "ended");
@@ -99,7 +122,7 @@ export default async function LeaderboardPage() {
 
       <div className="flex items-center justify-between mb-2">
         <p className="font-mono text-[10px] tracking-[0.28em] uppercase" style={{ color: "var(--text-3)" }}>
-          {started ? "Leaderboard" : "Waitlist"}
+          {referralView ? "Referral Standings" : started ? "Leaderboard" : "Waitlist"}
         </p>
         {status === "live" ? (
           <span className="flex items-center gap-1.5 font-mono text-[10px] tracking-wider" style={{ color: "var(--gain)" }}>
@@ -115,12 +138,35 @@ export default async function LeaderboardPage() {
         {data?.contestName ?? CONTEST.name}
       </h1>
       <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>
-        {started
+        {referralView
+          ? "Ranked by friends recruited — every entrant who joins with your referral code counts."
+          : started
           ? "Ranked by total return. Updates automatically every minute."
           : "Entrants in the order they joined. Everyone starts even when trading opens."}
       </p>
 
-      {!started && (
+      {/* View tabs */}
+      <div className="flex gap-2 mb-6">
+        {[
+          { href: "/challenge/leaderboard", label: "📈 Trading", active: !referralView },
+          { href: "/challenge/leaderboard?view=referrals", label: "🤝 Referrals", active: referralView },
+        ].map((t) => (
+          <Link
+            key={t.href}
+            href={t.href}
+            className="font-mono text-[11px] tracking-wider px-4 py-2 rounded-xl transition-all"
+            style={
+              t.active
+                ? { background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }
+                : { background: "var(--elevated)", border: "1px solid var(--border-mid)", color: "var(--text-3)" }
+            }
+          >
+            {t.label}
+          </Link>
+        ))}
+      </div>
+
+      {!started && !referralView && (
         <div
           className="rounded-2xl px-5 py-4 mb-6 flex items-center gap-3 flex-wrap"
           style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
@@ -149,6 +195,50 @@ export default async function LeaderboardPage() {
             Enter the Challenge →
           </Link>
         </div>
+      ) : referralView ? (
+        data.referralRows.length === 0 ? (
+          <div className="rounded-2xl p-10 text-center" style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
+            <p className="text-sm" style={{ color: "var(--text-2)" }}>
+              No referrals yet — share your code and be the first on this board.
+            </p>
+            <p className="text-xs mt-2" style={{ color: "var(--text-3)" }}>
+              Your code and invite link are on your portfolio page.
+            </p>
+            <Link
+              href="/challenge/play"
+              className="inline-block mt-5 font-mono text-xs tracking-wider px-5 py-2.5 rounded-xl"
+              style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+            >
+              Get my invite link →
+            </Link>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {data.referralRows.map((r) => {
+              const accent = r.rank <= 3 ? RANK_ACCENT[r.rank - 1] : null;
+              return (
+                <div
+                  key={r.rank}
+                  className="rounded-2xl px-5 py-4 flex items-center gap-4"
+                  style={{ background: "var(--surface)", border: `1px solid ${accent ? "var(--gold-border)" : "var(--border-mid)"}` }}
+                >
+                  <span className="font-mono font-bold text-lg w-8 text-center shrink-0" style={{ color: accent ?? "var(--text-3)" }}>
+                    {r.rank}
+                  </span>
+                  <span className="flex-1 font-medium truncate" style={{ color: "var(--text-1)" }}>
+                    {r.name}
+                  </span>
+                  <span
+                    className="font-mono text-xs font-semibold tabular-nums px-2.5 py-1 rounded-md"
+                    style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
+                  >
+                    {r.count} {r.count === 1 ? "recruit" : "recruits"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )
       ) : (
         <div className="space-y-2">
           {data.rows.map((r) => {

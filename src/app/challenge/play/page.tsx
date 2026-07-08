@@ -4,6 +4,7 @@ import { getStockPrices } from "@/lib/stockPrices";
 import { CONTEST, contestStatus, formatContestDate } from "@/lib/challenge";
 import HoldingsList, { type HoldingWithPrice } from "@/components/HoldingsList";
 import AutoRefresh from "@/components/challenge/AutoRefresh";
+import ReferralCard from "@/components/challenge/ReferralCard";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -89,6 +90,10 @@ export default async function ChallengePlayPage() {
     .select("symbol, quantity, avg_buy_price")
     .eq("league_id", contest.id)
     .eq("user_id", user.id);
+
+  const { data: referralStats } = await supabase.rpc("get_contest_referral_stats", {
+    p_league_id: contest.id,
+  });
 
   const symbols = (holdingsRaw ?? []).map((h) => h.symbol);
   const prices = symbols.length > 0 ? await getStockPrices(symbols) : {};
@@ -212,6 +217,13 @@ export default async function ChallengePlayPage() {
           <p className="text-xs mt-1.5" style={{ color: "var(--text-3)" }}>{holdings.length} open position{holdings.length !== 1 ? "s" : ""}</p>
         </div>
       </div>
+
+      {/* Referral share card */}
+      {referralStats?.success && referralStats.code && (
+        <div className="mb-10">
+          <ReferralCard code={referralStats.code} count={referralStats.count ?? 0} />
+        </div>
+      )}
 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold" style={{ color: "var(--text-2)" }}>Open Positions</h2>

@@ -4,7 +4,11 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import ReferralCard from "@/components/challenge/ReferralCard";
 import { CONTEST, formatContestDate } from "@/lib/challenge";
+
+// Survives the Google OAuth roundtrip in case the ?ref= param is lost.
+const REF_STORAGE_KEY = "papyrus_challenge_ref";
 
 type Contest = {
   id: string;
@@ -74,10 +78,26 @@ export default function EnrollPage() {
   const [school, setSchool] = useState("");
   const [grade, setGrade] = useState("");
   const [heardFrom, setHeardFrom] = useState("");
+  const [referralCode, setReferralCode] = useState("");
+  const [myReferralCode, setMyReferralCode] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const initPage = useCallback(async () => {
+    // Prefill the referral code from the share link (?ref=CODE), falling
+    // back to one stashed before the OAuth redirect.
+    const refParam = new URLSearchParams(window.location.search).get("ref");
+    if (refParam) {
+      const cleaned = refParam.trim().toUpperCase().slice(0, 12);
+      setReferralCode(cleaned);
+      try { localStorage.setItem(REF_STORAGE_KEY, cleaned); } catch {}
+    } else {
+      try {
+        const stored = localStorage.getItem(REF_STORAGE_KEY);
+        if (stored) setReferralCode(stored);
+      } catch {}
+    }
+
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setPhase("signedOut"); return; }
 
@@ -126,9 +146,10 @@ export default function EnrollPage() {
 
   async function handleGoogle() {
     setGoogleLoading(true);
+    const next = `/challenge/enroll${referralCode ? `?ref=${encodeURIComponent(referralCode)}` : ""}`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=/challenge/enroll` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
     });
     if (error) { setError(error.message); setGoogleLoading(false); }
   }
@@ -154,18 +175,21 @@ export default function EnrollPage() {
     setSubmitting(true);
     setError(null);
     const { data, error: rpcError } = await supabase.rpc("enroll_in_contest", {
-      p_league_id:    contest.id,
-      p_full_name:    fullName.trim(),
-      p_parent_email: parentEmail.trim() || null,
-      p_school:       school.trim() || null,
-      p_grade:        grade || null,
-      p_heard_from:   heardFrom || null,
+      p_league_id:     contest.id,
+      p_full_name:     fullName.trim(),
+      p_parent_email:  parentEmail.trim() || null,
+      p_school:        school.trim() || null,
+      p_grade:         grade || null,
+      p_heard_from:    heardFrom || null,
+      p_referral_code: referralCode.trim() || null,
     });
 
     if (rpcError || data?.success === false) {
       setError(rpcError?.message ?? data?.error ?? "Something went wrong. Please try again.");
       setSubmitting(false);
     } else {
+      setMyReferralCode(data?.referral_code ?? null);
+      try { localStorage.removeItem(REF_STORAGE_KEY); } catch {}
       setPhase("done");
     }
   }
@@ -263,6 +287,11 @@ export default function EnrollPage() {
             You&apos;re enrolled in the {CONTEST.name}. Trading opens {formatContestDate(CONTEST.startsAt)} — we&apos;ll
             email you when it&apos;s go time.
           </p>
+          {myReferralCode && (
+            <div className="mb-6">
+              <ReferralCard code={myReferralCode} count={0} />
+            </div>
+          )}
           <div className="flex flex-col gap-2.5">
             <Link href="/challenge/rules" className="font-mono text-xs tracking-wider px-5 py-2.5 rounded-xl" style={fieldStyle}>
               Read the rules
@@ -376,6 +405,26 @@ export default function EnrollPage() {
             <option value="">—</option>
             {HEARD_OPTIONS.map((h) => <option key={h} value={h}>{h}</option>)}
           </select>
+        </div>
+
+        <div>
+          <label className="block font-mono text-[10px] tracking-[0.22em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
+            Referral code
+          </label>
+          <input
+            type="text"
+            value={referralCode}
+            onChange={(e) => setReferralCode(e.target.value.toUpperCase().slice(0, 12))}
+            className="w-full rounded-xl px-4 py-2.5 text-sm font-mono tracking-[0.2em] focus:outline-none"
+            style={fieldStyle}
+            placeholder="optional"
+            autoCapitalize="characters"
+            autoCorrect="off"
+            spellCheck={false}
+          />
+          <p className="mt-1.5 text-[11px] leading-relaxed" style={{ color: "var(--text-3)" }}>
+            Got a code from a friend? Enter it and they get credit on the referral leaderboard. You&apos;ll get your own code to share once you&apos;re in.
+          </p>
         </div>
 
         <ShimmerButton
