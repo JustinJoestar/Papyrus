@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { getStockPrices } from "@/lib/stockPrices";
+import { getHoldingPrices } from "@/lib/leaguePrices";
 
 // Records each contest participant's total portfolio value once per day.
 // These daily snapshots are what the Sortino ("Smartest Investor") and
@@ -42,19 +42,17 @@ export async function GET(req: NextRequest) {
 
   const [{ data: members }, { data: holdings }] = await Promise.all([
     supabase.from("league_members").select("user_id, league_cash_balance").eq("league_id", contest.id),
-    supabase.from("league_holdings").select("user_id, symbol, quantity").eq("league_id", contest.id),
+    supabase.from("league_holdings").select("user_id, symbol, asset_type, quantity").eq("league_id", contest.id),
   ]);
 
   const memberRows = members ?? [];
   if (memberRows.length === 0) return NextResponse.json({ snapshotted: 0 });
 
-  const symbols = [...new Set((holdings ?? []).map((h) => h.symbol))];
-  const prices = symbols.length > 0 ? await getStockPrices(symbols) : {};
+  const { priceOf } = await getHoldingPrices(holdings ?? []);
 
   const holdingsValue = new Map<string, number>();
   for (const h of holdings ?? []) {
-    const price = prices[h.symbol] ?? 0;
-    holdingsValue.set(h.user_id, (holdingsValue.get(h.user_id) ?? 0) + price * Number(h.quantity));
+    holdingsValue.set(h.user_id, (holdingsValue.get(h.user_id) ?? 0) + priceOf(h) * Number(h.quantity));
   }
 
   const snapshotDate = new Date().toISOString().slice(0, 10); // UTC date = trading day at 20:30 UTC

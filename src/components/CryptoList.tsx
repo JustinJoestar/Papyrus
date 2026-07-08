@@ -6,9 +6,18 @@ import TradeModal from "./TradeModal";
 import { useMarketLeague } from "@/app/dashboard/market/MarketLeagueProvider";
 import type { CoinWithPrice } from "@/app/dashboard/market/page";
 
-type Props = { coins: CoinWithPrice[]; cashBalance: number; isAuthenticated?: boolean };
+type Props = {
+  coins: CoinWithPrice[];
+  cashBalance: number;
+  isAuthenticated?: boolean;
+  detailBasePath?: string;
+  loginHref?: string;
+};
 
-export default function CryptoList({ coins, cashBalance, isAuthenticated = true }: Props) {
+export default function CryptoList({
+  coins, cashBalance, isAuthenticated = true,
+  detailBasePath = "/dashboard/market", loginHref = "/auth/login",
+}: Props) {
   const router   = useRouter();
   const { activeLeague, refreshBalances } = useMarketLeague();
   const [buyTarget, setBuyTarget] = useState<CoinWithPrice | null>(null);
@@ -47,7 +56,7 @@ export default function CryptoList({ coins, cashBalance, isAuthenticated = true 
             return (
               <div
                 key={coin.id}
-                onClick={() => router.push(`/dashboard/market/${coin.id}`)}
+                onClick={() => router.push(`${detailBasePath}/${coin.id}`)}
                 className="row-ledger rise"
                 style={{ "--i": Math.min(i, 10) } as React.CSSProperties}
               >
@@ -76,7 +85,7 @@ export default function CryptoList({ coins, cashBalance, isAuthenticated = true 
                   </p>
                 </div>
                 <button
-                  onClick={(e) => { e.stopPropagation(); if (isAuthenticated) { setBuyTarget(coin); } else { router.push("/auth/login"); } }}
+                  onClick={(e) => { e.stopPropagation(); if (isAuthenticated) { setBuyTarget(coin); } else { router.push(loginHref); } }}
                   className="px-4 py-1.5 rounded-lg text-xs font-mono font-semibold tracking-wide transition-all duration-150 shrink-0"
                   style={{
                     background: "var(--gold-glow)",

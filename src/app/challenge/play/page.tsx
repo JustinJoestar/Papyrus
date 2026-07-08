@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getStockPrices } from "@/lib/stockPrices";
+import { getHoldingPrices } from "@/lib/leaguePrices";
 import { CONTEST, contestStatus, formatContestDate } from "@/lib/challenge";
 import HoldingsList, { type HoldingWithPrice } from "@/components/HoldingsList";
 import AutoRefresh from "@/components/challenge/AutoRefresh";
@@ -87,7 +87,7 @@ export default async function ChallengePlayPage() {
 
   const { data: holdingsRaw } = await supabase
     .from("league_holdings")
-    .select("symbol, quantity, avg_buy_price")
+    .select("symbol, asset_type, quantity, avg_buy_price")
     .eq("league_id", contest.id)
     .eq("user_id", user.id);
 
@@ -95,15 +95,15 @@ export default async function ChallengePlayPage() {
     p_league_id: contest.id,
   });
 
-  const symbols = (holdingsRaw ?? []).map((h) => h.symbol);
-  const prices = symbols.length > 0 ? await getStockPrices(symbols) : {};
+  const { priceOf, coinIdBySymbol } = await getHoldingPrices(holdingsRaw ?? []);
 
   const holdings: HoldingWithPrice[] = (holdingsRaw ?? []).map((h) => {
-    const currentPrice = prices[h.symbol] ?? Number(h.avg_buy_price);
+    const currentPrice = priceOf(h) || Number(h.avg_buy_price);
     return {
       id: `${contest.id}-${h.symbol}`,
       symbol: h.symbol,
-      asset_type: "stock",
+      asset_type: h.asset_type ?? "stock",
+      coinId: h.asset_type === "crypto" ? coinIdBySymbol[h.symbol.toUpperCase()] : undefined,
       quantity: Number(h.quantity),
       avg_buy_price: Number(h.avg_buy_price),
       currentPrice,

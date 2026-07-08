@@ -26,7 +26,7 @@ are what make it matter.
 | Window | ~6 weeks, **Jun 29 – Aug 7, 2026** (configurable). **Enrollment open now** — entrants join a waitlist and appear on the board; trading unlocks Jun 29 |
 | Eligibility | **13+** (grades 9–12). Age-gated at signup → keeps COPPA out, parent email can stay optional |
 | Starting balance | **$100,000** virtual, equal for all, no resets/deposits |
-| Universe | **US stocks + ETFs only** (S&P 500 + major ETFs). Hard whitelist. No crypto/options/penny |
+| Universe | **US stocks + ETFs** (S&P 500 + major ETFs, hard whitelist) **+ crypto** (top 250 coins, same feed as the main site). No options/penny |
 | Trading | **24/7** at last price, **no trade limits** |
 | Identity | **Google sign-in → enroll form.** One Google account = one entry |
 | Parent email | **Optional** (legal because of the 13+ floor) |

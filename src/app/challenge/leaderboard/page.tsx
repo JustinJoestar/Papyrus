@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
-import { getStockPrices } from "@/lib/stockPrices";
+import { getHoldingPrices } from "@/lib/leaguePrices";
 import { CONTEST, contestStatus, formatContestDate } from "@/lib/challenge";
 import AutoRefresh from "@/components/challenge/AutoRefresh";
 
@@ -33,7 +33,7 @@ async function loadStandings(): Promise<Standings | null> {
 
   const [{ data: members }, { data: holdings }, { data: enrollments }] = await Promise.all([
     admin.from("league_members").select("user_id, league_cash_balance").eq("league_id", contest.id),
-    admin.from("league_holdings").select("user_id, symbol, quantity").eq("league_id", contest.id),
+    admin.from("league_holdings").select("user_id, symbol, asset_type, quantity").eq("league_id", contest.id),
     admin.from("contest_enrollments").select("user_id, full_name, enrolled_at, referred_by").eq("league_id", contest.id),
   ]);
 
@@ -57,13 +57,11 @@ async function loadStandings(): Promise<Standings | null> {
     }
   }
 
-  const symbols = [...new Set((holdings ?? []).map((h) => h.symbol))];
-  const prices = symbols.length > 0 ? await getStockPrices(symbols) : {};
+  const { priceOf } = await getHoldingPrices(holdings ?? []);
 
   const holdingsValueByUser = new Map<string, number>();
   for (const h of holdings ?? []) {
-    const price = prices[h.symbol] ?? 0;
-    holdingsValueByUser.set(h.user_id, (holdingsValueByUser.get(h.user_id) ?? 0) + price * Number(h.quantity));
+    holdingsValueByUser.set(h.user_id, (holdingsValueByUser.get(h.user_id) ?? 0) + priceOf(h) * Number(h.quantity));
   }
 
   const start = Number(contest.starting_balance) || CONTEST.startingBalance;

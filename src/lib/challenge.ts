@@ -25,7 +25,7 @@ export const CONTEST = {
   minAge: 13,
 
   prize: "To be announced",
-  universeSummary: "S&P 500 stocks + major ETFs",
+  universeSummary: "S&P 500 stocks + major ETFs + top crypto",
 
   // Eligibility gate for the risk-adjusted (Sortino) award.
   gate: {

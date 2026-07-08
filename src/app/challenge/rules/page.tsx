@@ -71,7 +71,7 @@ export default function RulesPage() {
       <Section title="Trading">
         <ul className="list-disc pl-5 space-y-1.5">
           <li>Everyone starts with the same <strong>{fmtMoney(CONTEST.startingBalance)}</strong> in virtual cash. No deposits, no resets, no second accounts.</li>
-          <li>You can trade <strong>US stocks and ETFs only</strong> — the S&amp;P 500 plus major funds. No crypto, options, or penny stocks. The full tradeable list is shown in the app.</li>
+          <li>You can trade <strong>US stocks, ETFs, and crypto</strong> — the S&amp;P 500 plus major funds, and the top cryptocurrencies by market cap. No options or penny stocks. The full tradeable list is shown in the app.</li>
           <li>Trades fill at the latest real market price, <strong>24/7</strong>. There are no limits on how often you trade or how much you put in one position.</li>
           <li>Trading locks the moment the contest ends; final standings freeze at the closing bell on {formatContestDate(CONTEST.endsAt)}.</li>
         </ul>

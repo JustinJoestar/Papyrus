@@ -14,7 +14,7 @@ const fmtMoney = (n: number) => "$" + n.toLocaleString("en-US");
 
 const STEPS = [
   { n: "01", title: "Enter with Google", desc: "Sign in, pick your trading name, and you're in. Free, takes 30 seconds." },
-  { n: "02", title: "Trade the market", desc: `Everyone starts with ${fmtMoney(CONTEST.startingBalance)} in virtual cash. Build a portfolio of US stocks & ETFs at real, live prices.` },
+  { n: "02", title: "Trade the market", desc: `Everyone starts with ${fmtMoney(CONTEST.startingBalance)} in virtual cash. Build a portfolio of US stocks, ETFs & crypto at real, live prices.` },
   { n: "03", title: "Climb the leaderboard", desc: "Watch your rank update in real time. Three ways to win — outright returns, smart investing, or a strong finish." },
 ];
 

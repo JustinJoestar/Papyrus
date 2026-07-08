@@ -6,9 +6,10 @@ import { TOP_STOCKS } from "@/lib/stocks";
 
 const ASSET_TYPES: AssetType[] = ["crypto", "stock", "commodity"];
 
-// Starter contest universe (US stocks + ETFs). The full S&P list is TBD;
-// this is the single source the trade gate enforces.
-const CONTEST_SYMBOLS = new Set(TOP_STOCKS.map((s) => s.symbol.toUpperCase()));
+// Contest universe: US stocks/ETFs (hard whitelist below) + crypto (any
+// coin the main-site feed can price — getVerifiedPrice rejects unknowns).
+const CONTEST_STOCK_SYMBOLS = new Set(TOP_STOCKS.map((s) => s.symbol.toUpperCase()));
+const CONTEST_ASSET_TYPES = new Set<AssetType>(["stock", "crypto"]);
 
 function fail(error: string, status: number) {
   return NextResponse.json({ success: false, error }, { status });
@@ -56,9 +57,9 @@ export async function POST(req: NextRequest) {
       .maybeSingle();
 
     if (league?.is_contest) {
-      if (assetType !== "stock")
-        return fail("Only US stocks and ETFs can be traded in the Challenge.", 400);
-      if (!CONTEST_SYMBOLS.has(symbol.toUpperCase()))
+      if (!CONTEST_ASSET_TYPES.has(assetType as AssetType))
+        return fail("Only US stocks, ETFs, and crypto can be traded in the Challenge.", 400);
+      if (assetType === "stock" && !CONTEST_STOCK_SYMBOLS.has(symbol.toUpperCase()))
         return fail("That symbol isn't part of the Challenge universe.", 400);
 
       const now = Date.now();

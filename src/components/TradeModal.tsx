@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { isUsMarketOpen } from "@/lib/marketHours";
 
 export type TradeCoin = { symbol: string; name: string; price: number };
 
@@ -99,6 +100,7 @@ export default function TradeModal({
     n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const isBuy = mode === "buy";
+  const afterHours = assetType === "stock" && !isUsMarketOpen();
 
   return (
     <div
@@ -158,6 +160,20 @@ export default function TradeModal({
               ×
             </button>
           </div>
+
+          {afterHours && (
+            <div
+              className="mb-4 flex items-start gap-2.5 rounded-xl px-4 py-3"
+              style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)" }}
+            >
+              <span className="text-sm leading-none pt-0.5 shrink-0">🌙</span>
+              <p className="text-xs leading-relaxed" style={{ color: "var(--text-2)" }}>
+                <span className="font-semibold" style={{ color: "var(--gold)" }}>Outside market hours.</span>{" "}
+                US markets are closed (open 9:30 AM–4:00 PM ET, Mon–Fri). Your order fills now at the
+                last market price shown.
+              </p>
+            </div>
+          )}
 
           {error && (
             <div

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ThemeToggle from "@/components/ThemeToggle";
-import ChallengeSettingsClient from "./ChallengeSettingsClient";
+import { ChallengeSignOutButton, ChallengeParentEmailForm } from "./ChallengeSettingsClient";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Settings — Papyrus Challenge" };
@@ -59,7 +59,7 @@ export default async function ChallengeSettingsPage() {
             <p className="text-sm font-medium" style={{ color: "var(--text-1)" }}>Signed in as</p>
             <p className="text-xs mt-0.5" style={{ color: "var(--text-3)" }}>{user.email}</p>
           </div>
-          <ChallengeSettingsClient mode="signout" />
+          <ChallengeSignOutButton />
         </div>
       </div>
 
@@ -99,8 +99,7 @@ export default async function ChallengeSettingsPage() {
             <p className="text-xs mb-4" style={{ color: "var(--text-3)" }}>
               Optional — we&apos;ll send occasional updates and final standings.
             </p>
-            <ChallengeSettingsClient
-              mode="parentEmail"
+            <ChallengeParentEmailForm
               leagueId={contest?.id ?? ""}
               currentParentEmail={enrollment.parent_email ?? ""}
             />
