@@ -17,7 +17,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function RulesPage() {
-  const g = CONTEST.gate;
 
   return (
     <div className="max-w-2xl mx-auto px-5 sm:px-8 py-14">
@@ -77,10 +76,10 @@ export default function RulesPage() {
         </ul>
       </Section>
 
-      <Section title="The three awards">
+      <Section title="The prize">
         <p className="mb-2">
-          Three winners, each chosen automatically from the final data. <strong>One award per person</strong> — if
-          someone tops more than one category, they take the highest and the next eligible participant wins the other.
+          <strong>One winner</strong>, chosen automatically from the final data: the highest total return takes
+          a <strong>$50 gift card</strong> and the official <strong>winner&apos;s certificate</strong>.
         </p>
         <div className="space-y-4 mt-4">
           <div className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
@@ -96,45 +95,13 @@ export default function RulesPage() {
               </span>
             </p>
           </div>
-
-          <div className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">{AWARDS[1].emoji}</span>
-              <h3 className="font-bold text-base" style={{ color: "var(--text-1)" }}>{AWARDS[1].title}</h3>
-            </div>
-            <p style={{ color: "var(--text-2)" }}>
-              The best <strong>risk-adjusted return</strong> — rewarding steady, smart growth over lucky gambles.
-              We measure your <strong>Sortino ratio</strong>: how much you grew relative to your <em>downside</em>
-              swings only (good volatility isn&apos;t punished). To qualify, you must:
-            </p>
-            <ul className="list-disc pl-5 mt-2 space-y-1" style={{ color: "var(--text-2)" }}>
-              <li>finish with a <strong>positive</strong> return,</li>
-              <li>make at least <strong>{g.minTrades} trades</strong> across <strong>{g.minTradingDays}+ different days</strong>, and</li>
-              <li>stay invested (not all cash) for at least <strong>{Math.round(g.minInvestedShare * 100)}%</strong> of trading days.</li>
-            </ul>
-            <p className="mt-2 text-xs" style={{ color: "var(--text-3)" }}>
-              This gate keeps the award about skill, not someone sitting on one lucky trade.
-            </p>
-          </div>
-
-          <div className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">{AWARDS[2].emoji}</span>
-              <h3 className="font-bold text-base" style={{ color: "var(--text-1)" }}>{AWARDS[2].title}</h3>
-            </div>
-            <p style={{ color: "var(--text-2)" }}>
-              The strongest finish from behind. Among everyone <strong>at or below the median</strong> return at the
-              contest&apos;s halfway mark, we rank by return over the <strong>final {CONTEST.comebackWindowDays} days</strong>.
-              Biggest late surge wins — it&apos;s never over until the close.
-            </p>
-          </div>
         </div>
       </Section>
 
       <Section title="Fair play">
         <p>
           This is a game of skill. Attempting to manipulate prices, exploit bugs, or run multiple accounts
-          means disqualification. Tie-breakers go to the higher total return, then to whoever enrolled earlier.
+          means disqualification. If two traders finish with the same return, the tie goes to whoever enrolled earlier.
           We may make reasonable judgment calls to keep the contest fair, and reserve the right to verify a
           winner&apos;s eligibility before awarding a prize.
         </p>

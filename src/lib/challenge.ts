@@ -18,23 +18,14 @@ export const CONTEST = {
   enrollOpensAt: "2026-06-18T00:00:00Z", // enrollment open now (waitlist until trading starts)
   startsAt:      "2026-06-29T13:30:00Z", // first trading day, 9:30 AM ET
   endsAt:        "2026-08-07T20:00:00Z", // final close, 4:00 PM ET
-  // Midpoint divides the contest for the Comeback award (final 2 weeks).
-  comebackWindowDays: 14,
-
   startingBalance: 100_000,
   minAge: 13,
 
-  prize: "To be announced",
+  prize: "$50 gift card + winner's certificate",
   universeSummary: "S&P 500 stocks + major ETFs + top crypto",
-
-  // Eligibility gate for the risk-adjusted (Sortino) award.
-  gate: {
-    minTrades: 8,
-    minTradingDays: 5,
-    minInvestedShare: 0.6, // invested (not 100% cash) ≥ 60% of trading days
-  },
 } as const;
 
+// Single prize: one winner, decided purely by total return.
 export const AWARDS = [
   {
     key: "top-trader",
@@ -42,23 +33,7 @@ export const AWARDS = [
     title: "Top Trader",
     tagline: "Highest overall return",
     blurb:
-      "The simplest crown: whoever grows their $100,000 the most, by total return percentage, takes it.",
-  },
-  {
-    key: "smartest-investor",
-    emoji: "🧠",
-    title: "Smartest Investor",
-    tagline: "Best risk-adjusted return (Sortino)",
-    blurb:
-      "Rewards steady, disciplined growth over lucky gambles. We measure how smoothly you grew — only counting downside swings as risk — so consistency beats chaos.",
-  },
-  {
-    key: "comeback",
-    emoji: "🚀",
-    title: "Comeback Award",
-    tagline: "Biggest finish from behind",
-    blurb:
-      "For those trailing at the halfway mark: whoever climbs the most over the final two weeks wins. It's never over until the close.",
+      "The simplest crown: whoever grows their $100,000 the most, by total return percentage, takes the $50 gift card and the official winner's certificate.",
   },
 ] as const;
 

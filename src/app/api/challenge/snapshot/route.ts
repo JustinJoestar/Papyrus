@@ -3,9 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import { getHoldingPrices } from "@/lib/leaguePrices";
 
 // Records each contest participant's total portfolio value once per day.
-// These daily snapshots are what the Sortino ("Smartest Investor") and
-// Comeback awards are computed from — they CANNOT be backfilled, so this
-// must run every day of the contest window.
+// No award depends on this history anymore (single Top Trader prize), but
+// it CANNOT be backfilled — keep it running for progress charts and
+// narrative stats.
 //
 // Schedule for ~4:30 PM ET (20:30 UTC during EDT), after the close.
 export async function GET(req: NextRequest) {

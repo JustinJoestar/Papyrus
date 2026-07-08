@@ -141,7 +141,7 @@ export const SceneHowItWorks: React.FC<{ dur: number }> = ({ dur }) => {
   );
 };
 
-/* 6 — THREE AWARDS ─────────────────────────────────────────────── */
+/* 6 — THE PRIZE ────────────────────────────────────────────────── */
 const AwardCard: React.FC<{ emoji: string; title: string; sub: string; delay: number }> = ({ emoji, title, sub, delay }) => (
   <FadeUp delay={delay} y={50}>
     <div
@@ -167,16 +167,14 @@ const AwardCard: React.FC<{ emoji: string; title: string; sub: string; delay: nu
 export const SceneAwards: React.FC<{ dur: number }> = ({ dur }) => (
   <SceneWrap dur={dur}>
     <Center>
-      <FadeUp delay={0}><Kicker>Three ways to win</Kicker></FadeUp>
+      <FadeUp delay={0}><Kicker>The prize</Kicker></FadeUp>
       <FadeUp delay={8}>
         <div style={{ fontFamily: sans, fontSize: 84, fontWeight: 800, color: C.text1, marginTop: 14, marginBottom: 48 }}>
-          More than just the <GoldText>biggest number.</GoldText>
+          One winner <GoldText>takes it all.</GoldText>
         </div>
       </FadeUp>
       <div style={{ display: "flex", gap: 28 }}>
-        <AwardCard emoji="🏆" title="Top Trader" sub="Highest overall return." delay={24} />
-        <AwardCard emoji="🧠" title="Smartest Investor" sub="Best risk-adjusted growth — skill over luck." delay={36} />
-        <AwardCard emoji="🚀" title="Comeback" sub="The strongest finish from behind." delay={48} />
+        <AwardCard emoji="🏆" title="Top Trader" sub="Highest overall return wins a $50 gift card + the official winner's certificate." delay={24} />
       </div>
     </Center>
   </SceneWrap>

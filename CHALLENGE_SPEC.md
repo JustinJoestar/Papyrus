@@ -31,31 +31,28 @@ are what make it matter.
 | Identity | **Google sign-in → enroll form.** One Google account = one entry |
 | Parent email | **Optional** (legal because of the 13+ floor) |
 | Jurisdiction | **US only** |
-| Prize | **Gift card** (value + sponsor TBD — pursue sponsorship) |
+| Prize | **Single prize:** $50 gift card + winner's certificate, Top Trader only (decided 2026-07-07) |
 | Email | **Resend** (free tier ~3k/mo, 100/day; verify `papyrus-trade.com`) |
 
-## Awards (one prize per person, auto-computed)
-1. **Top Trader** — highest total return %: `(cash + holdings − 100k) / 100k`.
-2. **Smartest Investor** — **Sortino ratio** (downside deviation only), with an
-   **eligibility gate**: positive total return AND ≥8 trades across ≥5 distinct days
-   AND invested (not 100% cash) ≥60% of trading days. Downside-deviation floored to
-   avoid divide-by-near-zero.
-3. **Comeback** — best return % over the **final 14 days**, eligible **only to those
-   at/below the median at the midpoint**.
+## The prize (auto-computed)
+**Top Trader** — highest total return %: `(cash + holdings − 100k) / 100k` wins the
+$50 gift card + winner's certificate. Ties go to the earlier enrollment. Manual
+override available via admin.
 
-Tie-breakers + manual override available via admin.
+(Sortino "Smartest Investor" and Comeback awards were cut 2026-07-07 — single prize
+only. `AWARDS` in `src/lib/challenge.ts` now has one entry.)
 
-## Daily snapshots (non-deferrable)
+## Daily snapshots
 A cron records each participant's total portfolio value at **4:00 PM ET** daily into
-`contest_snapshots`. Sortino (daily-return volatility) and Comeback (final-window
-return) are impossible without this history, and it **cannot be backfilled** — it must
-run from the first trading day even though the code that consumes it ships later.
+`contest_snapshots`. No longer required for awards (Sortino/Comeback were cut), but
+kept running — the history powers progress charts / narrative stats and can't be
+backfilled if we ever want it.
 
 ## Pages
-- `/challenge` — teen landing: countdown, prize, 3 awards, how-it-works, CTA. ✅ built
+- `/challenge` — teen landing: countdown, prize, how-it-works, CTA. ✅ built
 - `/challenge/enroll` — Google sign-in → form (name, optional parent email, school, grade, how-heard).
 - `/challenge/leaderboard` — live public board ranked by return %.
-- `/challenge/rules` — dates, balance, universe, the 3 award formulas, prize.
+- `/challenge/rules` — dates, balance, universe, the Top Trader formula, prize.
 - `/challenge/parents` — safety-first: free, no real money, educational, rules.
 
 ## Email comms (Resend)
@@ -89,7 +86,7 @@ Schema/RPCs in `supabase/referrals.sql`.
 **Launch (early July):** signup + landing/rules/parents pages + contest league with
 start gate + universe + trading + live return-% leaderboard + welcome email + **snapshots running**.
 
-**During the run:** Sortino/Comeback math, winner determination, mid-contest
+**During the run:** winner determination (top total return), mid-contest
 email, admin override UI.
 
 ## Status
@@ -106,8 +103,9 @@ email, admin override UI.
 - [x] Admin page (`/challenge/admin`: create/edit contest, enrollments, CSV export)
 - [x] Referral system (codes, `?ref=` links, leaderboard Referrals tab) — run `supabase/referrals.sql`
 - [ ] Resend welcome email
-- [ ] Sortino + Comeback + winner computation
-- [ ] Finalize asset whitelist + prize/sponsor
+- [ ] Winner computation (highest total return) + certificate
+- [x] Prize finalized ($50 gift card + certificate)
+- [ ] Finalize asset whitelist + pursue sponsor
 
 ## Out of scope (v1)
 Payment, real money, options/derivatives, multi-contest history.

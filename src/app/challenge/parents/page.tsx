@@ -67,7 +67,7 @@ export default function ParentsPage() {
           {[
             "How the stock market actually works — prices, returns, and diversification.",
             "How to research real companies and ETFs before investing.",
-            "Why steady, disciplined decisions usually beat impulsive bets (one of our awards specifically rewards this).",
+            "Why steady, disciplined decisions usually beat impulsive bets.",
             "How to handle ups and downs without real-world consequences.",
           ].map((t) => (
             <li key={t} className="flex gap-3">
@@ -112,7 +112,7 @@ export default function ParentsPage() {
       <p className="text-sm mb-8" style={{ color: "var(--text-3)" }}>
         Questions? Read the{" "}
         <Link href="/challenge/rules" className="underline" style={{ color: "var(--gold)" }}>full rules</Link>{" "}
-        for exactly how the contest and its awards work. Enrollment opens {formatContestDate(CONTEST.enrollOpensAt)}.
+        for exactly how the contest and its prize work. Enrollment opens {formatContestDate(CONTEST.enrollOpensAt)}.
       </p>
 
       <div className="flex flex-wrap gap-3">

@@ -15,7 +15,7 @@ const fmtMoney = (n: number) => "$" + n.toLocaleString("en-US");
 const STEPS = [
   { n: "01", title: "Enter with Google", desc: "Sign in, pick your trading name, and you're in. Free, takes 30 seconds." },
   { n: "02", title: "Trade the market", desc: `Everyone starts with ${fmtMoney(CONTEST.startingBalance)} in virtual cash. Build a portfolio of US stocks, ETFs & crypto at real, live prices.` },
-  { n: "03", title: "Climb the leaderboard", desc: "Watch your rank update in real time. Three ways to win — outright returns, smart investing, or a strong finish." },
+  { n: "03", title: "Climb the leaderboard", desc: "Watch your rank update in real time. Finish #1 in total return and the prize is yours." },
 ];
 
 export default function ChallengeLanding() {
@@ -67,7 +67,7 @@ export default function ChallengeLanding() {
         >
           <span className="text-xl">🎁</span>
           <p className="text-sm" style={{ color: "var(--text-2)" }}>
-            Prizes for the top finishers — <span className="font-semibold" style={{ color: "var(--gold-bright)" }}>{CONTEST.prize}</span>
+            One winner takes it — <span className="font-semibold" style={{ color: "var(--gold-bright)" }}>{CONTEST.prize}</span>
           </p>
         </div>
       </section>
@@ -94,37 +94,36 @@ export default function ChallengeLanding() {
         </div>
       </section>
 
-      {/* ── Three ways to win ────────────────────────────────── */}
+      {/* ── The prize ────────────────────────────────────────── */}
       <section className="px-5 sm:px-8 pb-20">
         <div className="max-w-4xl mx-auto">
           <p className="text-center font-mono text-[10px] tracking-[0.28em] uppercase mb-2" style={{ color: "var(--text-3)" }}>
-            Three awards
+            The prize
           </p>
           <h2 className="text-center font-display font-semibold text-2xl sm:text-3xl mb-3" style={{ color: "var(--text-1)" }}>
-            Three ways to win
+            One winner takes it all
           </h2>
           <p className="text-center text-sm max-w-lg mx-auto mb-12" style={{ color: "var(--text-3)" }}>
-            Rewarding more than just the biggest number — skill, discipline, and persistence
-            all get their own crown.
+            No categories, no fine print — the biggest total return on the final bell wins.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="max-w-md mx-auto">
             {AWARDS.map((a) => (
               <div
                 key={a.key}
-                className="rounded-2xl p-6 flex flex-col"
-                style={{ background: "var(--surface)", border: "1px solid var(--border-mid)" }}
+                className="rounded-2xl p-8 flex flex-col items-center text-center"
+                style={{ background: "var(--surface)", border: "1px solid var(--gold-border)" }}
               >
-                <span className="text-3xl mb-3">{a.emoji}</span>
-                <h3 className="font-bold text-lg mb-1" style={{ color: "var(--text-1)" }}>{a.title}</h3>
+                <span className="text-4xl mb-3">{a.emoji}</span>
+                <h3 className="font-bold text-xl mb-1" style={{ color: "var(--text-1)" }}>{a.title}</h3>
                 <p className="font-mono text-[10px] tracking-wider uppercase mb-3" style={{ color: "var(--gold)" }}>{a.tagline}</p>
                 <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>{a.blurb}</p>
               </div>
             ))}
           </div>
           <p className="text-center text-xs mt-6" style={{ color: "var(--text-3)" }}>
-            One award per person. See the{" "}
+            See the{" "}
             <Link href="/challenge/rules" className="underline" style={{ color: "var(--gold)" }}>full rules</Link>{" "}
-            for exactly how each is calculated.
+            for exactly how the winner is calculated.
           </p>
         </div>
       </section>
