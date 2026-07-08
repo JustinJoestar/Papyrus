@@ -51,7 +51,7 @@ export default function ChallengeLanding() {
         chipLabel={statusChip}
         word1="Summer"
         word2="Challenge."
-        description={`A free six-week paper-trading competition for high schoolers. Start with ${fmtMoney(CONTEST.startingBalance)} in virtual cash, trade real markets, and prove you've got what it takes — no money, no risk, all skill.`}
+        description={`A free four-week paper-trading competition for high schoolers. Start with ${fmtMoney(CONTEST.startingBalance)} in virtual cash, trade real markets, and prove you've got what it takes — no money, no risk, all skill.`}
         primary={primary}
         secondary={secondary}
         footnote={footnote}

@@ -40,7 +40,7 @@ export default function ParentsPage() {
         A safe, free way for your teen to learn investing
       </h1>
       <p className="text-base mb-10 leading-relaxed" style={{ color: "var(--text-2)" }}>
-        The {CONTEST.name} is a six-week financial-literacy competition for high schoolers. Your teen
+        The {CONTEST.name} is a four-week financial-literacy competition for high schoolers. Your teen
         builds a portfolio with <strong>{fmtMoney(CONTEST.startingBalance)} in virtual cash</strong> and
         competes on a leaderboard — learning real investing skills without a cent of real money involved.
       </p>

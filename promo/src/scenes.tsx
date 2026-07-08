@@ -78,7 +78,7 @@ export const SceneTitle: React.FC<{ dur: number }> = ({ dur }) => {
         </FadeUp>
         <FadeUp delay={34}>
           <div style={{ fontFamily: sans, fontSize: 40, color: C.text2, marginTop: 30, maxWidth: 1200 }}>
-            A free six-week trading competition for high schoolers.
+            A free four-week trading competition for high schoolers.
           </div>
         </FadeUp>
         <div style={{ opacity: interpolate(frame, [40, 60], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }), marginTop: 26 }}>
