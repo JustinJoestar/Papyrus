@@ -23,7 +23,7 @@ are what make it matter.
 ## Locked decisions
 | Topic | Decision |
 |---|---|
-| Window | **Four weeks** (public copy). NB: configured dates are still **Jun 29 – Aug 7, 2026** (~6 weeks) — align `CONTEST.endsAt` + the DB contest row if the four-week length is final. Enrollment stays open through the run |
+| Window | ~6 weeks, **Jun 29 – Aug 7, 2026** (configurable). Enrollment stays open through the run |
 | Eligibility | **13+** (grades 9–12). Age-gated at signup → keeps COPPA out, parent email can stay optional |
 | Starting balance | **$100,000** virtual, equal for all, no resets/deposits |
 | Universe | **US stocks + ETFs** (S&P 500 + major ETFs, hard whitelist) **+ crypto** (top 250 coins, same feed as the main site). No options/penny |
