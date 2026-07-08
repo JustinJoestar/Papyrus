@@ -14,10 +14,10 @@ export const CONTEST = {
   shortName: "Summer Challenge",
   year: 2026,
 
-  // ISO timestamps (UTC). Summer/Fall: EDT = UTC-4, EST = UTC-5.
-  enrollOpensAt: "2026-06-18T00:00:00Z", // enrollment open (waitlist until trading starts)
-  startsAt:      "2026-08-01T13:30:00Z", // first trading day, 9:30 AM ET (Aug 1)
-  endsAt:        "2026-12-25T21:00:00Z", // final close, 4:00 PM ET (Dec 25, EST)
+  // ISO timestamps (UTC). Summer is US Eastern Daylight Time = UTC-4.
+  enrollOpensAt: "2026-06-18T00:00:00Z", // enrollment open now (waitlist until trading starts)
+  startsAt:      "2026-06-29T13:30:00Z", // first trading day, 9:30 AM ET
+  endsAt:        "2026-08-07T20:00:00Z", // final close, 4:00 PM ET
   // Midpoint divides the contest for the Comeback award (final 2 weeks).
   comebackWindowDays: 14,
 
