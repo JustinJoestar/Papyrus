@@ -39,7 +39,7 @@ export default function RulesPage() {
         {[
           ["Dates", `${formatContestDate(CONTEST.startsAt)} – ${formatContestDate(CONTEST.endsAt)}`],
           ["Starting balance", `${fmtMoney(CONTEST.startingBalance)} virtual`],
-          ["Who can play", `Ages ${CONTEST.minAge}+ · US only`],
+          ["Who can play", `Ages ${CONTEST.minAge}+ · Worldwide`],
           ["Cost", "Free — always"],
           ["Markets", CONTEST.universeSummary],
           ["Prize", CONTEST.prize],
@@ -53,7 +53,7 @@ export default function RulesPage() {
 
       <Section title="Eligibility">
         <ul className="list-disc pl-5 space-y-1.5">
-          <li>Open to participants <strong>{CONTEST.minAge} and older</strong> in the United States.</li>
+          <li>Open to participants <strong>{CONTEST.minAge} and older</strong>, anywhere in the world.</li>
           <li>One entry per person — accounts are tied to a single Google sign-in.</li>
           <li>Free to enter. No purchase, payment, or real money is ever required or accepted.</li>
         </ul>

@@ -28,7 +28,7 @@ const SECTIONS = [
   },
   {
     title: "6. Weekly Resets",
-    body: `Portfolio balances and holdings are reset on a weekly basis. This is a core feature of the platform. We are not liable for any perceived loss of virtual assets due to scheduled or unscheduled resets.`,
+    body: `On the main platform, portfolio balances and holdings are reset on a weekly basis. This is a core feature of the platform. We are not liable for any perceived loss of virtual assets due to scheduled or unscheduled resets. Contest entries are an exception: portfolios in the Papyrus Trading Challenge are not subject to the weekly reset and instead run continuously for the full duration of the contest, as described in the Challenge rules.`,
   },
   {
     title: "7. Data & Privacy",
@@ -44,7 +44,7 @@ const SECTIONS = [
   },
   {
     title: "10. Contact",
-    body: `If you have any questions about these terms, you can reach us through the platform's GitHub repository or contact page.`,
+    body: `If you have any questions about these terms, you can reach us by email at tradeonpapyrus@gmail.com.`,
   },
 ];
 
