@@ -10,7 +10,6 @@ type Props = {
   avatarUrl: string | null;
   profileHref?: string;
   settingsHref?: string;
-  showChallengeBadge?: boolean;
   signOutRedirect?: string;
 };
 
@@ -19,7 +18,6 @@ export default function NavUserMenu({
   avatarUrl,
   profileHref = "/dashboard/profile",
   settingsHref = "/dashboard/settings",
-  showChallengeBadge = false,
   signOutRedirect = "/auth/login",
 }: Props) {
   const pathname = usePathname();
@@ -105,17 +103,7 @@ export default function NavUserMenu({
               <span className="font-mono text-xs font-bold" style={{ color: "var(--text-1)" }}>
                 {username ?? "Profile"}
               </span>
-              <div className="flex items-center gap-1.5">
-                <span className="font-mono text-[10px]" style={{ color: "var(--text-3)" }}>View profile</span>
-                {showChallengeBadge && (
-                  <span
-                    className="font-mono text-[8px] tracking-[0.15em] px-1 py-px rounded"
-                    style={{ background: "var(--gold-glow)", border: "1px solid var(--gold-border)", color: "var(--gold)" }}
-                  >
-                    CHALLENGE
-                  </span>
-                )}
-              </div>
+              <span className="font-mono text-[10px]" style={{ color: "var(--text-3)" }}>View profile</span>
             </div>
           </Link>
 

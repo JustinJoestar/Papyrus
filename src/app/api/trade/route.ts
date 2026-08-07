@@ -2,14 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { createClient as createUserClient } from "@/lib/supabase/server";
 import { getVerifiedPrice, type AssetType } from "@/lib/serverPrice";
-import { TOP_STOCKS } from "@/lib/stocks";
 
 const ASSET_TYPES: AssetType[] = ["crypto", "stock", "commodity"];
-
-// Contest universe: US stocks/ETFs (hard whitelist below) + crypto (any
-// coin the main-site feed can price — getVerifiedPrice rejects unknowns).
-const CONTEST_STOCK_SYMBOLS = new Set(TOP_STOCKS.map((s) => s.symbol.toUpperCase()));
-const CONTEST_ASSET_TYPES = new Set<AssetType>(["stock", "crypto"]);
 
 function fail(error: string, status: number) {
   return NextResponse.json({ success: false, error }, { status });
@@ -47,30 +41,7 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // 3. Contest rules: if this trade targets a contest league, enforce the
-  //    restricted universe (US stocks/ETFs only) and the trading window.
-  if (leagueId) {
-    const { data: league } = await admin
-      .from("leagues")
-      .select("is_contest, starts_at, ends_at")
-      .eq("id", leagueId)
-      .maybeSingle();
-
-    if (league?.is_contest) {
-      if (!CONTEST_ASSET_TYPES.has(assetType as AssetType))
-        return fail("Only US stocks, ETFs, and crypto can be traded in the Challenge.", 400);
-      if (assetType === "stock" && !CONTEST_STOCK_SYMBOLS.has(symbol.toUpperCase()))
-        return fail("That symbol isn't part of the Challenge universe.", 400);
-
-      const now = Date.now();
-      if (league.starts_at && now < new Date(league.starts_at).getTime())
-        return fail("The Challenge hasn't started yet.", 403);
-      if (league.ends_at && now > new Date(league.ends_at).getTime())
-        return fail("The Challenge has ended — trading is closed.", 403);
-    }
-  }
-
-  // 4. Fetch the authoritative price server-side. If the feed is down we
+  // 3. Fetch the authoritative price server-side. If the feed is down we
   //    refuse rather than fall back to anything the client supplied.
   const price = await getVerifiedPrice(symbol, assetType as AssetType);
   if (price == null || price <= 0)
@@ -89,7 +60,7 @@ export async function POST(req: NextRequest) {
   if (error || data?.success === false)
     return fail(error?.message ?? data?.error ?? "Trade failed", 400);
 
-  // 5. Post-trade hooks for global trades — run as the user (use auth.uid()).
+  // 4. Post-trade hooks for global trades — run as the user (use auth.uid()).
   if (!leagueId) {
     await userClient.rpc("check_trade_achievements");
     void userClient.rpc("check_leaderboard_notification");

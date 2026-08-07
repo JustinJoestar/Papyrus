@@ -7,31 +7,31 @@ export const metadata = {
 const SECTIONS = [
   {
     title: "1. Overview",
-    body: `This Privacy Policy explains what information Papyrus collects, how we use it, and the choices you have. Papyrus is a free, educational paper-trading platform — including the Papyrus Summer Trading Challenge. All trading is simulated with virtual funds; no real money is ever involved. By using Papyrus you agree to this policy.`,
+    body: `This Privacy Policy explains what information Papyrus collects, how we use it, and the choices you have. Papyrus is a free, educational paper-trading platform. All trading is simulated with virtual funds; no real money is ever involved. By using Papyrus you agree to this policy.`,
   },
   {
     title: "2. Information we collect",
-    body: `When you sign in with Google, we receive your name, email address, and profile picture. When you create a profile we store a username and avatar. If you enroll in the Summer Trading Challenge, we collect the details you provide on the enrollment form: your full name, an optional parent or guardian email, and optionally your school, grade, and how you heard about us. We also store your in-app activity — your virtual trades, holdings, and portfolio history. We do not collect or store any payment, bank, or real financial account information, because the platform never handles real money.`,
+    body: `When you sign in with Google, we receive your name, email address, and profile picture. When you create a profile we store a username and avatar. We also store your in-app activity — your virtual trades, holdings, and portfolio history. We do not collect or store any payment, bank, or real financial account information, because the platform never handles real money.`,
   },
   {
     title: "3. How we use your information",
-    body: `We use your information to operate the service: to sign you in, show your portfolio and leaderboard position, run the contest, compute standings and awards, and send service-related emails such as enrollment confirmations, contest updates, and winner announcements. We use aggregate, non-identifying information (for example, how many participants joined or which schools took part) to understand and improve the program. We do not use your data for advertising.`,
+    body: `We use your information to operate the service: to sign you in, show your portfolio and leaderboard position, and send service-related emails. We use aggregate, non-identifying information (for example, how many users joined) to understand and improve the platform. We do not use your data for advertising.`,
   },
   {
     title: "4. Children's and teens' privacy",
-    body: `Papyrus and the Summer Trading Challenge are intended for users aged 13 and older. We do not knowingly collect personal information from anyone under 13; if we learn that we have, we will delete it. If you are under 18, you may optionally provide a parent or guardian's email during enrollment. If provided, that email is used only to send the parent or guardian occasional updates and the final standings — it is never sold, shared for marketing, or used for any other purpose.`,
+    body: `Papyrus is intended for users aged 13 and older. We do not knowingly collect personal information from anyone under 13; if we learn that we have, we will delete it. If you are under 18, you confirm that you have your parent or guardian's permission to use the service.`,
   },
   {
     title: "5. How we share information",
-    body: `We do not sell your personal information. We share data only with the service providers that make Papyrus work: Google (for sign-in), Supabase (database and authentication hosting), Vercel (application hosting), and an email provider used to send service and contest emails. We also retrieve market price data from third-party providers; this is read-only and does not involve sharing your personal information. We may disclose information if required by law.`,
+    body: `We do not sell your personal information. We share data only with the service providers that make Papyrus work: Google (for sign-in), Supabase (database and authentication hosting), and Vercel (application hosting). We also retrieve market price data from third-party providers; this is read-only and does not involve sharing your personal information. We may disclose information if required by law.`,
   },
   {
     title: "6. Data retention",
-    body: `We keep your account and contest information for as long as your account exists or as needed to run the contest and its standings. You can request deletion of your account and associated personal data at any time (see "Your choices" below), after which we will remove it except where we are required to retain it by law.`,
+    body: `We keep your account information for as long as your account exists. You can request deletion of your account and associated personal data at any time (see "Your choices" below), after which we will remove it except where we are required to retain it by law.`,
   },
   {
     title: "7. Your choices and rights",
-    body: `You can request access to, correction of, or deletion of your personal information by contacting us. You can change your display name in your settings. If a parent or guardian email is receiving contest updates, either of you may request that we stop by contacting us. You may stop using the service at any time.`,
+    body: `You can request access to, correction of, or deletion of your personal information by contacting us. You can change your display name in your settings. You may stop using the service at any time.`,
   },
   {
     title: "8. Cookies and sessions",
@@ -118,7 +118,6 @@ export default function PrivacyPage() {
         <div className="mt-14 pt-8 text-center" style={{ borderTop: "1px solid var(--border)" }}>
           <div className="flex items-center justify-center gap-4 mb-4 font-mono text-[11px]" style={{ color: "var(--text-3)" }}>
             <Link href="/tos" className="underline">Terms of Service</Link>
-            <Link href="/challenge" className="underline">Summer Challenge</Link>
             <Link href="/" className="underline">Home</Link>
           </div>
           <p className="font-mono text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>
