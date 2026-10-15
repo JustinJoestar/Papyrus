@@ -259,7 +259,8 @@ export default async function LandingPage() {
         </h2>
         <p className="text-base leading-relaxed mx-auto" style={{ color: "var(--text-2)", maxWidth: 620 }}>
           Papyrus was built by Bay Area high school students Vishnu Dhavala, Justin Koshy, and
-          Aarav Pillai to give teens a risk-free way to learn how markets work. [ONE-SENTENCE ORIGIN STORY]
+          Aarav Pillai to give teens a risk-free way to learn how markets work.{" "}
+          <em>We wanted to provide teens with a dedicated space to paper-trade and have fun.</em>
         </p>
       </section>
 

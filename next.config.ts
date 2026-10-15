@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
       { source: "/dashboard/leaderboard", destination: "/", permanent: false },
       { source: "/challenge", destination: "/", permanent: false },
       { source: "/dashboard/challenge", destination: "/", permanent: false },
+      { source: "/news", destination: "/", permanent: false },
+      { source: "/dashboard/news", destination: "/", permanent: false },
     ];
   },
 };
