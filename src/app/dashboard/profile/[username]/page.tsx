@@ -6,7 +6,6 @@ const ACHIEVEMENTS = [
   { id: "first_trade",   icon: "🚀", title: "First Trade",      desc: "Complete your first buy or sell." },
   { id: "ten_trades",    icon: "📈", title: "10 Trades",        desc: "Complete 10 total transactions." },
   { id: "diversified",   icon: "🌐", title: "Diversified",      desc: "Hold crypto, stocks, and a commodity simultaneously." },
-  { id: "top_10",        icon: "🏆", title: "Top 10",           desc: "Reach the top 10 on the global leaderboard." },
   { id: "league_winner", icon: "🥇", title: "League Champion",  desc: "Finish #1 in a private league." },
   { id: "diamond_hands", icon: "💎", title: "Diamond Hands",    desc: "Hold a position for a full week." },
   { id: "comeback",      icon: "⚡", title: "Comeback Kid",     desc: "Recover from -20% to finish positive." },

@@ -13,12 +13,12 @@ const FEATURES = [
   {
     no: "01",
     title: "Live market data",
-    desc: "Prices pulled in real time from crypto, stock, and commodity markets. The exact same assets and volatility — no simulated numbers.",
+    desc: "Prices stream from live stock, crypto, and commodity markets, so your trades fill at real quotes.",
   },
   {
     no: "02",
-    title: "Weekly competition",
-    desc: "Every Monday, the board resets. Compete globally or challenge friends in private leagues. Pure skill, no carryover advantage.",
+    title: "Weekly leagues with friends",
+    desc: "Start a private league, invite your friends, and trade the same live markets side by side to see who comes out ahead.",
   },
   {
     no: "03",
@@ -126,8 +126,8 @@ export default async function LandingPage() {
               className="rise text-base leading-relaxed max-w-md mx-auto mb-10"
               style={{ "--i": 2, color: "var(--text-2)" } as React.CSSProperties}
             >
-              Start with $10,000 in virtual cash. Trade real crypto, stocks, and
-              commodities at live prices — compete weekly, reset every Monday.
+              Learn to invest with $10,000 in virtual cash. Trade real stocks, crypto, and
+              commodities at live prices — no risk, no card.
             </p>
 
             <div className="rise" style={{ "--i": 3 } as React.CSSProperties}>
@@ -141,7 +141,7 @@ export default async function LandingPage() {
               className="rise inline-flex items-stretch mt-12 rounded-xl overflow-hidden"
               style={{ "--i": 4, border: "1px solid var(--border-mid)", background: "var(--card-bg)" } as React.CSSProperties}
             >
-              {[["250+", "cryptos"], ["35+", "stocks"], ["$10k", "to start"]].map(([val, lbl], i) => (
+              {[["35+", "stocks"], ["250+", "cryptos"], ["$10k", "to start"]].map(([val, lbl], i) => (
                 <div
                   key={lbl}
                   className="px-4 sm:px-8 py-3 text-center"
@@ -181,7 +181,7 @@ export default async function LandingPage() {
               <em style={{ color: "var(--gold-bright)" }}>one place</em>
             </h2>
             <p className="text-base mt-4 leading-relaxed" style={{ color: "var(--text-3)" }}>
-              The infrastructure of a real trading desk, built for learning and competition.
+              The infrastructure of a real trading desk, built for learning.
             </p>
           </div>
 
@@ -237,7 +237,7 @@ export default async function LandingPage() {
           <div className="relative z-10 flex flex-col items-center">
             <Seal size={44} />
             <h2 className="font-display text-4xl sm:text-5xl font-semibold mt-6 mb-4" style={{ color: "var(--text-1)" }}>
-              Ready to compete?
+              Ready to start?
             </h2>
             <p className="text-base mb-10" style={{ color: "var(--text-3)" }}>
               No card required. Your $10,000 is waiting.
@@ -246,10 +246,21 @@ export default async function LandingPage() {
               {isLoggedIn ? "Open Dashboard" : "Create free account"}
             </GoldShimmerCta>
             <p className="font-mono text-[9px] tracking-[0.3em] uppercase mt-8" style={{ color: "var(--text-3)" }}>
-              Certificate № 000001 · Virtual funds only
+              Virtual funds only
             </p>
           </div>
         </div>
+      </section>
+
+      {/* ── About ───────────────────────────────────────────── */}
+      <section className="relative z-10 max-w-3xl mx-auto px-6 sm:px-10 pb-32 text-center">
+        <h2 className="font-display text-3xl font-semibold mb-5" style={{ color: "var(--text-1)" }}>
+          About
+        </h2>
+        <p className="text-base leading-relaxed mx-auto" style={{ color: "var(--text-2)", maxWidth: 620 }}>
+          Papyrus was built by Bay Area high school students Vishnu Dhavala, Justin Koshy, and
+          Aarav Pillai to give teens a risk-free way to learn how markets work. [ONE-SENTENCE ORIGIN STORY]
+        </p>
       </section>
 
       {/* ── Footer ──────────────────────────────────────────── */}
@@ -267,6 +278,13 @@ export default async function LandingPage() {
             >
               Terms
             </Link>
+            <Link
+              href="/privacy"
+              className="font-mono text-[10px] tracking-[0.18em] uppercase transition-opacity hover:opacity-70"
+              style={{ color: "var(--text-3)" }}
+            >
+              Privacy
+            </Link>
             <a
               href="https://discord.gg/4tmwxCET2H"
               target="_blank"
@@ -277,6 +295,11 @@ export default async function LandingPage() {
               Discord
             </a>
           </div>
+        </div>
+        <div className="max-w-5xl mx-auto px-6 sm:px-10 pb-8 text-center sm:text-left">
+          <p className="text-[11px] leading-relaxed" style={{ color: "var(--text-3)" }}>
+            Market data from CoinGecko and Yahoo Finance. Prices may be delayed.
+          </p>
         </div>
         <div className="footer-aurora py-4 text-center" style={{ borderTop: "1px solid var(--border)" }}>
           <p className="font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: "var(--text-3)" }}>

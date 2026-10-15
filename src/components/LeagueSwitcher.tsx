@@ -22,7 +22,7 @@ export default function LeagueSwitcher() {
 
   if (leagues.length === 0) return null;
 
-  const label = activeLeague ? activeLeague.name : "Global Portfolio";
+  const label = activeLeague ? activeLeague.name : "Main Portfolio";
   const balance = activeLeague ? activeLeague.cashBalance : null;
 
   return (
@@ -64,8 +64,8 @@ export default function LeagueSwitcher() {
           >
             <span className="text-base leading-none shrink-0">🌐</span>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-xs" style={{ color: "var(--text-1)" }}>Global Portfolio</p>
-              <p className="font-mono text-[10px] mt-0.5" style={{ color: "var(--text-3)" }}>Main competition</p>
+              <p className="font-semibold text-xs" style={{ color: "var(--text-1)" }}>Main Portfolio</p>
+              <p className="font-mono text-[10px] mt-0.5" style={{ color: "var(--text-3)" }}>Your personal account</p>
             </div>
             {!activeLeague && (
               <span className="font-mono text-[10px] shrink-0" style={{ color: "var(--gold)" }}>✓</span>

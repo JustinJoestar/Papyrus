@@ -5,7 +5,7 @@ import { getStockPrices } from "@/lib/stockPrices";
 import { fetchCommodities } from "@/lib/commodities";
 
 // Runs every 5 minutes to refresh live prices.
-// Warms Next.js data cache so leaderboard/dashboard serve fresh prices.
+// Warms Next.js data cache so the dashboard and market pages serve fresh prices.
 // Does NOT reset portfolios.
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");

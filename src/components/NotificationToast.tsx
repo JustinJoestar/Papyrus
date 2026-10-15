@@ -3,11 +3,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
-import { Trophy, Star, Bell, RefreshCw, Crown, X } from "lucide-react";
+import { Trophy, Star, Bell, RefreshCw, X } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-type NotifType = "achievement" | "leaderboard" | "info" | "reset" | "league";
+type NotifType = "achievement" | "info" | "reset" | "league";
 
 interface ToastItem {
   id: string;
@@ -32,13 +32,6 @@ const TYPE_CONFIG: Record<
     accentColor: "var(--gold)",
     bgGlow: "rgba(201,162,78,0.12)",
     iconBg: "rgba(201,162,78,0.15)",
-  },
-  leaderboard: {
-    label: "Leaderboard",
-    Icon: Crown,
-    accentColor: "#a98bc8",
-    bgGlow: "rgba(169,139,200,0.1)",
-    iconBg: "rgba(169,139,200,0.15)",
   },
   league: {
     label: "League Update",

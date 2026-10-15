@@ -15,7 +15,7 @@ const SECTIONS = [
   },
   {
     title: "3. How we use your information",
-    body: `We use your information to operate the service: to sign you in, show your portfolio and leaderboard position, and send service-related emails. We use aggregate, non-identifying information (for example, how many users joined) to understand and improve the platform. We do not use your data for advertising.`,
+    body: `We use your information to operate the service: to sign you in, show your portfolio, and send service-related emails. We use aggregate, non-identifying information (for example, overall usage trends) to understand and improve the platform. We do not use your data for advertising.`,
   },
   {
     title: "4. Children's and teens' privacy",
@@ -83,7 +83,7 @@ export default function PrivacyPage() {
             Privacy Policy
           </h1>
           <p className="text-sm" style={{ color: "var(--text-3)" }}>
-            Last updated: June 2026
+            Last updated: October 14, 2026
           </p>
         </div>
 

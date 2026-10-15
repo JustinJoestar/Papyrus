@@ -55,9 +55,9 @@ export default function PapyrusMark({
   showEst?: boolean;
 }) {
   return (
-    <span className="inline-flex items-center gap-2.5 select-none">
+    <span className="inline-flex items-center gap-2.5 select-none" role="img" aria-label="Papyrus">
       <Seal size={sealSize} />
-      <span className="flex flex-col leading-none">
+      <span className="flex flex-col leading-none" aria-hidden="true">
         <span
           className="font-display font-semibold"
           style={{

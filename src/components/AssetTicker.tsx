@@ -1,17 +1,6 @@
 "use client";
 
 const TICKER_ASSETS = [
-  // Crypto
-  { symbol: "BTC",   name: "Bitcoin",   img: "https://assets.coingecko.com/coins/images/1/small/bitcoin.png" },
-  { symbol: "ETH",   name: "Ethereum",  img: "https://assets.coingecko.com/coins/images/279/small/ethereum.png" },
-  { symbol: "SOL",   name: "Solana",    img: "https://assets.coingecko.com/coins/images/4128/small/solana.png" },
-  { symbol: "BNB",   name: "BNB",       img: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" },
-  { symbol: "XRP",   name: "XRP",       img: "https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png" },
-  { symbol: "DOGE",  name: "Dogecoin",  img: "https://assets.coingecko.com/coins/images/5/small/dogecoin.png" },
-  { symbol: "ADA",   name: "Cardano",   img: "https://assets.coingecko.com/coins/images/975/small/cardano.png" },
-  { symbol: "AVAX",  name: "Avalanche", img: "https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png" },
-  { symbol: "LINK",  name: "Chainlink", img: "https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png" },
-  { symbol: "DOT",   name: "Polkadot",  img: "https://assets.coingecko.com/coins/images/12171/small/polkadot.png" },
   // Stocks
   { symbol: "AAPL",  name: "Apple",     img: "https://images.financialmodelingprep.com/symbol/AAPL.png" },
   { symbol: "NVDA",  name: "NVIDIA",    img: "https://images.financialmodelingprep.com/symbol/NVDA.png" },
@@ -23,6 +12,17 @@ const TICKER_ASSETS = [
   { symbol: "NFLX",  name: "Netflix",   img: "https://images.financialmodelingprep.com/symbol/NFLX.png" },
   { symbol: "AMD",   name: "AMD",       img: "https://images.financialmodelingprep.com/symbol/AMD.png" },
   { symbol: "JPM",   name: "JPMorgan",  img: "https://images.financialmodelingprep.com/symbol/JPM.png" },
+  // Crypto
+  { symbol: "BTC",   name: "Bitcoin",   img: "https://assets.coingecko.com/coins/images/1/small/bitcoin.png" },
+  { symbol: "ETH",   name: "Ethereum",  img: "https://assets.coingecko.com/coins/images/279/small/ethereum.png" },
+  { symbol: "SOL",   name: "Solana",    img: "https://assets.coingecko.com/coins/images/4128/small/solana.png" },
+  { symbol: "BNB",   name: "BNB",       img: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" },
+  { symbol: "XRP",   name: "XRP",       img: "https://assets.coingecko.com/coins/images/44/small/xrp-symbol-white-128.png" },
+  { symbol: "DOGE",  name: "Dogecoin",  img: "https://assets.coingecko.com/coins/images/5/small/dogecoin.png" },
+  { symbol: "ADA",   name: "Cardano",   img: "https://assets.coingecko.com/coins/images/975/small/cardano.png" },
+  { symbol: "AVAX",  name: "Avalanche", img: "https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png" },
+  { symbol: "LINK",  name: "Chainlink", img: "https://assets.coingecko.com/coins/images/877/small/chainlink-new-logo.png" },
+  { symbol: "DOT",   name: "Polkadot",  img: "https://assets.coingecko.com/coins/images/12171/small/polkadot.png" },
 ];
 
 // Duplicate for seamless infinite loop

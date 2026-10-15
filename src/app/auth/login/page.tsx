@@ -74,7 +74,7 @@ export default function LoginPage() {
           <p className="text-xs" style={{ color: "var(--text-2)" }}>
             Start with{" "}
             <span className="font-semibold font-mono" style={{ color: "var(--gold-bright)" }}>$10,000</span>
-            {" "}virtual cash — compete weekly
+            {" "}virtual cash — no risk, no card
           </p>
         </div>
 

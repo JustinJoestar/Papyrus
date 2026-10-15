@@ -140,7 +140,7 @@ export default function UsernamePage() {
               Choose your trading name
             </h2>
             <p className="text-xs font-mono mb-6" style={{ color: "var(--text-3)" }}>
-              This is how you appear on the leaderboard
+              This is how you appear across Papyrus
             </p>
 
             {saveErr && (

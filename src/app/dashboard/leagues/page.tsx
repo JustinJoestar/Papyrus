@@ -50,10 +50,10 @@ export default async function LeaguesPage() {
           </div>
           <div className="relative z-10">
             <p className="font-display italic text-xl mb-2" style={{ color: "var(--text-2)" }}>
-              No challenges on record.
+              Invite friends to start a league.
             </p>
             <p className="text-sm" style={{ color: "var(--text-3)" }}>
-              Create a league or join with an invite code — then let the market decide.
+              Create one below or join with an invite code, then trade the same markets side by side.
             </p>
           </div>
         </div>

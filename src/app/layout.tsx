@@ -22,10 +22,25 @@ const plexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
 });
 
+const SITE_DESCRIPTION =
+  "Learn to invest with $10,000 in virtual cash. Trade real stocks, crypto, and commodities at live prices. No risk, no card.";
+
 export const metadata: Metadata = {
-  title: "Papyrus — The Paper Trading Terminal",
-  description:
-    "Trade crypto, stocks, and commodities with $10,000 in virtual cash. Live prices, weekly resets, private leagues. No real money at risk.",
+  metadataBase: new URL("https://papyrus-trade.com"),
+  title: "Papyrus — Learn to Invest, Risk-Free",
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    type: "website",
+    siteName: "Papyrus",
+    title: "Papyrus — Learn to Invest, Risk-Free",
+    description: SITE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Papyrus — Learn to Invest, Risk-Free",
+    description: SITE_DESCRIPTION,
+  },
 };
 
 export default function RootLayout({
@@ -50,11 +65,6 @@ export default function RootLayout({
         <ThemeProvider>
           <CursorGlow />
           {children}
-          <footer className="footer-aurora w-full py-3 text-center">
-            <span className="font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: "var(--text-3)" }}>
-              Verse Productions
-            </span>
-          </footer>
         </ThemeProvider>
       </body>
     </html>

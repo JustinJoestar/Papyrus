@@ -8,7 +8,7 @@ export const metadata = {
 const SECTIONS = [
   {
     title: "1. About Papyrus",
-    body: `Papyrus is a paper trading simulation platform for educational purposes. All funds, trades, and portfolio values are entirely virtual. No real money is involved, invested, or at risk at any time. Papyrus is not a licensed financial advisor, broker, or investment platform.`,
+    body: `Papyrus (referred to as "we," "us," or the "operator") is a paper trading simulation platform for educational purposes. All funds, trades, and portfolio values are entirely virtual. No real money is involved, invested, or at risk at any time. Papyrus is not a licensed financial advisor, broker, or investment platform.`,
   },
   {
     title: "2. Eligibility",
@@ -16,11 +16,11 @@ const SECTIONS = [
   },
   {
     title: "3. Simulation Only",
-    body: `All prices, portfolio values, and leaderboard rankings are for simulation and entertainment purposes only. Past performance in Papyrus does not reflect or predict real-world investment returns. Nothing on Papyrus constitutes financial advice.`,
+    body: `All prices and portfolio values are for simulation and entertainment purposes only. Past performance in Papyrus does not reflect or predict real-world investment returns. Nothing on Papyrus constitutes financial advice.`,
   },
   {
     title: "4. Accounts",
-    body: `You are responsible for maintaining the confidentiality of your account credentials. You agree not to share your account, impersonate others, or create accounts to manipulate leaderboards. We reserve the right to suspend or delete accounts that violate these terms.`,
+    body: `You are responsible for maintaining the confidentiality of your account credentials. You agree not to share your account, impersonate others, or create accounts to manipulate league rankings. We reserve the right to suspend or delete accounts that violate these terms.`,
   },
   {
     title: "5. User Conduct",
@@ -63,7 +63,7 @@ export default function TosPage() {
             Terms of Service
           </h1>
           <p className="text-sm" style={{ color: "var(--text-3)" }}>
-            Last updated: March 2025 · Effective immediately upon account creation
+            Last updated: October 14, 2026 · Effective immediately upon account creation
           </p>
         </div>
 

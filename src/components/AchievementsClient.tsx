@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   Rocket, TrendingUp, Globe, Gem, Zap, Shield,
-  Trophy, Crown, Lock, Flame, Sparkles, Medal,
+  Crown, Lock, Flame, Sparkles,
   Plus, Minus, Maximize2,
 } from "lucide-react";
 
@@ -90,22 +90,10 @@ const ACH: AchDef[] = [
     Icon: Shield, col: 7, row: 4, parents: ["diamond_hands"], rarity: "rare", section: "trading",
   },
   {
-    id: "top_10", title: "The Elite Ten",
-    desc: "Reached the global top 10. You are in rarified air.",
-    hint: "Climb to the global top 10.",
-    Icon: Trophy, col: 10, row: 0, parents: [], rarity: "rare", section: "competition",
-  },
-  {
-    id: "top_3", title: "The Podium",
-    desc: "Global top 3. The crowd has turned to watch you.",
-    hint: "Break into the global top 3.",
-    Icon: Medal, col: 10, row: 2, parents: ["top_10"], rarity: "epic", section: "competition",
-  },
-  {
     id: "league_winner", title: "League Tyrant",
     desc: "Finished #1 in a private league. Absolutely, undeniably dominant.",
     hint: "Win a private league outright.",
-    Icon: Crown, col: 10, row: 4, parents: ["top_3"], rarity: "epic", section: "competition",
+    Icon: Crown, col: 10, row: 0, parents: [], rarity: "epic", section: "competition",
   },
 ];
 
@@ -305,12 +293,6 @@ export default function AchievementsClient({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [isLight, setIsLight] = useState(false);
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 0.85 });
-
-  // Check leaderboard achievements on load
-  useEffect(() => {
-    const supabase = createClient();
-    void supabase.rpc("check_leaderboard_notification");
-  }, []);
 
   // Theme detection
   useEffect(() => {
@@ -513,7 +495,7 @@ export default function AchievementsClient({
               textAnchor="middle" fontSize={9}
               style={{ fill: isLight ? "#7a7057" : "#6a5a30" }}
               fontFamily="monospace" letterSpacing="3">
-              COMPETITION
+              LEAGUES
             </text>
             {edges.map(e => (
               <path

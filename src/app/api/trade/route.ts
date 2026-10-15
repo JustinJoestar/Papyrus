@@ -63,7 +63,6 @@ export async function POST(req: NextRequest) {
   // 4. Post-trade hooks for global trades — run as the user (use auth.uid()).
   if (!leagueId) {
     await userClient.rpc("check_trade_achievements");
-    void userClient.rpc("check_leaderboard_notification");
   }
 
   return NextResponse.json({ success: true, price });

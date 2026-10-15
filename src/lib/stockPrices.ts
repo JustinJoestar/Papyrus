@@ -1,7 +1,7 @@
 import { fetchQuotes } from "@/lib/yahooFinanceApi";
 
 // Fetches current prices for a specific set of stock symbols
-// Used server-side by dashboard and leaderboard
+// Used server-side by the dashboard, market pages, and price-refresh crons
 export async function getStockPrices(
   symbols: string[]
 ): Promise<Record<string, number>> {

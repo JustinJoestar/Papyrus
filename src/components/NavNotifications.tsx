@@ -1,11 +1,11 @@
 "use client";
 
-import { Bell, Star, Crown, Trophy, RefreshCw, Info } from "lucide-react";
+import { Bell, Star, Trophy, RefreshCw, Info } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
 
-type NotifType = "achievement" | "leaderboard" | "info" | "reset" | "league";
+type NotifType = "achievement" | "info" | "reset" | "league";
 
 type Notification = {
   id: string;
@@ -21,7 +21,6 @@ const TYPE_META: Record<
   { Icon: React.ElementType; color: string; bg: string; label: string }
 > = {
   achievement: { Icon: Star,      color: "var(--gold)",  bg: "rgba(201,162,78,0.12)",  label: "Achievement" },
-  leaderboard: { Icon: Crown,     color: "#a98bc8",       bg: "rgba(169,139,200,0.12)", label: "Leaderboard" },
   league:      { Icon: Trophy,    color: "#8fa3bc",       bg: "rgba(143,163,188,0.12)", label: "League"      },
   reset:       { Icon: RefreshCw, color: "#4fa97f",       bg: "rgba(79,169,127,0.12)",  label: "Reset"       },
   info:        { Icon: Info,      color: "var(--text-2)", bg: "rgba(160,150,130,0.08)", label: "Notice"      },
@@ -192,7 +191,7 @@ export default function NavNotifications({ userId }: Props) {
                     No notifications yet
                   </p>
                   <p className="font-mono text-[10px] mt-1" style={{ color: "var(--text-3)", opacity: 0.6 }}>
-                    Achievements &amp; rank updates appear here
+                    Achievements &amp; league updates appear here
                   </p>
                 </div>
               ) : (

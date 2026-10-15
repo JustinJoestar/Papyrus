@@ -71,16 +71,30 @@ const BEAMS = [
       { cx: 380,   cy: 168,  r: 6   },
     ],
   },
+  // News — top left (mirror of stocks)
+  {
+    path: "M290 200H17C11.477 200 6.5 195.523 6.5 190V40",
+    gradientConfig: {
+      initial:  { x1: "0%",  x2: "0%",  y1: "80%",  y2: "100%" },
+      animate:  { x1: ["20%", "100%", "100%"], x2: ["0%", "90%", "90%"], y1: ["80%", "80%", "-20%"], y2: ["100%", "100%", "0%"] },
+      transition: { duration: 2, repeat: Infinity, repeatType: "loop", ease: "linear", repeatDelay: 2, delay: 1.0 },
+    },
+    connectionPoints: [
+      { cx: 6.5,  cy: 34,    r: 6.5 },
+      { cx: 290,  cy: 200,   r: 6   },
+    ],
+  },
 ];
 
 
 // Labels mapped to approximate SVG endpoint positions (as % of 858×434 viewbox)
 const NODE_LABELS = [
-  { label: "CRYPTO",      sub: "250+ coins",     top: "76%",  left: "-2%",  align: "left"   },
   { label: "STOCKS",      sub: "35+ symbols",    top: "-4%",  left: "91%",  align: "right"  },
+  { label: "CRYPTO",      sub: "250+ coins",     top: "76%",  left: "-2%",  align: "left"   },
+  { label: "NEWS",        sub: "Market headlines", top: "-4%", left: "2%",  align: "left"   },
   { label: "PORTFOLIO",   sub: "Real-time P&L",  top: "104%", left: "10%",  align: "left"   },
   { label: "COMMODITIES", sub: "10 markets",     top: "104%", left: "80%",  align: "right"  },
-  { label: "LEAGUES",     sub: "Weekly resets",  top: "-12%", left: "45%",  align: "center" },
+  { label: "LEAGUES",     sub: "Play with friends", top: "-12%", left: "45%", align: "center" },
 ];
 
 export default function PulseSection() {

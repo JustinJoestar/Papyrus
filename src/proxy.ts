@@ -25,6 +25,13 @@ export async function proxy(request: NextRequest) {
     }
   );
 
+  // Retired routes — send anyone (signed in or not) back to the homepage
+  // before the auth gate so they never hit a dead page.
+  const retired = ["/dashboard/leaderboard", "/dashboard/challenge"];
+  if (retired.some((p) => request.nextUrl.pathname.startsWith(p))) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
