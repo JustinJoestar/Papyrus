@@ -532,7 +532,7 @@ body::before {
 }
 .animate-blink-dot { animation: blink-dot 1.6s ease-in-out infinite; }
 
-/* ── Challenge / competition ─────────────────────────────── */
+/* ── Leagues / competition ─────────────────────────────── */
 
 /* Progress-to-leader bar sweeps in from the left */
 @keyframes bar-grow {

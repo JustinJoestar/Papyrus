@@ -32,10 +32,10 @@ export default async function LeaguesPage() {
       <div className="rise mb-8" style={{ "--i": 0 } as React.CSSProperties}>
         <p className="label-ledger mb-1.5">№ 05 — Private Competition</p>
         <h1 className="font-display text-3xl font-semibold" style={{ color: "var(--text-1)" }}>
-          The Challenge Hall
+          Your Leagues
         </h1>
         <p className="text-sm mt-2" style={{ color: "var(--text-3)" }}>
-          Issue a challenge. Set the stakes. Settle it on the tape.
+          Start a league. Set the stakes. Settle it on the tape.
         </p>
       </div>
 

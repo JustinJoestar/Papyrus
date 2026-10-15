@@ -103,7 +103,7 @@ export default function LeagueActions() {
             onClick={() => switchMode("create")}
             className="btn-bronze text-sm px-5 py-2.5"
           >
-            + Issue a Challenge
+            + Create a League
           </button>
           <button
             onClick={() => switchMode("join")}
@@ -120,7 +120,7 @@ export default function LeagueActions() {
           style={{ "--i": 0 } as React.CSSProperties}
         >
           <p className="label-ledger mb-1" style={{ letterSpacing: "0.22em", color: "var(--gold)" }}>
-            New Challenge
+            New League
           </p>
           <h3 className="font-display font-semibold text-lg mb-4" style={{ color: "var(--text-1)" }}>
             Create a League
@@ -236,7 +236,7 @@ export default function LeagueActions() {
           style={{ "--i": 0 } as React.CSSProperties}
         >
           <p className="label-ledger mb-1" style={{ letterSpacing: "0.22em", color: "var(--gold)" }}>
-            Answer a Challenge
+            By Invite Code
           </p>
           <h3 className="font-display font-semibold text-lg mb-4" style={{ color: "var(--text-1)" }}>
             Join a League

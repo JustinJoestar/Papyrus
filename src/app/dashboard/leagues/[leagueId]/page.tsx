@@ -42,7 +42,7 @@ function Avatar({ username, avatarUrl, size = 8 }: { username: string; avatarUrl
   );
 }
 
-/* Progress toward the leader — the heart of the challenge */
+/* Progress toward the leader — the heart of the league */
 function ChaseBar({ pct, metal, index }: { pct: number; metal?: string; index: number }) {
   return (
     <div
@@ -147,7 +147,7 @@ export default async function LeagueLeaderboardPage({
   const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const champion    = entries[0];
-  const challengers = entries.slice(1, 3);
+  const runnersUp   = entries.slice(1, 3);
   const rest        = entries.slice(3);
   const leaderValue = champion?.totalValue || 1;
   const isOwner     = league.owner_id === user.id;
@@ -175,7 +175,7 @@ export default async function LeagueLeaderboardPage({
 
       {/* Header */}
       <div className="rise mb-6" style={{ "--i": 1 } as React.CSSProperties}>
-        <p className="label-ledger mb-1.5">№ 05 — The Challenge</p>
+        <p className="label-ledger mb-1.5">№ 05 — The League</p>
         <h1 className="font-display text-3xl sm:text-4xl font-semibold" style={{ color: "var(--text-1)" }}>
           {league.name}
         </h1>
@@ -268,10 +268,10 @@ export default async function LeagueLeaderboardPage({
         </div>
       )}
 
-      {/* ── Challengers — ranks 2 & 3 ────────────────────────── */}
-      {challengers.length > 0 && (
+      {/* ── Runners-up — ranks 2 & 3 ────────────────────────── */}
+      {runnersUp.length > 0 && (
         <div className="space-y-3 mb-3">
-          {challengers.map((entry, idx) => {
+          {runnersUp.map((entry, idx) => {
             const isMe = entry.isCurrentUser;
             const metalText = METAL_TEXT[entry.rank as 2 | 3];
             const behind = leaderValue - entry.totalValue;

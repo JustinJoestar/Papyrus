@@ -133,7 +133,7 @@ export default function LeagueCard({ league, currentUserId }: Props) {
             href={`/dashboard/leagues/${league.id}`}
             className="btn-bronze text-sm px-4 py-2 shrink-0"
           >
-            View Challenge →
+            View League →
           </Link>
         </div>
 
